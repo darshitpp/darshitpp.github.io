@@ -19,5 +19,55 @@
        <description></description>
      </item>
    
+     <item>
+       <title>Using IntelliJ IDEA Live Templates</title>
+       <link>https://darshitpp.github.io/posts/using-intellij-idea-live-templates/</link>
+       <pubDate>Sun, 01 Sep 2019 14:02:10 +0530</pubDate>
+       
+       <guid>https://darshitpp.github.io/posts/using-intellij-idea-live-templates/</guid>
+       <description>&lt;p&gt;IntelliJ IDEA is an awesome IDE, and a lesser known and used feature is Live Templates.&lt;/p&gt;
+&lt;p&gt;Live Templates enable you to use code snippets with just a few keystrokes. A lot of great ones are provided out-of-the-box by IntelliJ. You can view them using the shortcut press &lt;code&gt;Double Shift&lt;/code&gt; and then typing &lt;code&gt;Live Templates&lt;/code&gt;. The shortcut works regardless of the OS you&amp;rsquo;re currently using (and I am too lazy to specify OS specific menus).&lt;/p&gt;
+&lt;p&gt;Some of the examples of Live Templates are:&lt;/p&gt;
+&lt;p&gt;Typing &lt;code&gt;psvm&lt;/code&gt; replaces it with&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;main&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;String&lt;span style=&#34;color:#f92672&#34;&gt;[]&lt;/span&gt; args&lt;span style=&#34;color:#f92672&#34;&gt;){&lt;/span&gt;
+  
+&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Typing &lt;code&gt;psfs&lt;/code&gt; magically turns it into&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;final&lt;/span&gt; String
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I was recently refactoring a lot of &lt;code&gt;class&lt;/code&gt;es and I had to replace a lot of legacy logging initialization statements to using &lt;code&gt;slf4j&lt;/code&gt; logging library like the following:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; org.slf4j.Logger&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;import&lt;/span&gt; org.slf4j.LoggerFactory&lt;span style=&#34;color:#f92672&#34;&gt;;&lt;/span&gt;
+
+&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;class&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;LoggerTest&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;final&lt;/span&gt; Logger logger &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; LoggerFactory&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;getLogger&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;LoggerTest&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;class&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I had more than 30 different classes to refactor as the above, and I certainly didn&amp;rsquo;t want to painstakingly write everything by hand again (confirms that I&amp;rsquo;m lazy).&lt;/p&gt;
+&lt;p&gt;Fortunately, IntelliJ Live Templates came to my rescue! I fired up the Live Templates menu using the shortcut mentioned above, and clicked on the &lt;code&gt;+&lt;/code&gt; button at the top right.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://imgur.com/6bbbZpm.png&#34; alt=&#34;Check the + on the top right!&#34;&gt;&lt;/p&gt;
+&lt;p&gt;I then clicked on &lt;code&gt;Live Template&lt;/code&gt; button. The UI now points to the bottom which asks you to put an abbreviation.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://imgur.com/vSuAw6t.png&#34; alt=&#34;Abbreviation&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s input the abbreviation as &lt;code&gt;psfl&lt;/code&gt; which stands for &lt;code&gt;public static final Logger&lt;/code&gt;, which can be also put in the description.&lt;/p&gt;
+&lt;p&gt;Write the following code in the Template text box:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;final&lt;/span&gt; Logger logger &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt; LoggerFactory&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;getLogger&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;();&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://imgur.com/ZTj7Wj7.png&#34; alt=&#34;Template&#34;&gt;&lt;/p&gt;
+&lt;p&gt;But hang on, the IDE gives us a warning to define a context where it would be used at. We want the template to be only used in Java, so we click on the &lt;code&gt;Define&lt;/code&gt; button, and select &lt;code&gt;Java&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://imgur.com/6wXTcV1.png&#34; alt=&#34;Java only template&#34;&gt;&lt;/p&gt;
+&lt;p&gt;You may now notice the IDE now applies syntax highlighting on the template.&lt;/p&gt;
+&lt;p&gt;Wait, we are still not there yet. I certainly don&amp;rsquo;t want to manually write every class name inside the &lt;code&gt;getLogger&lt;/code&gt; function! At this point, I was not sure how I could achieve that. Cue in a bit of googling, stackoverflow again came to the rescue.&lt;/p&gt;
+&lt;p&gt;I found the following answer: &lt;a href=&#34;https://stackoverflow.com/a/8552882/4840501&#34;&gt;https://stackoverflow.com/a/8552882/4840501&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;public&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;static&lt;/span&gt; &lt;span style=&#34;color:#66d9ef&#34;&gt;final&lt;/span&gt; org&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;slf4j&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;Logger&lt;/span&gt; logger &lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;
+org&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;slf4j&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;LoggerFactory&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;.&lt;/span&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;getLogger&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;$CLASS_NAME$&lt;span style=&#34;color:#f92672&#34;&gt;);&lt;/span&gt;
+$END$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;So I copy-pasted the code in my template screen(what did you expect? :P)&lt;/p&gt;
+&lt;p&gt;You&amp;rsquo;d then need to define what &lt;code&gt;$CLASS_NAME$&lt;/code&gt; means. To do that, click on the &lt;code&gt;Edit Variables&lt;/code&gt; button and select &lt;code&gt;className()&lt;/code&gt; in the &lt;code&gt;Expression&lt;/code&gt; box.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://imgur.com/mTJoIvT.png&#34; alt=&#34;Select className()&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;$END$&lt;/code&gt; variable means where you want your cursor at, after the template is applied.&lt;/p&gt;
+&lt;p&gt;Click on &lt;code&gt;Apply&lt;/code&gt; and &lt;code&gt;Ok&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;We&amp;rsquo;re done!&lt;/p&gt;
+&lt;p&gt;Fire up your classes and refactor with 10x speed!&lt;/p&gt;
+&lt;p&gt;Relevant link: &lt;a href=&#34;https://www.jetbrains.com/help/idea/creating-and-editing-live-templates.html&#34;&gt;https://www.jetbrains.com/help/idea/creating-and-editing-live-templates.html&lt;/a&gt;&lt;/p&gt;
+</description>
+     </item>
+   
  </channel>
 </rss>
