@@ -4,22 +4,37 @@
   
   <url>
     <loc>https://darshitpp.github.io/posts/</loc>
-    <lastmod>2019-09-01T14:02:10+05:30</lastmod>
+    <lastmod>2020-05-10T21:25:01+05:30</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
     <loc>https://darshitpp.github.io/</loc>
-    <lastmod>2019-09-01T14:02:10+05:30</lastmod>
+    <lastmod>2020-05-10T21:25:01+05:30</lastmod>
   </url>
   
   <url>
-    <loc>https://darshitpp.github.io/tags/intellij/</loc>
-    <lastmod>2019-09-01T14:02:10+05:30</lastmod>
+    <loc>https://darshitpp.github.io/posts/reduce-redis-memory-usage/</loc>
+    <lastmod>2020-05-10T21:25:01+05:30</lastmod>
   </url>
   
   <url>
     <loc>https://darshitpp.github.io/tags/java/</loc>
+    <lastmod>2020-05-10T21:25:01+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://darshitpp.github.io/tags/redis/</loc>
+    <lastmod>2020-05-10T21:25:01+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://darshitpp.github.io/tags/</loc>
+    <lastmod>2020-05-10T21:25:01+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://darshitpp.github.io/tags/intellij/</loc>
     <lastmod>2019-09-01T14:02:10+05:30</lastmod>
   </url>
   
@@ -30,11 +45,6 @@
   
   <url>
     <loc>https://darshitpp.github.io/tags/productivity/</loc>
-    <lastmod>2019-09-01T14:02:10+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://darshitpp.github.io/tags/</loc>
     <lastmod>2019-09-01T14:02:10+05:30</lastmod>
   </url>
   
