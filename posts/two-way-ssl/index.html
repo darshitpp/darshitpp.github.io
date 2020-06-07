@@ -1,0 +1,381 @@
+<!doctype html>
+
+<html lang="en-us">
+
+<head>
+  <title>Darshit Patel&#39;s Blog</title>
+  <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Darshit Patel&#39;s Blog: Some things that I learn and find interesting" />
+<meta name="author" content="Darshit Patel" /><meta property="og:title" content="Two Way SSL with nginx" />
+<meta property="og:description" content="A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and I have a very limited experience with networking concepts like SSL in my short career. So I turned up blank on how I could make it possible. Our services have SSL enabled, but only the usual one &ndash; similar to the one you&rsquo;d find while visiting this website, but this was a unique thing for me as I didn&rsquo;t even know two way SSL existed." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darshitpp.github.io/posts/two-way-ssl/" />
+<meta property="article:published_time" content="2020-06-07T12:37:13+05:30" />
+<meta property="article:modified_time" content="2020-06-07T12:37:13+05:30" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Two Way SSL with nginx"/>
+<meta name="twitter:description" content="A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and I have a very limited experience with networking concepts like SSL in my short career. So I turned up blank on how I could make it possible. Our services have SSL enabled, but only the usual one &ndash; similar to the one you&rsquo;d find while visiting this website, but this was a unique thing for me as I didn&rsquo;t even know two way SSL existed."/>
+
+<meta name="generator" content="Hugo 0.71.1" />
+    
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" integrity="sha256-l85OmPOjvil/SOvVt3HnSSjzF1TUMyT9eV0c2BzEGzU=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://darshitpp.github.io/fontawesome/css/all.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Slab|Ruda" />
+  <link rel="stylesheet" type="text/css" href="https://darshitpp.github.io/css/styles.css" /><link rel='stylesheet' href='https://darshitpp.github.io/css/custom.css'></head>
+
+<body>
+  <div id="container">
+    <header>
+      <h1>
+                <a href="https://darshitpp.github.io/">Darshit Patel&rsquo;s Blog</a>
+            </h1>
+
+      <ul id="social-media">
+             <li>
+               <a href="https://github.com/darshitpp" title="GitHub">
+               <i class="fab fa-github fa-lg"></i>
+               </a>
+             </li>
+             <li>
+               <a href="https://twitter.com/darshitpp" title="Twitter">
+               <i class="fab fa-twitter fa-lg"></i>
+               </a>
+             </li>
+             <li>
+               <a href="https://linkedin.com/in/darshitpp" title="LinkedIn">
+               <i class="fab fa-linkedin fa-lg"></i>
+               </a>
+             </li>
+      </ul>
+      
+      <p><em>Some things that I learn and find interesting</em></p>
+      
+    </header>
+
+    
+<nav>
+    <ul>
+        
+        <li>
+            <a class="" href="https://darshitpp.github.io/tags">
+                <i class="fa-li fa  fa-lg"></i><span>Tags</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://darshitpp.github.io/posts/">
+                <i class="fa-li fa  fa-lg"></i><span>Posts</span>
+            </a>
+        </li>
+        
+        <li>
+            <a class="" href="https://darshitpp.github.io/about/">
+                <i class="fa-li fa  fa-lg"></i><span>About</span>
+            </a>
+        </li>
+        
+    </ul>
+</nav>
+
+
+    <main>
+
+
+
+
+<article>
+
+    <h1>Two Way SSL with nginx</h1>
+
+    
+      <aside>
+    <ul>
+        <li>
+            <time class="post-date" datetime="2020-06-07T12:37:13&#43;05:30">Jun 7, 2020</time>
+        </li>
+        
+
+        
+        <li>
+            <em>
+                
+                    
+                    <a href="https://darshitpp.github.io/tags/ssl">#ssl</a>
+                
+                    , 
+                    <a href="https://darshitpp.github.io/tags/ngnix">#ngnix</a>
+                
+            </em>
+        </li>
+        
+
+        <li>9 minutes read</li>
+    </ul>
+</aside>
+
+    
+
+    
+<div class="featured_image">
+    <a href="https://darshitpp.github.io/posts/two-way-ssl/" title="Two Way SSL with nginx">
+        <img src="">
+    </a>
+</div>
+
+
+
+    <p>A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and I have a very limited experience with networking concepts like SSL in my short career. So I turned up blank on how I could make it possible. Our services have SSL enabled, but only the usual one &ndash; similar to the one you&rsquo;d find while visiting this website, but this was a unique thing for me as I didn&rsquo;t even know two way SSL existed. Regardless I figured out how this is supposed to work. However, I had more problems with trying to understand how to implement this. This post is not for explaining how two way SSL works, but how to make it work. Unfortunately most guides that I found on the internet were very incomplete, and staright away skipped many parts for someone who&rsquo;s new to this. This is my attempt at explaining what I have learnt and documentation for future reference.</p>
+<p>This guide is only for Unix like systems like MacOS or Linux. I even tried to do this on Windows, but could not make it work.</p>
+<h1 id="prerequisites">Prerequisites</h1>
+<ol>
+<li>nginx</li>
+<li>sudo privileges on your system</li>
+</ol>
+<h1 id="installing-and-configuring-nginx">Installing and Configuring nginx</h1>
+<h2 id="install-1">Install <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup></h2>
+<p>Install nginx using <code>apt</code> command on your Linux system.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ sudo apt update
+$ sudo apt install nginx
+</code></pre></div><p>This will install all of nginx on the path <code>/opt/nginx</code>. All the configuration files we will be editing for two-way SSL would be found within this directory.</p>
+<h2 id="configure-nginx-to-start">Configure nginx to start</h2>
+<p>Before starting up nginx for use, we need to enable some ports on the firewall that our nginx can listen incoming connections from.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ sudo ufw app list
+Available applications:
+  Nginx Full
+  Nginx HTTP
+  Nginx HTTPS
+  OpenSSH
+</code></pre></div><p>The utility <code>ufw</code> can be used to manage our firewall. Though a knowledge of <code>ufw</code> is not necessary for us, more information can be found at this <a href="https://www.linux.com/training-tutorials/introduction-uncomplicated-firewall-ufw/">link</a>.</p>
+<p>You can see in the above output that the utility responds us with three profiles. When we installed nginx, it registered itself with the <code>ufw</code> utility with three profiles.</p>
+<ul>
+<li><code>Nginx HTTP</code> allows nginx to listen through port 80, for normal HTTP traffic.</li>
+<li><code>Nginx HTTPS</code> allows nginx to listen through port 443, for HTTPS traffic.</li>
+<li><code>Nginx Full</code> is a combination of the above both, enabling port 80 and 443 both.</li>
+</ul>
+<p>We will enable <code>Nginx Full</code> as we have to use our server for SSL, and using normal HTTP connections is not an uncommon use-case either. To enable it, run:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ sudo ufw allow <span style="color:#e6db74">&#39;Nginx Full&#39;</span>
+</code></pre></div><p>You should see the activated profile if you run the command</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+OpenSSH                    ALLOW       Anywhere                  
+Nginx Full                 ALLOW       Anywhere                  
+OpenSSH <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>               ALLOW       Anywhere <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>             
+Nginx Full <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>            ALLOW       Anywhere <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>
+</code></pre></div><p>The nginx service should already be up and running now. You can check the by running</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ systemctl status nginx
+● nginx.service - A high performance web server and a reverse proxy server
+   Loaded: loaded <span style="color:#f92672">(</span>/lib/systemd/system/nginx.service; enabled; vendor preset: enabled<span style="color:#f92672">)</span>
+   Active: active <span style="color:#f92672">(</span>running<span style="color:#f92672">)</span> since Fri 2018-04-20 16:08:19 UTC; <span style="color:#ae81ff">3</span> days ago
+     Docs: man:nginx<span style="color:#f92672">(</span>8<span style="color:#f92672">)</span>
+ Main PID: <span style="color:#ae81ff">2369</span> <span style="color:#f92672">(</span>nginx<span style="color:#f92672">)</span>
+    Tasks: <span style="color:#ae81ff">2</span> <span style="color:#f92672">(</span>limit: 1153<span style="color:#f92672">)</span>
+   CGroup: /system.slice/nginx.service
+           ├─2369 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
+           └─2380 nginx: worker process
+</code></pre></div><h1 id="creating-certificates">Creating Certificates</h1>
+<h2 id="terminology">Terminology</h2>
+<ul>
+<li>Certificate Authority (CA): This is an Organization which provides you a Certificate (the <code>.crt</code> file). In reality, anyone (including yourself) can be the CA which issues certificates</li>
+<li>Certificate Signing Request (CSR <code>.csr</code>): An &ldquo;input form&rdquo; with details (like Name, Organization, Address, etc.) filled by the requestor of the certificate which is submitted to the CA</li>
+<li>Private Key (<code>.key</code>): The private key file used by the CA in conjunction with CSR to sign and generate the certificates</li>
+<li>Certificate (<code>.crt</code>): The certificate generated by the CA</li>
+<li>Seld Signed Certificate: Consider yourself as a Certificate Authority (CA) and generate the <code>.crt</code> files.</li>
+</ul>
+<p>Now that we know the terminology, it would be easier to proceed with generating the certificates. The following part of the tutorial all requires root/superuser privileges, so switch to the user using the <code>sudo su</code> command.</p>
+<p>Create a directory called <code>certs</code> under the root of the file-system which will hold all the certificates and related files.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># Create directory</span>
+$ mkdir /certs 
+<span style="color:#75715e"># Change directory to /certs</span>
+$ cd /certs
+<span style="color:#75715e"># Verify the present working directory</span>
+$ pwd
+/certs
+</code></pre></div><p>In this tutorial, we would be designating ourselves as a Certificate Authority, and then self-sign and generate the certificates.</p>
+<h2 id="generate-certificate-authority-ca-files">Generate Certificate Authority (CA) files</h2>
+<p>We would be first generating a CA key, which would be the basis of all further certificate generation.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ openssl genrsa -des3 -out ca.key <span style="color:#ae81ff">4096</span>
+Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
+.............................................................++++
+....................................................................................................................................................................................++++
+e is <span style="color:#ae81ff">65537</span> <span style="color:#f92672">(</span>0x010001<span style="color:#f92672">)</span>
+Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
+Verifying - Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt; 
+</code></pre></div><p>Command options:</p>
+<ul>
+<li><code>genrsa</code>: generate RSA private key</li>
+<li><code>-des3</code>: encrypts the output key using des3 encryption</li>
+<li><code>-out</code>: specifying the output key file</li>
+<li><code>4096</code>: size of private key in bits</li>
+</ul>
+<p>This generates a file named <code>ca.key</code> in the current directory. You would have to provide a password/pasphrase for the key. For the purposes of this tutorial, I&rsquo;ll be using the same passphrase whenever required.</p>
+<p><code>&lt;passphrase&gt;</code> = <code>root</code></p>
+<p>The next step is the generation of <code>ca.crt</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ openssl req -new -x509 -days <span style="color:#ae81ff">3650</span> -key ca.key -out ca.crt
+Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
+</code></pre></div><p>Command options:</p>
+<ul>
+<li><code>req</code>: used for creating certificate requests</li>
+<li><code>-new</code>: generates new certificate request</li>
+<li><code>-x509</code>: outputs a new self signed certificate instead of a certificate request</li>
+<li><code>-days 3650</code>: validity of certificate (in this case, 10 years/3650 days)</li>
+<li><code>-key</code>: RSA key to be used for generating the certificate</li>
+<li><code>-out</code>: output file for the certificate</li>
+</ul>
+<p>Once you enter the passphrase (which is the same as we entered in the previous step), it&rsquo;ll ask you to provide more information for the self signed certificate.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter <span style="color:#e6db74">&#39;.&#39;</span>, the field will be left blank.
+-----
+Country Name <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> letter code<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>AU<span style="color:#f92672">]</span>:
+State or Province Name <span style="color:#f92672">(</span>full name<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Some-State<span style="color:#f92672">]</span>:
+Locality Name <span style="color:#f92672">(</span>eg, city<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+Organization Name <span style="color:#f92672">(</span>eg, company<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Internet Widgits Pty Ltd<span style="color:#f92672">]</span>:CertAuth
+Organizational Unit Name <span style="color:#f92672">(</span>eg, section<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+Common Name <span style="color:#f92672">(</span>e.g. server FQDN or YOUR name<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+Email Address <span style="color:#f92672">[]</span>:
+</code></pre></div><p>Note the <code>Organization Name</code> parameter is named as <code>CertAuth</code> for this example. This is because we are a CA and CAs should ideally be independent to enable other parties to trust other parties and establish a chain of trust.</p>
+<h2 id="generating-clientuser-certificates">Generating Client/User Certificates</h2>
+<p>At this point, we have two files in the <code>certs</code> directory.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ca.key
+ca.crt
+</code></pre></div><p>We now would be generating client/user certificates.
+The command to generate the <code>user.key</code> is similar to the one used to create the <code>ca.key</code></p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ openssl genrsa -des3 -out user.key <span style="color:#ae81ff">4096</span>
+Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
+.....................................................................................................................................................++++
+.......................++++
+e is <span style="color:#ae81ff">65537</span> <span style="color:#f92672">(</span>0x010001<span style="color:#f92672">)</span>
+Enter pass phrase <span style="color:#66d9ef">for</span> user.key:
+Verifying - Enter pass phrase <span style="color:#66d9ef">for</span> user.key:
+</code></pre></div><p>As said earlier, the passphrase to be used for <code>user.key</code> is still the same.</p>
+<p>The client/user certificate aren&rsquo;t supposed to be self signed, and we would need to generate a CSR. It means the signing is to be done by a CA(even though in this case, we own the CA!). The way to do this is</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ openssl req -new -key user.key -out user.csr
+Enter pass phrase <span style="color:#66d9ef">for</span> user.key:&lt;passphrase&gt; 
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter <span style="color:#e6db74">&#39;.&#39;</span>, the field will be left blank.
+-----
+Country Name <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> letter code<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>AU<span style="color:#f92672">]</span>:
+State or Province Name <span style="color:#f92672">(</span>full name<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Some-State<span style="color:#f92672">]</span>:
+Locality Name <span style="color:#f92672">(</span>eg, city<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+Organization Name <span style="color:#f92672">(</span>eg, company<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Internet Widgits Pty Ltd<span style="color:#f92672">]</span>:User
+Organizational Unit Name <span style="color:#f92672">(</span>eg, section<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+Common Name <span style="color:#f92672">(</span>e.g. server FQDN or YOUR name<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+Email Address <span style="color:#f92672">[]</span>:
+
+Please enter the following <span style="color:#e6db74">&#39;extra&#39;</span> attributes
+to be sent with your certificate request
+A challenge password <span style="color:#f92672">[]</span>:
+An optional company name <span style="color:#f92672">[]</span>:
+</code></pre></div><p>The <code>Organization Name</code> would be <code>User</code> as this certificate is for a Client/User. <strong>DO NOT</strong> keep it the same as the CertificateAuthority.</p>
+<p>The next step would be to create a User Certificate from the User CSR.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ openssl x509 -req -days <span style="color:#ae81ff">365</span> -in user.csr -CA ca.crt -CAkey ca.key -set_serial <span style="color:#ae81ff">01</span> -out user.crt
+Signature ok
+subject<span style="color:#f92672">=</span>C <span style="color:#f92672">=</span> AU, ST <span style="color:#f92672">=</span> Some-State, O <span style="color:#f92672">=</span> User
+Getting CA Private Key
+Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
+</code></pre></div><p>Command options:</p>
+<ul>
+<li><code>x509</code>: standard format for public key certificates</li>
+<li><code>-CA</code>: the CA certificate</li>
+<li><code>-CAkey</code>: the key to generate the certificate from</li>
+<li><code>-set_serial 01</code>: the serial version of the certificate to be generated. The user certificate can be regenerated by incrementing the serial number from the same <code>user.csr</code> after 365 days when it expires.</li>
+</ul>
+<p>You can see that it displayes data from the CSR, and then uses the CA key to generate <code>user.crt</code>.</p>
+<p>To enable us to use the certificate from a web browser, we would need to create the certificate in the PFX file file format.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ openssl pkcs12 -export -out user.pfx -inkey user.key -in user.crt -certfile ca.crt
+Enter pass phrase <span style="color:#66d9ef">for</span> user.key:&lt;passphrase&gt;
+Enter Export Password:&lt;passphrase&gt;
+Verifying - Enter Export Password:&lt;passphrase&gt;
+</code></pre></div><p>You can verify if the generated certificate can be decrypted using the CA certificate by the following command</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl verify -verbose -CAfile ca.crt user.crt
+user.crt: OK
+</code></pre></div><p>The files that we currently have in the directory are</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ca.key
+ca.crt
+user.key
+user.csr
+user.crt
+user.pfx
+</code></pre></div><h2 id="generating-server-certificates">Generating Server Certificates</h2>
+<p>This is similar to generating the User certificates, with the following commands</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ openssl req -new -sha256 -key nginx.mssl.com.key -out nginx.mssl.com.csr
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter <span style="color:#e6db74">&#39;.&#39;</span>, the field will be left blank.
+-----
+Country Name <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> letter code<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>AU<span style="color:#f92672">]</span>:
+State or Province Name <span style="color:#f92672">(</span>full name<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Some-State<span style="color:#f92672">]</span>:
+Locality Name <span style="color:#f92672">(</span>eg, city<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+Organization Name <span style="color:#f92672">(</span>eg, company<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Internet Widgits Pty Ltd<span style="color:#f92672">]</span>:Server
+Organizational Unit Name <span style="color:#f92672">(</span>eg, section<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+Common Name <span style="color:#f92672">(</span>e.g. server FQDN or YOUR name<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:nginx.mssl.com
+Email Address <span style="color:#f92672">[]</span>:
+
+Please enter the following <span style="color:#e6db74">&#39;extra&#39;</span> attributes
+to be sent with your certificate request
+A challenge password <span style="color:#f92672">[]</span>:
+An optional company name <span style="color:#f92672">[]</span>:
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">$ openssl x509 -req -days <span style="color:#ae81ff">365</span> -sha256 -in nginx.mssl.com.csr -CA ca.crt -CAkey ca.key -set_serial <span style="color:#ae81ff">1</span> -out nginx.mssl.com.crt
+Signature ok
+subject<span style="color:#f92672">=</span>C <span style="color:#f92672">=</span> AU, ST <span style="color:#f92672">=</span> Some-State, O <span style="color:#f92672">=</span> Server, CN <span style="color:#f92672">=</span> nginx.mssl.com
+Getting CA Private Key
+Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
+</code></pre></div><section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p>The main resource is this <a href="https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04">tutorial by DigitalOcean</a>, and all the relevant steps have been described in my article. <a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+
+</article>
+
+
+<section class="post-nav">
+    <ul>
+        
+        <li>
+            <a href="https://darshitpp.github.io/posts/reduce-redis-memory-usage/"><i class="fa fa-chevron-circle-left"></i> How to achieve a 50% reduction in Redis memory usage</a>
+        </li>
+        
+        
+    </ul>
+</section>
+    
+    
+
+
+
+
+
+</main>
+    <footer>
+        <h6>
+            
+    </footer>
+</div>
+<script src="https://darshitpp.github.io/js/scripts.js"></script>
+
+</body>
+
+</html>
+

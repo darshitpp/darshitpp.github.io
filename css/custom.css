@@ -1,0 +1,26 @@
+#container > * {
+  width: 800px;
+  margin: 0 auto;
+}
+
+#container main a {
+  text-decoration: underline;
+  text-decoration-color: red;
+  text-decoration-thickness: 2px;
+}
+
+#container main h1 a {
+  text-decoration: initial;
+  text-decoration-color: initial;
+}
+
+#container main section.post-nav a {
+  text-decoration: initial;
+  text-decoration-color: initial;
+}
+
+#container main article ul code {
+  padding: 0.2em;
+  background-color: #d03232;
+  font-size: 0.9em;
+}

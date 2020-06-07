@@ -1,14 +1,14 @@
 
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
  <channel>
-   <title>redis on Darshit Patel&#39;s Blog</title>
-   <link>https://darshitpp.github.io/tags/redis/</link>
-   <description>Recent content in redis on Darshit Patel&#39;s Blog</description>
+   <title>ngnix on Darshit Patel&#39;s Blog</title>
+   <link>https://darshitpp.github.io/tags/ngnix/</link>
+   <description>Recent content in ngnix on Darshit Patel&#39;s Blog</description>
    <generator>Hugo -- gohugo.io</generator>
    <language>en-us</language>
-   <lastBuildDate>Sun, 10 May 2020 21:25:01 +0530</lastBuildDate>
+   <lastBuildDate>Sun, 07 Jun 2020 12:37:13 +0530</lastBuildDate>
    
-       <atom:link href="https://darshitpp.github.io/tags/redis/index.xml" rel="self" type="application/rss+xml" />
+       <atom:link href="https://darshitpp.github.io/tags/ngnix/index.xml" rel="self" type="application/rss+xml" />
    
    
      <item>
