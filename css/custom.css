@@ -19,3 +19,9 @@
   background-color: #d03232;
   font-size: 0.9em;
 }
+
+#container main article ol code {
+  padding: 0.2em;
+  background-color: #d03232;
+  font-size: 0.9em;
+}

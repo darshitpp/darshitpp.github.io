@@ -2,21 +2,21 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
  <channel>
    <title>logger on Darshit Patel&#39;s Blog</title>
-   <link>https://darshitpp.github.io/tags/logger/</link>
+   <link>https://darshit.dev/tags/logger/</link>
    <description>Recent content in logger on Darshit Patel&#39;s Blog</description>
    <generator>Hugo -- gohugo.io</generator>
    <language>en-us</language>
    <lastBuildDate>Sun, 01 Sep 2019 14:02:10 +0530</lastBuildDate>
    
-       <atom:link href="https://darshitpp.github.io/tags/logger/index.xml" rel="self" type="application/rss+xml" />
+       <atom:link href="https://darshit.dev/tags/logger/index.xml" rel="self" type="application/rss+xml" />
    
    
      <item>
        <title>How to achieve a 50% reduction in Redis memory usage</title>
-       <link>https://darshitpp.github.io/posts/reduce-redis-memory-usage/</link>
+       <link>https://darshit.dev/posts/reduce-redis-memory-usage/</link>
        <pubDate>Sun, 10 May 2020 21:25:01 +0530</pubDate>
        
-       <guid>https://darshitpp.github.io/posts/reduce-redis-memory-usage/</guid>
+       <guid>https://darshit.dev/posts/reduce-redis-memory-usage/</guid>
        <description>&lt;p&gt;Yes, you read that right.&lt;/p&gt;
 &lt;p&gt;To give you some context, some time ago, our (my org&amp;rsquo;s) Redis usage was un-tracked &amp;ndash; meaning we didn&amp;rsquo;t know why our Redis memory was being occupied as much as it was. Our 2.5GB of Redis ElastiCache was almost close to being full, and if it somehow reached its limit, our system would start to fail. Though there were fallbacks in place, Redis could turn out to be a bottle-neck.&lt;/p&gt;
 &lt;p&gt;In this post, I would try to explain how we reduced the storage occupied by the data by more than 50%. This would also kind of be a step by step guide from the basics, so if you&amp;rsquo;re just interested in how Redis is being used, just skip the and go to the Optimization section.&lt;/p&gt;
@@ -346,10 +346,10 @@ Request Body:&lt;/p&gt;
    
      <item>
        <title>Using IntelliJ IDEA Live Templates</title>
-       <link>https://darshitpp.github.io/posts/using-intellij-idea-live-templates/</link>
+       <link>https://darshit.dev/posts/using-intellij-idea-live-templates/</link>
        <pubDate>Sun, 01 Sep 2019 14:02:10 +0530</pubDate>
        
-       <guid>https://darshitpp.github.io/posts/using-intellij-idea-live-templates/</guid>
+       <guid>https://darshit.dev/posts/using-intellij-idea-live-templates/</guid>
        <description>&lt;p&gt;IntelliJ IDEA is an awesome IDE, and a lesser known and used feature is Live Templates.&lt;/p&gt;
 &lt;p&gt;Live Templates enable you to use code snippets with just a few keystrokes. A lot of great ones are provided out-of-the-box by IntelliJ. You can view them using the shortcut press &lt;code&gt;Double Shift&lt;/code&gt; and then typing &lt;code&gt;Live Templates&lt;/code&gt;. The shortcut works regardless of the OS you&amp;rsquo;re currently using (and I am too lazy to specify OS specific menus).&lt;/p&gt;
 &lt;p&gt;Some of the examples of Live Templates are:&lt;/p&gt;
