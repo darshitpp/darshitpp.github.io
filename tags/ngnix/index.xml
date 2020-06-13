@@ -6,7 +6,7 @@
    <description>Recent content in ngnix on Darshit Patel&#39;s Blog</description>
    <generator>Hugo -- gohugo.io</generator>
    <language>en-us</language>
-   <lastBuildDate>Sat, 13 Jun 2020 18:00:13 +0530</lastBuildDate>
+   <lastBuildDate>Sat, 13 Jun 2020 18:30:13 +0530</lastBuildDate>
    
        <atom:link href="https://darshit.dev/tags/ngnix/index.xml" rel="self" type="application/rss+xml" />
    
@@ -14,7 +14,7 @@
      <item>
        <title>How To Implement Two Way SSL With Nginx</title>
        <link>https://darshit.dev/posts/two-way-ssl-nginx/</link>
-       <pubDate>Sat, 13 Jun 2020 18:00:13 +0530</pubDate>
+       <pubDate>Sat, 13 Jun 2020 18:30:13 +0530</pubDate>
        
        <guid>https://darshit.dev/posts/two-way-ssl-nginx/</guid>
        <description>&lt;p&gt;A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and have had only a limited experience with networking concepts like SSL/TLS in my short career. So I turned up blank on how I could make it possible. Moreover, the terminology you&amp;rsquo;d find online is not uniform. From a programming point of view, the term &amp;ldquo;Two way SSL&amp;rdquo; led me to limited  results, and I soon realized that other communities have different terminology. For example the &amp;ldquo;Two way SSL&amp;rdquo; is also known as &amp;ldquo;Mutual TLS&amp;rdquo; or &amp;ldquo;mTLS&amp;rdquo; or &amp;ldquo;Client Certificate Authentication&amp;rdquo; in Cloud/DevOps communitites. This makes finding the right resources online more difficult.&lt;/p&gt;
