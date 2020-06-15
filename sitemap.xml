@@ -4,12 +4,37 @@
   
   <url>
     <loc>https://darshit.dev/posts/</loc>
-    <lastmod>2020-06-13T18:30:13+05:30</lastmod>
+    <lastmod>2020-06-15T10:40:40+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://darshit.dev/tags/ant/</loc>
+    <lastmod>2020-06-15T10:40:40+05:30</lastmod>
   </url>
   
   <url>
     <loc>https://darshit.dev/</loc>
-    <lastmod>2020-06-13T18:30:13+05:30</lastmod>
+    <lastmod>2020-06-15T10:40:40+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://darshit.dev/posts/change-java-version-ant/</loc>
+    <lastmod>2020-06-15T10:40:40+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://darshit.dev/tags/java/</loc>
+    <lastmod>2020-06-15T10:40:40+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://darshit.dev/tags/linux/</loc>
+    <lastmod>2020-06-15T10:40:40+05:30</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://darshit.dev/tags/</loc>
+    <lastmod>2020-06-15T10:40:40+05:30</lastmod>
   </url>
   
   <url>
@@ -28,11 +53,6 @@
   </url>
   
   <url>
-    <loc>https://darshit.dev/tags/</loc>
-    <lastmod>2020-06-13T18:30:13+05:30</lastmod>
-  </url>
-  
-  <url>
     <loc>https://darshit.dev/tags/tls/</loc>
     <lastmod>2020-06-13T18:30:13+05:30</lastmod>
   </url>
@@ -44,11 +64,6 @@
   
   <url>
     <loc>https://darshit.dev/posts/reduce-redis-memory-usage/</loc>
-    <lastmod>2020-05-10T21:25:01+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://darshit.dev/tags/java/</loc>
     <lastmod>2020-05-10T21:25:01+05:30</lastmod>
   </url>
   

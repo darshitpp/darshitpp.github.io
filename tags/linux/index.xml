@@ -5,7 +5,7 @@
    <link>https://darshit.dev/tags/linux/</link>
    <description>Recent content in linux on Darshit Patel&#39;s Blog</description>
    <generator>Hugo -- gohugo.io</generator>
-   <lastBuildDate>Mon, 15 Jun 2020 10:26:40 +0530</lastBuildDate>
+   <lastBuildDate>Mon, 15 Jun 2020 10:40:40 +0530</lastBuildDate>
    
        <atom:link href="https://darshit.dev/tags/linux/index.xml" rel="self" type="application/rss+xml" />
    
@@ -13,7 +13,7 @@
      <item>
        <title>How to change Java Version/JAVA_HOME for Ant?</title>
        <link>https://darshit.dev/posts/change-java-version-ant/</link>
-       <pubDate>Mon, 15 Jun 2020 10:26:40 +0530</pubDate>
+       <pubDate>Mon, 15 Jun 2020 10:40:40 +0530</pubDate>
        
        <guid>https://darshit.dev/posts/change-java-version-ant/</guid>
        <description>&lt;p&gt;I wrote this earlier on a &lt;a href=&#34;https://gist.github.com/darshitpp/f8017cdb61f4056c100edbf0182a6be0&#34;&gt;Github gist&lt;/a&gt;, but putting it here for a consolidated reference.&lt;/p&gt;

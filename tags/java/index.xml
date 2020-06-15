@@ -5,10 +5,39 @@
    <link>https://darshit.dev/tags/java/</link>
    <description>Recent content in java on Darshit Patel&#39;s Blog</description>
    <generator>Hugo -- gohugo.io</generator>
-   <lastBuildDate>Sun, 10 May 2020 21:25:01 +0530</lastBuildDate>
+   <lastBuildDate>Mon, 15 Jun 2020 10:40:40 +0530</lastBuildDate>
    
        <atom:link href="https://darshit.dev/tags/java/index.xml" rel="self" type="application/rss+xml" />
    
+   
+     <item>
+       <title>How to change Java Version/JAVA_HOME for Ant?</title>
+       <link>https://darshit.dev/posts/change-java-version-ant/</link>
+       <pubDate>Mon, 15 Jun 2020 10:40:40 +0530</pubDate>
+       
+       <guid>https://darshit.dev/posts/change-java-version-ant/</guid>
+       <description>&lt;p&gt;I wrote this earlier on a &lt;a href=&#34;https://gist.github.com/darshitpp/f8017cdb61f4056c100edbf0182a6be0&#34;&gt;Github gist&lt;/a&gt;, but putting it here for a consolidated reference.&lt;/p&gt;
+&lt;h2 id=&#34;want-to-change-java-versionjava_home-for-ant-builds&#34;&gt;Want to change Java Version/JAVA_HOME for Ant builds?&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Open &lt;code&gt;~/.antrc&lt;/code&gt; file by running &lt;code&gt;vim ~/.antrc&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add &lt;code&gt;JAVACMD=&amp;lt;NEW_JAVA_HOME&amp;gt;/bin/java&lt;/code&gt; and save&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The Ant wrapper script for Unix will source (read and evaluate) the file ~/.antrc before it does anything.
+On Windows, the Ant wrapper batch-file invokes %HOME%\antrc_pre.bat at the start and %HOME%\antrc_post.bat at the end.
+You can use these files, for example, to set/unset environment variables that should only be visible during the execution of Ant.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The wrapper scripts use the following environment variables (if set):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;JAVACMD—full path of the Java executable. Use this to invoke a different JVM than JAVA_HOME/bin/java(.exe).&lt;/li&gt;
+&lt;li&gt;ANT_OPTS—command-line arguments that should be passed to the JVM. For example, you can define system properties or set the maximum Java heap size here.&lt;/li&gt;
+&lt;li&gt;ANT_ARGS—Ant command-line arguments. For example, set ANT_ARGS to point to a different logger, include a listener, and to include the &lt;code&gt;-find&lt;/code&gt; flag. Note: If you include -find in ANT_ARGS, you should include the name of the build file to find, even if the file is called build.xml.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Source: &lt;a href=&#34;https://ant.apache.org/manual/running.html&#34;&gt;https://ant.apache.org/manual/running.html&lt;/a&gt;&lt;/p&gt;
+</description>
+     </item>
    
      <item>
        <title>How To Implement Two Way SSL With Nginx</title>
