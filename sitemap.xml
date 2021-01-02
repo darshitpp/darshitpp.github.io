@@ -53,21 +53,6 @@
   </url>
   
   <url>
-    <loc>https://darshit.dev/tags/ngnix/</loc>
-    <lastmod>2020-06-13T18:30:13+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://darshit.dev/tags/ssl/</loc>
-    <lastmod>2020-06-13T18:30:13+05:30</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://darshit.dev/tags/tls/</loc>
-    <lastmod>2020-06-13T18:30:13+05:30</lastmod>
-  </url>
-  
-  <url>
     <loc>https://darshit.dev/about/</loc>
     <lastmod>2020-06-01T11:08:57+05:30</lastmod>
   </url>
@@ -104,6 +89,10 @@
   
   <url>
     <loc>https://darshit.dev/categories/</loc>
+  </url>
+  
+  <url>
+    <loc>https://darshit.dev/search/</loc>
   </url>
   
 </urlset>
