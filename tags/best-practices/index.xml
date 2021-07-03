@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>best-practices on Darshit Patel&#39;s Blog</title>
     <link>https://darshit.dev/tags/best-practices/</link>
@@ -12,9 +12,7 @@
       <pubDate>Sun, 08 Nov 2020 04:29:47 +0530</pubDate>
       
       <guid>https://darshit.dev/posts/java-constants-interface/</guid>
-      <description>How do you define and use constants in Java?
-Most advice on Internet has the following opinions:
- Declare public static final for constants in a class Do not use Interfaces for constants  The most common way to define a constant is in a class and using public static final.</description>
+      <description>Should you use Interfaces for defining constant values?</description>
     </item>
     
   </channel>

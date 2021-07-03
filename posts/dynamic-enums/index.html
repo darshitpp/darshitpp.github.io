@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Dynamic Enums | Darshit Patel&#39;s Blog</title>
+<meta name="keywords" content="enums, dynamic enums, java, class, type-safe enums, singleton" />
+<meta name="description" content="Enable Enums to load data from a Database">
+<meta name="author" content="">
+<link rel="canonical" href="https://darshit.dev/posts/dynamic-enums/" />
+<link crossorigin="anonymous" href="https://darshit.dev/assets/css/stylesheet.min.35cd0f65a15cafa92372b8313deef5960aae04b90ad722f2bbf509eb0468137e.css" integrity="sha256-Nc0PZaFcr6kjcrgxPe71lgquBLkK1yLyu/UJ6wRoE34=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="https://darshit.dev/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js" integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5&#43;kdJvBz5iKbt6B5PJI="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://darshit.dev/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://darshit.dev/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://darshit.dev/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://darshit.dev/apple-touch-icon.png">
+<link rel="mask-icon" href="https://darshit.dev/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.84.4" />
+<meta property="og:title" content="Dynamic Enums" />
+<meta property="og:description" content="Enable Enums to load data from a Database" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://darshit.dev/posts/dynamic-enums/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-07-03T20:12:52&#43;05:30" />
+<meta property="article:modified_time" content="2021-07-03T20:12:52&#43;05:30" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Dynamic Enums"/>
+<meta name="twitter:description" content="Enable Enums to load data from a Database"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://darshit.dev/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Dynamic Enums",
+      "item": "https://darshit.dev/posts/dynamic-enums/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Dynamic Enums",
+  "name": "Dynamic Enums",
+  "description": "Enable Enums to load data from a Database",
+  "keywords": [
+    "enums", "dynamic enums", "java", "class", "type-safe enums", "singleton"
+  ],
+  "articleBody": "But can one even make Enums dynamic? Enums, by definition, are static. They are used to “predefine” constants. I’ll let the official Oracle Java Tutorial on Enums to help explain the definition.\n An enum type is a special data type that enables for a variable to be a set of predefined constants. The variable must be equal to one of the values that have been predefined for it. Common examples include compass directions (values of NORTH, SOUTH, EAST, and WEST) and the days of the week.\n public enum Day { SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY } The values of an enum are known to the compiler at compile time, are not supposed to change. Imagine if someone tried to introduce a new day of the week. This is pretty unlikely, and thus, for all intents and purposes, the days of the week remain the same.\nHowever, you are now working on an application which has a legacy codebase. This legacy code has an enum named Colour (the British spelling, because I’m not in the US). The actual enum might be something different and complicated, but the example of Colour works for the purposes of this article.\nColour has three colours defined inside it – RED, GREEN, and BLUE.\npublic enum Colour { RED(255, 0, 0), GREEN(0, 255, 0), BLUE(0, 0, 255); int r, g, b; Colour(int r, int g, int b) { this.r = r; this.g = g; this.b = b; } // getters and toString() } The Colour enum is being used across lots of applications as a dependency. First, you wonder why someone needed to put the Colours as an Enum datatype. But unable to do anything about it, you just accept it and work with whatever is in your fate.\nThe problem with the above enum is, every time some app needs a new colour, you need to add the new colour to your codebase. After adding a new colour, you now need to test, and then re-deploy all your applications. This has to be done every time a new colour is requested. You see the problem – the colours are supposed to be dynamic, but someone took a decision an eternity ago, and now you are the one in soup.\nYou now want to change enums to make them dynamic, so that any new colour added, is picked up from a database, with minimal code changes across your stack. How do you proceed?\n Enums are also classes Yes! Enums are also classes. We know that enums are static, and classes are not. Technically, you could replace Enum with a class. If you replace an Enum with a Class, you would not even need to change imports in other classes. No part of your code base would even realize it! This will be the basis of our solution – turn Enum into a Class.\nBut wait! It’s not so straightforward. Enums can also be referred directly, like Colour.RED. We do not want to meddle with existing usages of Colour.RED in our code.\n Step 1: Change enum to class When you change the enum to class, your IDE should instantly throw up an error. This is because Enums are compile time constructs which are being referred in other parts of you application. But not to worry!\n Step 2: Create constants of existing Colours To keep the usages of Colour.RED same, we would need to create constants for all the colours defined in the enum (now class).\npublic final class Colour { public static final Colour RED = new Colour(255, 0, 0); public static final Colour GREEN = new Colour(0, 255, 0); public static final Colour BLUE = new Colour(0, 0, 255); private final int r, g, b; private Colour(int r, int g, int b) { this.r = r; this.g = g; this.b = b; } // getters and toString() } We also do not want the objects of Colour to be created outside the class. If we do not do this, we are essentially allowing anyone to create Colour objects, and defeats the purpose of mimicing the enum. Thus, we would mark the constructor as private.\nCongrats! The IDE should stop raising an error now (inside the Colour class atleast). The above refactoring makes sure that you can still refer to Colour.RED as earlier. Also, now that we made the variables of r, g, and b as private final as we do not want them to change after object creation.\n Step 3: Implement other Enum methods like values() and valueOf() We know that methods like values() and valueOf() are used quite often with enums. To ensure that these usages do not break, we would need to “mimic” these methods. How can we do that?\nNote the return types of values() and valueOf().\n valueOf(String) returns in instance of Colour defined by the name provided as a parameter. values() returns an array of Colour, i.e. Colour[]  Let us start with the valueOf() method, and it will lead us to the solution of values()\nAs we know, the valueOf() accepts a String as an argument, and returns an instance of Colour. What can we use to preserve the mapping between a String and Colour? A Map!! We can use a HashMap or ConcurrentHashMap for this.\nNote that we currently have no way of knowing what colour an instance is. Of course, we have a constant declared as\npublic static final Colour RED = new Colour(255, 0, 0); but even if we load it into a map, how would we know if the object is for Colour.RED or Colour.GREEN? Is there a way we can get the “text”/“name” of the variable as a String? Not directly, no.\nEnter: Java Reflection\n It allows an executing Java program to examine or “introspect” upon itself, and manipulate internal properties of the program. For example, it’s possible for a Java class to obtain the names of all its members and display them.\n We can use this! Let us first define a Map of type Map as a HashMap or ConcurrentHashMap. We will then use Java Reflection to load up the values inside the Map through a static block.\npublic final class Colour { public static final Colour RED = new Colour(255, 0, 0); public static final Colour GREEN = new Colour(0, 255, 0); public static final Colour BLUE = new Colour(0, 0, 255); private static final MapString, Colour map = new ConcurrentHashMap(); static { loadClassData(); } private static void loadClassData() { Arrays.stream(Colour.class.getDeclaredFields()) .filter(declaredField - declaredField.getType() == Colour.class) .forEach(Colour::putInMap); } private static void putInMap(Field declaredField) { try { map.putIfAbsent(declaredField.getName(), (Colour) declaredField.get(null)); } catch (IllegalAccessException e) { System.err.println(\"Could not initialize Colour Map value: \" + declaredField.getName() + \" \" + e); } } private final int r, g, b; private Colour(int r, int g, int b) { this.r = r; this.g = g; this.b = b; } // getters and toString() } The above codeblock uses Java Streams to load up the map. Let us go through what it does.\n The Colour.class.getDeclaredFields() fetches all the fields declared inside the Colour class. For each of the field returned, we only want the fields of type Colour. (The previous statement would also return Map) For each of the fields of Colour, we would call the putInMap() method. The putInMap() takes a parameter of type Field, and loads the data in the map. The variable name is obtained by declaredField.getName(), and the actual object is returned by declaredField.get(null)  If you do not understand the above Stream based code, or you’re just working with Java 7 and lower, you can use the following:\nprivate static void loadClassData() { for (Field declaredField : Colour.class.getDeclaredFields()) { if (declaredField.getType() == Colour.class) { putInMap(declaredField); } } } We have the data in the map! We can now just implement the valueOf() method as follows:\npublic static Colour valueOf(String name) { Colour colour = map.get(name); if (colour == null) { throw new IllegalArgumentException(\"No Colour by the name \" + name + \" found\"); } return colour; } Note that in Enums, the valueOf() returns an IllegalArgumentException if no value is found within the enum. Similarly, we will ensure that our implementation also returns the same exception.\nThe usage of Map enables us to easily implement the values() method. We can implement it by using the map.values() method.\npublic static Colour[] values() { return map.values().toArray(new Colour[0]).clone(); } Every time the values() is called, it returns the clone of the array values in the map.\n Step 4: Load data from the Database However, the purpose of having a dynamic Enum is still not achieved. We want the values of the colour to be loaded up from a database. The problem now seems trivial. Similar to the way we loaded up the class data inside the map, we must also fetch the data from the database and load it. This needs to take place in the static block as well.\nHowever, in this case we cannot use Java Reflection to get the variable name, simply because there isn’t any static variable we can refer to.\nThus, we must add another field into the class named colourName.\npublic final class Colour { public static final Colour RED = new Colour(\"RED\", 255, 0, 0); public static final Colour GREEN = new Colour(\"GREEN\", 0, 255, 0); public static final Colour BLUE = new Colour(\"BLUE\", 0, 0, 255); private static final MapString, Colour map = new ConcurrentHashMap(); // other implemented methods  // new field  private final String colourName; private final int r, g, b; private Colour(String colourName, int r, int g, int b) { this.colourName = colourName; this.r = r; this.g = g; this.b = b; } // getters and toString() } Thus, when we load up the data from the database, we would know what key to use for the Map.\nOur static block would now have\nstatic { loadClassData(); loadDataFromDb(); } private static void loadDataFromDb() { ListColourDB.ColourData colourData = new ColourDB().getColours(); for (ColourDB.ColourData colourDatum : colourData) { map.putIfAbsent(colourDatum.getColourName(), new Colour(colourDatum)); } } Our ColourDB contains the static class ColourData, which is exactly the same as the Colour POJO. As we cannot create Colour objects, we need another type to put the data in, and get the data from.\nThe ColourDB is like the following:\npublic class ColourDB { public ListColourData getColours() { // data from DB  } static class ColourData { String colourName; int r; int g; int b; public ColourData(String colourName, int r, int g, int b) { this.colourName = colourName; this.r = r; this.g = g; this.b = b; } // getters  } } We can now add another private constructor within Colour that accepts ColourData.\nprivate Colour(ColourDB.ColourData colourDatum) { this.colourName = colourDatum.getColourName(); this.r = colourDatum.getR(); this.g = colourDatum.getG(); this.b = colourDatum.getB(); } Notice that using this method allows you to make Colours dynamic, but prevents you from creating static objects like Colour.RED. If we add the data for the colour “BLACK” in the DB, we cannot refer to it as Colour.BLACK after this change. We would need to refer to it as Colour.valueOf(\"BLACK\"), and get the value. This is a trade off required to make it dynamic. However, this allows us to ensure that the existing code is not impacted.\nIf you have a implemented a getter method for colourName, refactor it from getColourName() to name().\nSimilarly, if you use ordinal() method of the enum, ensure that you introduce the ordinal field in the Colour class as well. You would need to store the ordinal field in the DB too.\nYou can also implement the equals() method and change it to compare using == as is done in Enums. One would also need to implement the Comparable interface with the compareTo() method.\nWe will also implement the Serializable interface to enable us to serialize objects. This will ensure we conform to the Enum functionality. Also, Enums cannot be cloned. Hence, we will also implement the clone method and throw CloneNotSupportedException.\nThe updated code would look like the following:\npublic final class Colour implements ComparableColour, Serializable { public static final Colour RED = new Colour(\"RED\", 255, 0, 0, 0); public static final Colour GREEN = new Colour(\"GREEN\", 0, 255, 0, 1); public static final Colour BLUE = new Colour(\"BLUE\", 0, 0, 255, 2); private static final MapString, Colour map = new ConcurrentHashMap(); static { loadClassData(); loadDataFromDb(); } private static void loadClassData() { Arrays.stream(Colour.class.getDeclaredFields()) .filter(declaredField - declaredField.getType() == Colour.class) .forEach(Colour::putInMap); } private static void loadDataFromDb() { ListColourDB.ColourData colourData = new ColourDB().getColours(); for (ColourDB.ColourData colourDatum : colourData) { map.putIfAbsent(colourDatum.getColourName(), new Colour(colourDatum)); } } public static Colour[] values() { return map.values().toArray(new Colour[0]).clone(); } public static Colour valueOf(String name) { Colour colour = map.get(name); if (colour == null) { throw new IllegalArgumentException(\"No Colour by the name \" + name + \" found\"); } return colour; } private final String colourName; private final int r, g, b; private final int ordinal; private Colour(String colourName, int r, int g, int b, int ordinal) { this.colourName = colourName; this.r = r; this.g = g; this.b = b; this.ordinal = ordinal; } private Colour(ColourDB.ColourData colourData) { this.colourName = colourData.getColourName(); this.r = colourData.getR(); this.g = colourData.getG(); this.b = colourData.getB(); this.ordinal = colourData.getOrdinal(); } private static void putInMap(Field declaredField) { try { map.putIfAbsent(declaredField.getName(), (Colour) declaredField.get(null)); } catch (IllegalAccessException e) { System.err.println(\"Could not initialize Colour Map value: \" + declaredField.getName() + \" \" + e); } } public String name() { return colourName; } public int ordinal() { return ordinal; } // getters  // ..  // ..  @Override public boolean equals(Object o) { return this == o; } @Override public int hashCode() { return Objects.hash(colourName, r, g, b, ordinal); } @Override public final int compareTo(Colour o) { Colour self = this; return self.ordinal - o.ordinal; } @Override protected Object clone() throws CloneNotSupportedException { throw new CloneNotSupportedException(); } @Override public String toString() { return \"Colour{\" + \"colourName='\" + colourName + '\\'' + \", r=\" + r + \", g=\" + g + \", b=\" + b + \", ordinal=\" + ordinal + '}'; } } and ColourDB as\npublic class ColourDB { public ListColourData getColours() { // data from DB  } static class ColourData { String colourName; int r; int g; int b; int ordinal; public ColourData(String colourName, int r, int g, int b, int ordinal) { this.colourName = colourName; this.r = r; this.g = g; this.b = b; this.ordinal = ordinal; } // getters  } }  Step 5: Test Ordinarily, this would work. Unless, of course, you actually want to write unit tests for the class.\nHowever, how can we test it? Notice that testing it is almost impossible, unless you have an actual DB. This is because of the following piece of code.\nprivate static void loadDataFromDb() { ListColourDB.ColourData colourData = new ColourDB().getColours(); for (ColourDB.ColourData colourDatum : colourData) { map.putIfAbsent(colourDatum.getColourName(), new Colour(colourDatum)); } } Here, the dependency for the Database new ColourDB() is hard-coded inside the class. Testing would require an actual Database connection. We would want to Mock it during testing. If we were using a DI framework like Spring, we could have injected it. However, using pure Java code would require some more refactoring.\nFirst, we need to extract ColourDB into an interface and include the actual implementation as ColourDbImpl.\npublic interface ColourDB { ListColourData getColours(); class ColourData { // existing  } } public class ColourDBImpl implements ColourDB { @Override public ListColourData getColours() { // get from DB  } } We will now create a class named DB:\npublic class DB { private static ColourDB COLOUR_DB; public DB(ColourDB colourDB) { COLOUR_DB = colourDB; } public static ColourDB getColourDb() { if (COLOUR_DB == null) { COLOUR_DB = new ColourDBImpl(); } return COLOUR_DB; } public static void setColourDb(ColourDB colourDb) { COLOUR_DB = colourDb; } } We can now replace ColourDB in loadDataFromDb with DB.getColourDb(). The code now looks like\nprivate static void loadDataFromDb() { ListColourDB.ColourData colourData = DB.getColourDb().getColours(); for (ColourDB.ColourData colourDatum : colourData) { map.putIfAbsent(colourDatum.getColourName(), new Colour(colourDatum)); } } Now that we have refactored it, we can Mock it successfully.\nYou can see the test class ColourTest as follows\n@TestInstance(TestInstance.Lifecycle.PER_CLASS) class ColourTest { public static final String BLACK = \"BLACK\"; public static final String WHITE = \"WHITE\"; public static final String YELLOW = \"YELLOW\"; public static final String RED = \"RED\"; @Mock ColourDBImpl colourDB; @InjectMocks DB db; @BeforeAll void setUp() { MockitoAnnotations.openMocks(this); ColourDB.ColourData black = new ColourDB.ColourData(BLACK, 255, 255, 255, 3); ColourDB.ColourData white = new ColourDB.ColourData(WHITE, 0, 0, 0, 4); ColourDB.ColourData yellow = new ColourDB.ColourData(YELLOW, 255, 255, 0, 5); Mockito.when(colourDB.getColours()).thenReturn(List.of(black, white, yellow)); } @Test void test_values() { Colour[] values = Colour.values(); assertTrue(Arrays.stream(values).anyMatch(colour - colour.name().equals(Colour.RED.name()))); assertTrue(Arrays.stream(values).anyMatch(colour - colour.name().equals(Colour.valueOf(WHITE).name()))); assertEquals(6, values.length); } @Test void test_if_instances_are_same() { assertSame(Colour.RED, Colour.valueOf(RED)); assertSame(Colour.valueOf(RED), Colour.valueOf(RED)); assertEquals(Colour.valueOf(RED), Colour.valueOf(RED)); assertSame(Colour.valueOf(WHITE), Colour.valueOf(WHITE)); assertEquals(Colour.valueOf(WHITE), Colour.valueOf(WHITE)); } @Test void test_ordinal() { assertEquals(0, Colour.RED.ordinal()); // static  assertEquals(5, Colour.valueOf(YELLOW).ordinal()); // dynamic  } @Test void test_invalid_colour() { String magenta = \"MAGENTA\"; IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () - Colour.valueOf(magenta)); assertEquals(\"No Colour by the name \" + magenta + \" found\", exception.getMessage()); } @Test void test_compareTo() { int red = Colour.RED.compareTo(Colour.valueOf(\"WHITE\")); assertTrue(red  0); int yellow = Colour.valueOf(\"YELLOW\").compareTo(Colour.RED); assertTrue(yellow  0); } @Test void test_name() { assertEquals(\"RED\", Colour.RED.name()); assertEquals(\"YELLOW\", Colour.valueOf(\"YELLOW\").name()); } } You will need to use @BeforeAll with @TestInstance(TestInstance.Lifecycle.PER_CLASS) as the static block is only executed once. Else Mockito will throw an UnnecessaryStubbingException because the Mock would not execute every test.\n Step 6: Serialization! We did not consider what would happen if we serialize the Colour class. Enum constants are serialized differently than ordinary serializable or externalizable objects. Only the name of the field is serialized, and deserialization uses valueOf() method to get the Enum constant back.\nEnums are effectively singletons. However, the singleton property of our class can be broken during deserialization. Thus, we need to ensure that we preserve the singleton property of Colour as well. We can do that by implementing the readResolve1 method. This will ensure that we only receive an instance of the same class as the one that we have already created. We already store the colour name. So when a new object is created, it will still return the already existing objects that we expect.\npublic final class Colour implements ComparableColour, Serializable { // Existing code  //  //  private Object readResolve() { return Colour.valueOf(colourName); } } We can add a test and verify if this will work.\n@Test void test_serialization_deserialization() throws IOException, ClassNotFoundException { serialize(Colour.valueOf(BLACK)); Colour black = deserialize(); assertNotNull(black); assertEquals(Colour.valueOf(BLACK), black); assertSame(Colour.valueOf(BLACK), black); serialize(Colour.RED); Colour red = deserialize(); assertNotNull(red); assertEquals(Colour.valueOf(RED), red); assertSame(Colour.valueOf(RED), red); assertEquals(Colour.RED, red); assertSame(Colour.RED, red); } void serialize(Colour colour) throws IOException { try (FileOutputStream fos = new FileOutputStream(\"data.obj\"); ObjectOutputStream oos = new ObjectOutputStream(fos)) { oos.writeObject(colour); } } Colour deserialize() throws IOException, ClassNotFoundException { try (FileInputStream fis = new FileInputStream(\"data.obj\"); ObjectInputStream ois = new ObjectInputStream(fis)) { return (Colour) ois.readObject(); } } It does! :)\n Limitations As you know, this has a limitation that you cannot statically infer Enum constants, except the ones defined inside Colour. The values in DB must be referred through Colour.valueOf(). Moreover, you would need to change any switch-case statements to use the value of the the Constant, instead of static enum types supported by switch-case. An example:\nswitch (Colour.RED.name()) { case \"RED\" : System.out.println(\"RED\"); break; default: } I discovered that this is also known as a type-safe enum, which was used before Enum as types were introduced in Java 5. Granted, this a step lower than Enums, but… you know.\n The above is a hack though. In an ideal world, you would never have to try and implement these hacks. However, if you find yourself in such a spot, you know what to do. Please, try to refactor and remove this code though.\nYou can find the code for the project on my Github repository: dynamic-enums.\nDone! We have now created a “Dynamic Enum”! 😎\nYou can now rest in peace, and wish/hope that the next developer touching this piece of code does not try to contact you.\nReferences and Reading material:\n Java Magazine tutorial on Enums How to use typesafe enums in Java Beware of Java typesafe enumerations More on typesafe enums Enum Tricks: Dynamic Enums Introduction to Java Serialization    Java Serialization Docs ↩︎\n   ",
+  "wordCount" : "3335",
+  "inLanguage": "en",
+  "datePublished": "2021-07-03T20:12:52+05:30",
+  "dateModified": "2021-07-03T20:12:52+05:30",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://darshit.dev/posts/dynamic-enums/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Darshit Patel's Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://darshit.dev/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+<noscript>
+    <style type="text/css">
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: #1d1e20;
+                --entry: #2e2e33;
+                --primary: rgba(255, 255, 255, 0.84);
+                --secondary: rgba(255, 255, 255, 0.56);
+                --tertiary: rgba(255, 255, 255, 0.16);
+                --content: rgba(255, 255, 255, 0.74);
+                --hljs-bg: #2e2e33;
+                --code-bg: #37383e;
+                --border: #333;
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://darshit.dev/" accesskey="h" title="Darshit Patel&#39;s Blog (Alt + H)">Darshit Patel&#39;s Blog</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://darshit.dev/posts/" title="Posts">
+                    <span>Posts</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://darshit.dev/about/" title="About">
+                    <span>About</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Dynamic Enums
+    </h1>
+    <div class="post-description">
+      Enable Enums to load data from a Database
+    </div>
+    <div class="post-meta">July 3, 2021&nbsp;·&nbsp;16 min
+</div>
+  </header> 
+  <div class="post-content"><h3 id="but-can-one-even-make-enums-dynamic">But can one even make Enums dynamic?<a hidden class="anchor" aria-hidden="true" href="#but-can-one-even-make-enums-dynamic">#</a></h3>
+<p>Enums, by definition, are static. They are used to &ldquo;predefine&rdquo; constants. I&rsquo;ll let the official <a href="https://docs.oracle.com/javase/tutorial/java/javaOO/enum.html">Oracle Java Tutorial on Enums</a> to help explain the definition.</p>
+<blockquote>
+<p>An enum type is a special data type that enables for a variable to be a set of predefined constants. The variable must be equal to one of the values that have been predefined for it. Common examples include compass directions (values of NORTH, SOUTH, EAST, and WEST) and the days of the week.</p>
+</blockquote>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> Day <span style="color:#f92672">{</span>
+    SUNDAY<span style="color:#f92672">,</span> MONDAY<span style="color:#f92672">,</span> TUESDAY<span style="color:#f92672">,</span> WEDNESDAY<span style="color:#f92672">,</span>
+    THURSDAY<span style="color:#f92672">,</span> FRIDAY<span style="color:#f92672">,</span> SATURDAY 
+<span style="color:#f92672">}</span>
+</code></pre></div><p>The values of an enum are known to the compiler at compile time, are not supposed to change. Imagine if someone tried to introduce a new day of the week. This is pretty unlikely, and thus, for all intents and purposes, the days of the week remain the same.</p>
+<p>However, you are now working on an application which has a legacy codebase. This legacy code has an enum named <code>Colour</code> (<a href="https://www.grammarly.com/blog/color-colour/">the British spelling, because I&rsquo;m not in the US</a>). The actual enum might be something different and complicated, but the example of <code>Colour</code> works for the purposes of this article.</p>
+<p><code>Colour</code> has three colours defined inside it &ndash; <code>RED</code>, <code>GREEN</code>, and <code>BLUE</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">enum</span> Colour <span style="color:#f92672">{</span>
+
+    RED<span style="color:#f92672">(</span>255<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 0<span style="color:#f92672">),</span>
+    GREEN<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 0<span style="color:#f92672">),</span>
+    BLUE<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 255<span style="color:#f92672">);</span>
+
+    <span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> g<span style="color:#f92672">,</span> b<span style="color:#f92672">;</span>
+
+    Colour<span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> g<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> r<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">g</span> <span style="color:#f92672">=</span> g<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> b<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#75715e">// getters and toString()
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</code></pre></div><p>The <code>Colour</code> enum is being used across lots of applications as a dependency. First, you wonder why someone needed to put the Colours as an Enum datatype. But unable to do anything about it, you just accept it and work with whatever is in your fate.</p>
+<p>The problem with the above enum is, every time some app needs a new colour, you need to add the new colour to your codebase. After adding a new colour, you now need to test, and then re-deploy all your applications. This has to be done every time a new colour is requested. You see the problem &ndash; the colours are supposed to be dynamic, but someone took a decision an eternity ago, and now you are the one in soup.</p>
+<p>You now want to change enums to make them dynamic, so that any new colour added, is picked up from a database, with minimal code changes across your stack. How do you proceed?</p>
+<hr>
+<h3 id="enums-are-also-classes">Enums are also classes<a hidden class="anchor" aria-hidden="true" href="#enums-are-also-classes">#</a></h3>
+<p>Yes! Enums are also classes. We know that enums are static, and classes are not. Technically, you could replace Enum with a class. If you replace an Enum with a Class, you would not even need to change imports in other classes. No part of your code base would even realize it! This will be the basis of our solution &ndash; turn Enum into a Class.</p>
+<p>But wait! It&rsquo;s not so straightforward. Enums can also be referred directly, like <code>Colour.RED</code>. We do not want to meddle with existing usages of <code>Colour.RED</code> in our code.</p>
+<hr>
+<h3 id="step-1-change-enum-to-class">Step 1: Change <code>enum</code> to <code>class</code><a hidden class="anchor" aria-hidden="true" href="#step-1-change-enum-to-class">#</a></h3>
+<p>When you change the <code>enum</code> to <code>class</code>, your IDE should instantly throw up an error. This is because Enums are compile time constructs which are being referred in other parts of you application. But not to worry!</p>
+<hr>
+<h3 id="step-2-create-constants-of-existing-colours">Step 2: Create constants of existing Colours<a hidden class="anchor" aria-hidden="true" href="#step-2-create-constants-of-existing-colours">#</a></h3>
+<p>To keep the usages of <code>Colour.RED</code> same, we would need to create constants for all the colours defined in the enum (now class).</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Colour</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour RED <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span>255<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 0<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour GREEN <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 0<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour BLUE <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 255<span style="color:#f92672">);</span>
+
+	<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> g<span style="color:#f92672">,</span> b<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Colour</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> g<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> r<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">g</span> <span style="color:#f92672">=</span> g<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> b<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#75715e">// getters and toString()
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</code></pre></div><p>We also do not want the objects of <code>Colour</code> to be created outside the class. If we do not do this, we are essentially allowing anyone to create <code>Colour</code> objects, and defeats the purpose of mimicing the enum. Thus, we would mark the constructor as <code>private</code>.</p>
+<p>Congrats! The IDE should stop raising an error now (inside the <code>Colour</code> class atleast). The above refactoring makes sure that you can still refer to <code>Colour.RED</code> as earlier. Also, now that we made the variables of <code>r</code>, <code>g</code>, and <code>b</code> as <code>private final</code> as we do not want them to change after object creation.</p>
+<hr>
+<h3 id="step-3-implement-other-enum-methods-like-values-and-valueof">Step 3: Implement other Enum methods like <code>values()</code> and <code>valueOf()</code><a hidden class="anchor" aria-hidden="true" href="#step-3-implement-other-enum-methods-like-values-and-valueof">#</a></h3>
+<p>We know that methods like <code>values()</code> and <code>valueOf()</code> are used quite often with enums. To ensure that these usages do not break, we would need to &ldquo;mimic&rdquo; these methods. How can we do that?</p>
+<p>Note the return types of <code>values()</code> and <code>valueOf()</code>.</p>
+<ul>
+<li><code>valueOf(String)</code> returns in instance of <code>Colour</code> defined by the name provided as a parameter.</li>
+<li><code>values()</code> returns an array of <code>Colour</code>, i.e. <code>Colour[]</code></li>
+</ul>
+<p>Let us start with the <code>valueOf()</code> method, and it will lead us to the solution of <code>values()</code></p>
+<p>As we know, the <code>valueOf()</code> accepts a <code>String</code> as an argument, and returns an instance of <code>Colour</code>. What can we use to preserve the mapping between a <code>String</code> and <code>Colour</code>? A Map!! We can use a <code>HashMap</code> or <code>ConcurrentHashMap</code> for this.</p>
+<p>Note that we currently have no way of knowing what colour an instance is. Of course, we have a constant declared as</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour RED <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span>255<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 0<span style="color:#f92672">);</span>
+</code></pre></div><p>but even if we load it into a map, how would we know if the object is for <code>Colour.RED</code> or <code>Colour.GREEN</code>? Is there a way we can get the &ldquo;text&rdquo;/&ldquo;name&rdquo; of the variable as a <code>String</code>? Not directly, no.</p>
+<p>Enter: <a href="https://www.oracle.com/technical-resources/articles/java/javareflection.html">Java Reflection</a></p>
+<blockquote>
+<p>It allows an executing Java program to examine or &ldquo;introspect&rdquo; upon itself, and manipulate internal properties of the program. <strong>For example, it&rsquo;s possible for a Java class to obtain the names of all its members and display them.</strong></p>
+</blockquote>
+<p>We can use this! Let us first define a Map of type <code>Map&lt;String, Colour&gt;</code> as a <code>HashMap</code> or <code>ConcurrentHashMap</code>. We will then use Java Reflection to load up the values inside the Map through a <code>static</code> block.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Colour</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour RED <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span>255<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 0<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour GREEN <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 0<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour BLUE <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 255<span style="color:#f92672">);</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Colour<span style="color:#f92672">&gt;</span> map <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;&gt;();</span>
+
+    <span style="color:#66d9ef">static</span> <span style="color:#f92672">{</span>
+    	loadClassData<span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loadClassData</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredFields</span><span style="color:#f92672">())</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>declaredField <span style="color:#f92672">-&gt;</span> declaredField<span style="color:#f92672">.</span><span style="color:#a6e22e">getType</span><span style="color:#f92672">()</span> <span style="color:#f92672">==</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>Colour<span style="color:#f92672">::</span>putInMap<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">putInMap</span><span style="color:#f92672">(</span>Field declaredField<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            map<span style="color:#f92672">.</span><span style="color:#a6e22e">putIfAbsent</span><span style="color:#f92672">(</span>declaredField<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">(),</span> <span style="color:#f92672">(</span>Colour<span style="color:#f92672">)</span> declaredField<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">));</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IllegalAccessException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">err</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Could not initialize Colour Map value: &#34;</span> <span style="color:#f92672">+</span> declaredField<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#f92672">+</span> e<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+
+	<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> g<span style="color:#f92672">,</span> b<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Colour</span><span style="color:#f92672">(</span><span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> g<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> r<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">g</span> <span style="color:#f92672">=</span> g<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> b<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+
+    <span style="color:#75715e">// getters and toString()
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</code></pre></div><p>The above codeblock uses Java Streams to load up the map. Let us go through what it does.</p>
+<ol>
+<li>The <code>Colour.class.getDeclaredFields()</code> fetches all the fields declared inside the <code>Colour</code> class.</li>
+<li>For each of the field returned, we only want the fields of type <code>Colour</code>. (The previous statement would also return <code>Map&lt;String, Colour&gt;</code>)</li>
+<li>For each of the fields of <code>Colour</code>, we would call the <code>putInMap()</code> method.</li>
+<li>The <code>putInMap()</code> takes a parameter of type <code>Field</code>, and loads the data in the map. The variable name is obtained by <code>declaredField.getName()</code>, and the actual object is returned by <code>declaredField.get(null)</code></li>
+</ol>
+<p>If you do not understand the above Stream based code, or you&rsquo;re just working with Java 7 and lower, you can use the following:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loadClassData</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>Field declaredField <span style="color:#f92672">:</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredFields</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>declaredField<span style="color:#f92672">.</span><span style="color:#a6e22e">getType</span><span style="color:#f92672">()</span> <span style="color:#f92672">==</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            putInMap<span style="color:#f92672">(</span>declaredField<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>We have the data in the map! We can now just implement the <code>valueOf()</code> method as follows:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Colour <span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    Colour colour <span style="color:#f92672">=</span> map<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>colour <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> IllegalArgumentException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;No Colour by the name &#34;</span> <span style="color:#f92672">+</span> name <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; found&#34;</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+    <span style="color:#66d9ef">return</span> colour<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>Note that in Enums, the <code>valueOf()</code> returns an <code>IllegalArgumentException</code> if no value is found within the enum. Similarly, we will ensure that our implementation also returns the same exception.</p>
+<p>The usage of Map enables us to easily implement the <code>values()</code> method. We can implement it by using the <code>map.values()</code> method.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Colour<span style="color:#f92672">[]</span> <span style="color:#a6e22e">values</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">return</span> map<span style="color:#f92672">.</span><span style="color:#a6e22e">values</span><span style="color:#f92672">().</span><span style="color:#a6e22e">toArray</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">[</span>0<span style="color:#f92672">]).</span><span style="color:#a6e22e">clone</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>Every time the <code>values()</code> is called, it returns the clone of the array values in the map.</p>
+<hr>
+<h3 id="step-4-load-data-from-the-database">Step 4: Load data from the Database<a hidden class="anchor" aria-hidden="true" href="#step-4-load-data-from-the-database">#</a></h3>
+<p>However, the purpose of having a dynamic Enum is still not achieved. We want the values of the colour to be loaded up from a database. The problem now seems trivial. Similar to the way we loaded up the class data inside the map, we must also fetch the data from the database and load it. This needs to take place in the static block as well.</p>
+<p>However, in this case we cannot use Java Reflection to get the variable name, simply because there isn&rsquo;t any static variable we can refer to.</p>
+<p>Thus, we must add another field into the class named <code>colourName</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Colour</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour RED <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;RED&#34;</span><span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 0<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour GREEN <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;GREEN&#34;</span><span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 0<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour BLUE <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;BLUE&#34;</span><span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 255<span style="color:#f92672">);</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Colour<span style="color:#f92672">&gt;</span> map <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;&gt;();</span>
+
+    <span style="color:#75715e">// other implemented methods
+</span><span style="color:#75715e"></span>
+
+    <span style="color:#75715e">// new field
+</span><span style="color:#75715e"></span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> String colourName<span style="color:#f92672">;</span>
+	<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> g<span style="color:#f92672">,</span> b<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Colour</span><span style="color:#f92672">(</span>String colourName<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> g<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    	<span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">colourName</span> <span style="color:#f92672">=</span> colourName<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> r<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">g</span> <span style="color:#f92672">=</span> g<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> b<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+
+    <span style="color:#75715e">// getters and toString()
+</span><span style="color:#75715e"></span><span style="color:#f92672">}</span>
+</code></pre></div><p>Thus, when we load up the data from the database, we would know what key to use for the Map.</p>
+<p>Our static block would now have</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">static</span> <span style="color:#f92672">{</span>
+    loadClassData<span style="color:#f92672">();</span>
+    loadDataFromDb<span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loadDataFromDb</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    List<span style="color:#f92672">&lt;</span>ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span><span style="color:#f92672">&gt;</span> colourData <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ColourDB<span style="color:#f92672">().</span><span style="color:#a6e22e">getColours</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span> colourDatum <span style="color:#f92672">:</span> colourData<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        map<span style="color:#f92672">.</span><span style="color:#a6e22e">putIfAbsent</span><span style="color:#f92672">(</span>colourDatum<span style="color:#f92672">.</span><span style="color:#a6e22e">getColourName</span><span style="color:#f92672">(),</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span>colourDatum<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>Our <code>ColourDB</code> contains the static class <code>ColourData</code>, which is exactly the same as the <code>Colour</code> POJO. As we cannot create <code>Colour</code> objects, we need another type to put the data in, and get the data from.</p>
+<p>The <code>ColourDB</code> is like the following:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ColourDB</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>ColourData<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getColours</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    	<span style="color:#75715e">// data from DB
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ColourData</span> <span style="color:#f92672">{</span>
+        String colourName<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> r<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> g<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> b<span style="color:#f92672">;</span>
+
+        <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">ColourData</span><span style="color:#f92672">(</span>String colourName<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> g<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> b<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">colourName</span> <span style="color:#f92672">=</span> colourName<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> r<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">g</span> <span style="color:#f92672">=</span> g<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> b<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#75715e">// getters
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>We can now add another private constructor within <code>Colour</code> that accepts <code>ColourData</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Colour</span><span style="color:#f92672">(</span>ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span> colourDatum<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">colourName</span> <span style="color:#f92672">=</span> colourDatum<span style="color:#f92672">.</span><span style="color:#a6e22e">getColourName</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> colourDatum<span style="color:#f92672">.</span><span style="color:#a6e22e">getR</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">g</span> <span style="color:#f92672">=</span> colourDatum<span style="color:#f92672">.</span><span style="color:#a6e22e">getG</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> colourDatum<span style="color:#f92672">.</span><span style="color:#a6e22e">getB</span><span style="color:#f92672">();</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>Notice that using this method allows you to make Colours dynamic, but prevents you from creating static objects like <code>Colour.RED</code>. If we add the data for the colour &ldquo;BLACK&rdquo; in the DB, we cannot refer to it as <code>Colour.BLACK</code> after this change. We would need to refer to it as <code>Colour.valueOf(&quot;BLACK&quot;)</code>, and get the value. This is a trade off required to make it dynamic. However, this allows us to ensure that the existing code is not impacted.</p>
+<p>If you have a implemented a getter method for <code>colourName</code>, refactor it from <code>getColourName()</code> to <code>name()</code>.</p>
+<p>Similarly, if you use <code>ordinal()</code> method of the enum, ensure that you introduce the ordinal field in the <code>Colour</code> class as well. You would need to store the ordinal field in the DB too.</p>
+<p>You can also implement the <code>equals()</code> method and change it to compare using <code>==</code> as is done in Enums. One would also need to implement the <code>Comparable</code> interface with the <code>compareTo()</code> method.</p>
+<p>We will also implement the Serializable interface to enable us to serialize objects. This will ensure we conform to the <code>Enum</code> functionality. Also, Enums cannot be cloned. Hence, we will also implement the clone method and throw <code>CloneNotSupportedException</code>.</p>
+<p>The updated code would look like the following:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Colour</span> <span style="color:#66d9ef">implements</span> Comparable<span style="color:#f92672">&lt;</span>Colour<span style="color:#f92672">&gt;,</span> Serializable <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour RED <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;RED&#34;</span><span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 0<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour GREEN <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;GREEN&#34;</span><span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 1<span style="color:#f92672">);</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Colour BLUE <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;BLUE&#34;</span><span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 2<span style="color:#f92672">);</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Map<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> Colour<span style="color:#f92672">&gt;</span> map <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ConcurrentHashMap<span style="color:#f92672">&lt;&gt;();</span>
+
+    <span style="color:#66d9ef">static</span> <span style="color:#f92672">{</span>
+        loadClassData<span style="color:#f92672">();</span>
+        loadDataFromDb<span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loadClassData</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeclaredFields</span><span style="color:#f92672">())</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>declaredField <span style="color:#f92672">-&gt;</span> declaredField<span style="color:#f92672">.</span><span style="color:#a6e22e">getType</span><span style="color:#f92672">()</span> <span style="color:#f92672">==</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+                <span style="color:#f92672">.</span><span style="color:#a6e22e">forEach</span><span style="color:#f92672">(</span>Colour<span style="color:#f92672">::</span>putInMap<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loadDataFromDb</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        List<span style="color:#f92672">&lt;</span>ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span><span style="color:#f92672">&gt;</span> colourData <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ColourDB<span style="color:#f92672">().</span><span style="color:#a6e22e">getColours</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span> colourDatum <span style="color:#f92672">:</span> colourData<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            map<span style="color:#f92672">.</span><span style="color:#a6e22e">putIfAbsent</span><span style="color:#f92672">(</span>colourDatum<span style="color:#f92672">.</span><span style="color:#a6e22e">getColourName</span><span style="color:#f92672">(),</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span>colourDatum<span style="color:#f92672">));</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Colour<span style="color:#f92672">[]</span> <span style="color:#a6e22e">values</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> map<span style="color:#f92672">.</span><span style="color:#a6e22e">values</span><span style="color:#f92672">().</span><span style="color:#a6e22e">toArray</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">[</span>0<span style="color:#f92672">]).</span><span style="color:#a6e22e">clone</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Colour <span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>String name<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Colour colour <span style="color:#f92672">=</span> map<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>colour <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> IllegalArgumentException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;No Colour by the name &#34;</span> <span style="color:#f92672">+</span> name <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; found&#34;</span><span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> colour<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> String colourName<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> g<span style="color:#f92672">,</span> b<span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> ordinal<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Colour</span><span style="color:#f92672">(</span>String colourName<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> g<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> b<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> ordinal<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">colourName</span> <span style="color:#f92672">=</span> colourName<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> r<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">g</span> <span style="color:#f92672">=</span> g<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> b<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ordinal</span> <span style="color:#f92672">=</span> ordinal<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#a6e22e">Colour</span><span style="color:#f92672">(</span>ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span> colourData<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">colourName</span> <span style="color:#f92672">=</span> colourData<span style="color:#f92672">.</span><span style="color:#a6e22e">getColourName</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> colourData<span style="color:#f92672">.</span><span style="color:#a6e22e">getR</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">g</span> <span style="color:#f92672">=</span> colourData<span style="color:#f92672">.</span><span style="color:#a6e22e">getG</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> colourData<span style="color:#f92672">.</span><span style="color:#a6e22e">getB</span><span style="color:#f92672">();</span>
+        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ordinal</span> <span style="color:#f92672">=</span> colourData<span style="color:#f92672">.</span><span style="color:#a6e22e">getOrdinal</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">putInMap</span><span style="color:#f92672">(</span>Field declaredField<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+            map<span style="color:#f92672">.</span><span style="color:#a6e22e">putIfAbsent</span><span style="color:#f92672">(</span>declaredField<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">(),</span> <span style="color:#f92672">(</span>Colour<span style="color:#f92672">)</span> declaredField<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">(</span><span style="color:#66d9ef">null</span><span style="color:#f92672">));</span>
+        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>IllegalAccessException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            System<span style="color:#f92672">.</span><span style="color:#a6e22e">err</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Could not initialize Colour Map value: &#34;</span> <span style="color:#f92672">+</span> declaredField<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">()</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; &#34;</span> <span style="color:#f92672">+</span> e<span style="color:#f92672">);</span>
+        <span style="color:#f92672">}</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">name</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> colourName<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">ordinal</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> ordinal<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#75715e">// getters
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// ..
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">// ..
+</span><span style="color:#75715e"></span>
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>Object o<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">this</span> <span style="color:#f92672">==</span> o<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">hashCode</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">hash</span><span style="color:#f92672">(</span>colourName<span style="color:#f92672">,</span> r<span style="color:#f92672">,</span> g<span style="color:#f92672">,</span> b<span style="color:#f92672">,</span> ordinal<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">compareTo</span><span style="color:#f92672">(</span>Colour o<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        Colour self <span style="color:#f92672">=</span> <span style="color:#66d9ef">this</span><span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">return</span> self<span style="color:#f92672">.</span><span style="color:#a6e22e">ordinal</span> <span style="color:#f92672">-</span> o<span style="color:#f92672">.</span><span style="color:#a6e22e">ordinal</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+    
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">protected</span> Object <span style="color:#a6e22e">clone</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> CloneNotSupportedException <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> CloneNotSupportedException<span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">toString</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#e6db74">&#34;Colour{&#34;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;colourName=&#39;&#34;</span> <span style="color:#f92672">+</span> colourName <span style="color:#f92672">+</span> <span style="color:#e6db74">&#39;\&#39;&#39;</span> <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;, r=&#34;</span> <span style="color:#f92672">+</span> r <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;, g=&#34;</span> <span style="color:#f92672">+</span> g <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;, b=&#34;</span> <span style="color:#f92672">+</span> b <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#34;, ordinal=&#34;</span> <span style="color:#f92672">+</span> ordinal <span style="color:#f92672">+</span>
+                <span style="color:#e6db74">&#39;}&#39;</span><span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>and <code>ColourDB</code> as</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ColourDB</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>ColourData<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getColours</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    	<span style="color:#75715e">// data from DB
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ColourData</span> <span style="color:#f92672">{</span>
+        String colourName<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> r<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> g<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> b<span style="color:#f92672">;</span>
+        <span style="color:#66d9ef">int</span> ordinal<span style="color:#f92672">;</span>
+
+        <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">ColourData</span><span style="color:#f92672">(</span>String colourName<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> r<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> g<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> b<span style="color:#f92672">,</span> <span style="color:#66d9ef">int</span> ordinal<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">colourName</span> <span style="color:#f92672">=</span> colourName<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">r</span> <span style="color:#f92672">=</span> r<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">g</span> <span style="color:#f92672">=</span> g<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">b</span> <span style="color:#f92672">=</span> b<span style="color:#f92672">;</span>
+            <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ordinal</span> <span style="color:#f92672">=</span> ordinal<span style="color:#f92672">;</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#75715e">// getters
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><hr>
+<h3 id="step-5-test">Step 5: Test<a hidden class="anchor" aria-hidden="true" href="#step-5-test">#</a></h3>
+<p>Ordinarily, this would work. Unless, of course, you actually want to write unit tests for the class.</p>
+<p>However, how can we test it? Notice that testing it is almost impossible, unless you have an actual DB. This is because of the following piece of code.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loadDataFromDb</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    List<span style="color:#f92672">&lt;</span>ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span><span style="color:#f92672">&gt;</span> colourData <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ColourDB<span style="color:#f92672">().</span><span style="color:#a6e22e">getColours</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span> colourDatum <span style="color:#f92672">:</span> colourData<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        map<span style="color:#f92672">.</span><span style="color:#a6e22e">putIfAbsent</span><span style="color:#f92672">(</span>colourDatum<span style="color:#f92672">.</span><span style="color:#a6e22e">getColourName</span><span style="color:#f92672">(),</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span>colourDatum<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>Here, the dependency for the Database <code>new ColourDB()</code> is hard-coded inside the class. Testing would require an actual Database connection. We would want to Mock it during testing. If we were using a DI framework like Spring, we could have injected it. However, using pure Java code would require some more refactoring.</p>
+<p>First, we need to extract <code>ColourDB</code> into an interface and include the actual implementation as <code>ColourDbImpl</code>.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">ColourDB</span> <span style="color:#f92672">{</span>
+
+    List<span style="color:#f92672">&lt;</span>ColourData<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getColours</span><span style="color:#f92672">();</span>
+
+    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ColourData</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// existing
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ColourDBImpl</span> <span style="color:#66d9ef">implements</span> ColourDB <span style="color:#f92672">{</span>
+
+    <span style="color:#a6e22e">@Override</span>
+    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>ColourData<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getColours</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#75715e">// get from DB
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>We will now create a class named <code>DB</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">DB</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> ColourDB COLOUR_DB<span style="color:#f92672">;</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">DB</span><span style="color:#f92672">(</span>ColourDB colourDB<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        COLOUR_DB <span style="color:#f92672">=</span> colourDB<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> ColourDB <span style="color:#a6e22e">getColourDb</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>COLOUR_DB <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+            COLOUR_DB <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ColourDBImpl<span style="color:#f92672">();</span>
+        <span style="color:#f92672">}</span>
+        <span style="color:#66d9ef">return</span> COLOUR_DB<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setColourDb</span><span style="color:#f92672">(</span>ColourDB colourDb<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        COLOUR_DB <span style="color:#f92672">=</span> colourDb<span style="color:#f92672">;</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>We can now replace <code>ColourDB</code> in <code>loadDataFromDb</code> with <code>DB.getColourDb()</code>. The code now looks like</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">loadDataFromDb</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+    List<span style="color:#f92672">&lt;</span>ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span><span style="color:#f92672">&gt;</span> colourData <span style="color:#f92672">=</span> DB<span style="color:#f92672">.</span><span style="color:#a6e22e">getColourDb</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getColours</span><span style="color:#f92672">();</span>
+    <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span> colourDatum <span style="color:#f92672">:</span> colourData<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+        map<span style="color:#f92672">.</span><span style="color:#a6e22e">putIfAbsent</span><span style="color:#f92672">(</span>colourDatum<span style="color:#f92672">.</span><span style="color:#a6e22e">getColourName</span><span style="color:#f92672">(),</span> <span style="color:#66d9ef">new</span> Colour<span style="color:#f92672">(</span>colourDatum<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>Now that we have refactored it, we can Mock it successfully.</p>
+<p>You can see the test class <code>ColourTest</code> as follows</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@TestInstance</span><span style="color:#f92672">(</span>TestInstance<span style="color:#f92672">.</span><span style="color:#a6e22e">Lifecycle</span><span style="color:#f92672">.</span><span style="color:#a6e22e">PER_CLASS</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">class</span> <span style="color:#a6e22e">ColourTest</span> <span style="color:#f92672">{</span>
+
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String BLACK <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;BLACK&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String WHITE <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;WHITE&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String YELLOW <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;YELLOW&#34;</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String RED <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;RED&#34;</span><span style="color:#f92672">;</span>
+
+    <span style="color:#a6e22e">@Mock</span>
+    ColourDBImpl colourDB<span style="color:#f92672">;</span>
+
+    <span style="color:#a6e22e">@InjectMocks</span>
+    DB db<span style="color:#f92672">;</span>
+
+    <span style="color:#a6e22e">@BeforeAll</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setUp</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        MockitoAnnotations<span style="color:#f92672">.</span><span style="color:#a6e22e">openMocks</span><span style="color:#f92672">(</span><span style="color:#66d9ef">this</span><span style="color:#f92672">);</span>
+        ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span> black <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span><span style="color:#f92672">(</span>BLACK<span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 3<span style="color:#f92672">);</span>
+        ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span> white <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span><span style="color:#f92672">(</span>WHITE<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 4<span style="color:#f92672">);</span>
+        ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span> yellow <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ColourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">ColourData</span><span style="color:#f92672">(</span>YELLOW<span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 255<span style="color:#f92672">,</span> 0<span style="color:#f92672">,</span> 5<span style="color:#f92672">);</span>
+        Mockito<span style="color:#f92672">.</span><span style="color:#a6e22e">when</span><span style="color:#f92672">(</span>colourDB<span style="color:#f92672">.</span><span style="color:#a6e22e">getColours</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">thenReturn</span><span style="color:#f92672">(</span>List<span style="color:#f92672">.</span><span style="color:#a6e22e">of</span><span style="color:#f92672">(</span>black<span style="color:#f92672">,</span> white<span style="color:#f92672">,</span> yellow<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test_values</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        Colour<span style="color:#f92672">[]</span> values <span style="color:#f92672">=</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">values</span><span style="color:#f92672">();</span>
+        assertTrue<span style="color:#f92672">(</span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span>values<span style="color:#f92672">).</span><span style="color:#a6e22e">anyMatch</span><span style="color:#f92672">(</span>colour <span style="color:#f92672">-&gt;</span> colour<span style="color:#f92672">.</span><span style="color:#a6e22e">name</span><span style="color:#f92672">().</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">RED</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span><span style="color:#f92672">())));</span>
+        assertTrue<span style="color:#f92672">(</span>Arrays<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">(</span>values<span style="color:#f92672">).</span><span style="color:#a6e22e">anyMatch</span><span style="color:#f92672">(</span>colour <span style="color:#f92672">-&gt;</span> colour<span style="color:#f92672">.</span><span style="color:#a6e22e">name</span><span style="color:#f92672">().</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>WHITE<span style="color:#f92672">).</span><span style="color:#a6e22e">name</span><span style="color:#f92672">())));</span>
+        assertEquals<span style="color:#f92672">(</span>6<span style="color:#f92672">,</span> values<span style="color:#f92672">.</span><span style="color:#a6e22e">length</span><span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test_if_instances_are_same</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        assertSame<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">RED</span><span style="color:#f92672">,</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>RED<span style="color:#f92672">));</span>
+        assertSame<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>RED<span style="color:#f92672">),</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>RED<span style="color:#f92672">));</span>
+        assertEquals<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>RED<span style="color:#f92672">),</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>RED<span style="color:#f92672">));</span>
+
+        assertSame<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>WHITE<span style="color:#f92672">),</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>WHITE<span style="color:#f92672">));</span>
+        assertEquals<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>WHITE<span style="color:#f92672">),</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>WHITE<span style="color:#f92672">));</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test_ordinal</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        assertEquals<span style="color:#f92672">(</span>0<span style="color:#f92672">,</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">RED</span><span style="color:#f92672">.</span><span style="color:#a6e22e">ordinal</span><span style="color:#f92672">());</span> <span style="color:#75715e">// static
+</span><span style="color:#75715e"></span>        assertEquals<span style="color:#f92672">(</span>5<span style="color:#f92672">,</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>YELLOW<span style="color:#f92672">).</span><span style="color:#a6e22e">ordinal</span><span style="color:#f92672">());</span> <span style="color:#75715e">// dynamic
+</span><span style="color:#75715e"></span>    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test_invalid_colour</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        String magenta <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;MAGENTA&#34;</span><span style="color:#f92672">;</span>
+        IllegalArgumentException exception <span style="color:#f92672">=</span> assertThrows<span style="color:#f92672">(</span>IllegalArgumentException<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> <span style="color:#f92672">()</span> <span style="color:#f92672">-&gt;</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>magenta<span style="color:#f92672">));</span>
+        assertEquals<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;No Colour by the name &#34;</span> <span style="color:#f92672">+</span> magenta <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34; found&#34;</span><span style="color:#f92672">,</span> exception<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test_compareTo</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">int</span> red <span style="color:#f92672">=</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">RED</span><span style="color:#f92672">.</span><span style="color:#a6e22e">compareTo</span><span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;WHITE&#34;</span><span style="color:#f92672">));</span>
+        assertTrue<span style="color:#f92672">(</span>red <span style="color:#f92672">&lt;</span> 0<span style="color:#f92672">);</span>
+
+        <span style="color:#66d9ef">int</span> yellow <span style="color:#f92672">=</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;YELLOW&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">compareTo</span><span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">RED</span><span style="color:#f92672">);</span>
+        assertTrue<span style="color:#f92672">(</span>yellow <span style="color:#f92672">&gt;</span> 0<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+
+    <span style="color:#a6e22e">@Test</span>
+    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test_name</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        assertEquals<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;RED&#34;</span><span style="color:#f92672">,</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">RED</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span><span style="color:#f92672">());</span>
+        assertEquals<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;YELLOW&#34;</span><span style="color:#f92672">,</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;YELLOW&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">name</span><span style="color:#f92672">());</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>You will need to use <code>@BeforeAll</code> with <code>@TestInstance(TestInstance.Lifecycle.PER_CLASS)</code> as the static block is only executed once.
+Else Mockito will throw an <code>UnnecessaryStubbingException</code> because the Mock would not execute every test.</p>
+<hr>
+<h3 id="step-6-serialization">Step 6: Serialization!<a hidden class="anchor" aria-hidden="true" href="#step-6-serialization">#</a></h3>
+<p>We did not consider what would happen if we serialize the Colour class. <a href="https://docs.oracle.com/javase/7/docs/platform/serialization/spec/serial-arch.html">Enum constants are serialized differently than ordinary serializable or externalizable objects.</a> Only the <code>name</code> of the field is serialized, and deserialization uses <code>valueOf()</code> method to get the Enum constant back.</p>
+<p>Enums are effectively singletons. However, the <a href="https://dzone.com/articles/prevent-breaking-a-singleton-class-pattern">singleton property of our class can be broken during deserialization.</a> Thus, we need to ensure that we preserve the singleton property of <code>Colour</code> as well. We can do that by implementing the <code>readResolve</code><sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> method. This will ensure that we only receive an instance of the same class as the one that we have already created. We already store the colour name. So when a new object is created, it will still return the already existing objects that we expect.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Colour</span> <span style="color:#66d9ef">implements</span> Comparable<span style="color:#f92672">&lt;</span>Colour<span style="color:#f92672">&gt;,</span> Serializable <span style="color:#f92672">{</span>
+    <span style="color:#75715e">// Existing code
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//
+</span><span style="color:#75715e"></span>    <span style="color:#75715e">//
+</span><span style="color:#75715e"></span>
+    <span style="color:#66d9ef">private</span> Object <span style="color:#a6e22e">readResolve</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>colourName<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>We can add a test and verify if this will work.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Test</span>
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">test_serialization_deserialization</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> IOException<span style="color:#f92672">,</span> ClassNotFoundException <span style="color:#f92672">{</span>
+    serialize<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>BLACK<span style="color:#f92672">));</span>
+    Colour black <span style="color:#f92672">=</span> deserialize<span style="color:#f92672">();</span>
+
+    assertNotNull<span style="color:#f92672">(</span>black<span style="color:#f92672">);</span>
+    assertEquals<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>BLACK<span style="color:#f92672">),</span> black<span style="color:#f92672">);</span>
+    assertSame<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>BLACK<span style="color:#f92672">),</span> black<span style="color:#f92672">);</span>
+
+    serialize<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">RED</span><span style="color:#f92672">);</span>
+    Colour red <span style="color:#f92672">=</span> deserialize<span style="color:#f92672">();</span>
+
+    assertNotNull<span style="color:#f92672">(</span>red<span style="color:#f92672">);</span>
+    assertEquals<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>RED<span style="color:#f92672">),</span> red<span style="color:#f92672">);</span>
+    assertSame<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">valueOf</span><span style="color:#f92672">(</span>RED<span style="color:#f92672">),</span> red<span style="color:#f92672">);</span>
+
+    assertEquals<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">RED</span><span style="color:#f92672">,</span> red<span style="color:#f92672">);</span>
+    assertSame<span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">RED</span><span style="color:#f92672">,</span> red<span style="color:#f92672">);</span>
+<span style="color:#f92672">}</span>
+
+<span style="color:#66d9ef">void</span> <span style="color:#a6e22e">serialize</span><span style="color:#f92672">(</span>Colour colour<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IOException <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">try</span> <span style="color:#f92672">(</span>FileOutputStream fos <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileOutputStream<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;data.obj&#34;</span><span style="color:#f92672">);</span>
+         ObjectOutputStream oos <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ObjectOutputStream<span style="color:#f92672">(</span>fos<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+        oos<span style="color:#f92672">.</span><span style="color:#a6e22e">writeObject</span><span style="color:#f92672">(</span>colour<span style="color:#f92672">);</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+
+Colour <span style="color:#a6e22e">deserialize</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> IOException<span style="color:#f92672">,</span> ClassNotFoundException <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">try</span> <span style="color:#f92672">(</span>FileInputStream fis <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileInputStream<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;data.obj&#34;</span><span style="color:#f92672">);</span>
+         ObjectInputStream ois <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ObjectInputStream<span style="color:#f92672">(</span>fis<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+        <span style="color:#66d9ef">return</span> <span style="color:#f92672">(</span>Colour<span style="color:#f92672">)</span> ois<span style="color:#f92672">.</span><span style="color:#a6e22e">readObject</span><span style="color:#f92672">();</span>
+    <span style="color:#f92672">}</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>It does! :)</p>
+<hr>
+<h3 id="limitations">Limitations<a hidden class="anchor" aria-hidden="true" href="#limitations">#</a></h3>
+<p>As you know, this has a limitation that you cannot statically infer Enum constants, except the ones defined inside <code>Colour</code>. The values in DB must be referred through <code>Colour.valueOf()</code>. Moreover, you would need to change any switch-case statements to use the value of the the Constant, instead of static enum types supported by switch-case. An example:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">switch</span> <span style="color:#f92672">(</span>Colour<span style="color:#f92672">.</span><span style="color:#a6e22e">RED</span><span style="color:#f92672">.</span><span style="color:#a6e22e">name</span><span style="color:#f92672">())</span> <span style="color:#f92672">{</span>
+    <span style="color:#66d9ef">case</span> <span style="color:#e6db74">&#34;RED&#34;</span> <span style="color:#f92672">:</span>
+        System<span style="color:#f92672">.</span><span style="color:#a6e22e">out</span><span style="color:#f92672">.</span><span style="color:#a6e22e">println</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;RED&#34;</span><span style="color:#f92672">);</span>  
+        <span style="color:#66d9ef">break</span><span style="color:#f92672">;</span>
+    <span style="color:#66d9ef">default</span><span style="color:#f92672">:</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>I discovered that this is also known as a type-safe enum, which was used before Enum as types were introduced in Java 5. Granted, this a step lower than Enums, but&hellip; you know.</p>
+<hr>
+<p>The above is a hack though. In an ideal world, you would never have to try and implement these hacks. However, if you find yourself in such a spot, you know what to do. Please, try to refactor and remove this code though.</p>
+<p>You can find the code for the project on my Github repository: <a href="https://github.com/darshitpp/dynamic-enums">dynamic-enums</a>.</p>
+<p>Done! We have now created a &ldquo;Dynamic Enum&rdquo;! 😎</p>
+<p>You can now rest in peace, and wish/hope that the next developer touching this piece of code does not try to contact you.</p>
+<p>References and Reading material:</p>
+<ol>
+<li><a href="https://blogs.oracle.com/javamagazine/java-enumerated-enums-class">Java Magazine tutorial on Enums</a></li>
+<li><a href="https://www.infoworld.com/article/3543350/how-to-use-typesafe-enums-in-java.html">How to use typesafe enums in Java</a></li>
+<li><a href="https://www.infoworld.com/article/2077487/java-tip-122--beware-of-java-typesafe-enumerations.html">Beware of Java typesafe enumerations</a></li>
+<li><a href="https://www.infoworld.com/article/2077499/java-tip-133--more-on-typesafe-enums.html">More on typesafe enums</a></li>
+<li><a href="https://dzone.com/articles/enum-tricks-dynamic-enums">Enum Tricks: Dynamic Enums</a></li>
+<li><a href="https://www.baeldung.com/java-serialization">Introduction to Java Serialization</a></li>
+</ol>
+<section class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1" role="doc-endnote">
+<p><a href="https://docs.oracle.com/javase/8/docs/platform/serialization/spec/input.html#5903">Java Serialization Docs</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</section>
+
+
+  </div>
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://darshit.dev/tags/enums/">enums</a></li>
+      <li><a href="https://darshit.dev/tags/dynamic-enums/">dynamic enums</a></li>
+      <li><a href="https://darshit.dev/tags/java/">java</a></li>
+      <li><a href="https://darshit.dev/tags/class/">class</a></li>
+      <li><a href="https://darshit.dev/tags/type-safe-enums/">type-safe enums</a></li>
+      <li><a href="https://darshit.dev/tags/singleton/">singleton</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="https://darshit.dev/posts/java-constants-interface/">
+    <span class="title">Next Page »</span>
+    <br>
+    <span>The Java Constants Interface Anti-Pattern</span>
+  </a>
+</nav>
+
+<div class="share-buttons">
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Dynamic Enums on twitter"
+        href="https://twitter.com/intent/tweet/?text=Dynamic%20Enums&amp;url=https%3a%2f%2fdarshit.dev%2fposts%2fdynamic-enums%2f&amp;hashtags=enums%2cdynamicenums%2cjava%2cclass%2ctype-safeenums%2csingleton">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Dynamic Enums on linkedin"
+        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fdarshit.dev%2fposts%2fdynamic-enums%2f&amp;title=Dynamic%20Enums&amp;summary=Dynamic%20Enums&amp;source=https%3a%2f%2fdarshit.dev%2fposts%2fdynamic-enums%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Dynamic Enums on reddit"
+        href="https://reddit.com/submit?url=https%3a%2f%2fdarshit.dev%2fposts%2fdynamic-enums%2f&title=Dynamic%20Enums">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Dynamic Enums on facebook"
+        href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fdarshit.dev%2fposts%2fdynamic-enums%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Dynamic Enums on whatsapp"
+        href="https://api.whatsapp.com/send?text=Dynamic%20Enums%20-%20https%3a%2f%2fdarshit.dev%2fposts%2fdynamic-enums%2f">
+        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
+            <path
+                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+        </svg>
+    </a>
+    <a target="_blank" rel="noopener noreferrer" aria-label="share Dynamic Enums on telegram"
+        href="https://telegram.me/share/url?text=Dynamic%20Enums&amp;url=https%3a%2f%2fdarshit.dev%2fposts%2fdynamic-enums%2f">
+        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28">
+            <path
+                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+        </svg>
+    </a>
+</div>
+
+  </footer><div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "darshitpp" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</article>
+    </main>
+    <footer class="footer">
+    <span>&copy; 2021 <a href="https://darshit.dev/">Darshit Patel&#39;s Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)">
+    <button class="top-link" id="top-link" type="button" accesskey="g">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+            <path d="M12 6H0l6-6z" />
+        </svg>
+    </button>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+    menu.onscroll = function () {
+        localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerText = 'copy';
+
+        function copyingDone() {
+            copybutton.innerText = 'copied!';
+            setTimeout(() => {
+                copybutton.innerText = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

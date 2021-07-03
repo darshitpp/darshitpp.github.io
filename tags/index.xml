@@ -1,26 +1,71 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Tags on Darshit Patel&#39;s Blog</title>
     <link>https://darshit.dev/tags/</link>
     <description>Recent content in Tags on Darshit Patel&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 08 Nov 2020 04:29:47 +0530</lastBuildDate><atom:link href="https://darshit.dev/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Jul 2021 20:12:52 +0530</lastBuildDate><atom:link href="https://darshit.dev/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>best-practices</title>
-      <link>https://darshit.dev/tags/best-practices/</link>
-      <pubDate>Sun, 08 Nov 2020 04:29:47 +0530</pubDate>
+      <title>class</title>
+      <link>https://darshit.dev/tags/class/</link>
+      <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
       
-      <guid>https://darshit.dev/tags/best-practices/</guid>
+      <guid>https://darshit.dev/tags/class/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>dynamic enums</title>
+      <link>https://darshit.dev/tags/dynamic-enums/</link>
+      <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
+      
+      <guid>https://darshit.dev/tags/dynamic-enums/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>enums</title>
+      <link>https://darshit.dev/tags/enums/</link>
+      <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
+      
+      <guid>https://darshit.dev/tags/enums/</guid>
       <description></description>
     </item>
     
     <item>
       <title>java</title>
       <link>https://darshit.dev/tags/java/</link>
-      <pubDate>Sun, 08 Nov 2020 04:29:47 +0530</pubDate>
+      <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
       
       <guid>https://darshit.dev/tags/java/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>singleton</title>
+      <link>https://darshit.dev/tags/singleton/</link>
+      <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
+      
+      <guid>https://darshit.dev/tags/singleton/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>type-safe enums</title>
+      <link>https://darshit.dev/tags/type-safe-enums/</link>
+      <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
+      
+      <guid>https://darshit.dev/tags/type-safe-enums/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>best-practices</title>
+      <link>https://darshit.dev/tags/best-practices/</link>
+      <pubDate>Sun, 08 Nov 2020 04:29:47 +0530</pubDate>
+      
+      <guid>https://darshit.dev/tags/best-practices/</guid>
       <description></description>
     </item>
     

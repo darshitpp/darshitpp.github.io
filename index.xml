@@ -1,20 +1,27 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Darshit Patel&#39;s Blog</title>
     <link>https://darshit.dev/</link>
     <description>Recent content on Darshit Patel&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 08 Nov 2020 04:29:47 +0530</lastBuildDate><atom:link href="https://darshit.dev/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 03 Jul 2021 20:12:52 +0530</lastBuildDate><atom:link href="https://darshit.dev/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Dynamic Enums</title>
+      <link>https://darshit.dev/posts/dynamic-enums/</link>
+      <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
+      
+      <guid>https://darshit.dev/posts/dynamic-enums/</guid>
+      <description>Enable Enums to load data from a Database</description>
+    </item>
+    
     <item>
       <title>The Java Constants Interface Anti-Pattern</title>
       <link>https://darshit.dev/posts/java-constants-interface/</link>
       <pubDate>Sun, 08 Nov 2020 04:29:47 +0530</pubDate>
       
       <guid>https://darshit.dev/posts/java-constants-interface/</guid>
-      <description>How do you define and use constants in Java?
-Most advice on Internet has the following opinions:
- Declare public static final for constants in a class Do not use Interfaces for constants  The most common way to define a constant is in a class and using public static final.</description>
+      <description>Should you use Interfaces for defining constant values?</description>
     </item>
     
     <item>
@@ -66,14 +73,6 @@ To give you some context, some time ago, our (my org&amp;rsquo;s) Redis usage wa
 Live Templates enable you to use code snippets with just a few keystrokes. A lot of great ones are provided out-of-the-box by IntelliJ.</description>
     </item>
     
-    <item>
-      <title>Search</title>
-      <link>https://darshit.dev/search/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://darshit.dev/search/</guid>
-      <description>search</description>
-    </item>
     
   </channel>
 </rss>
