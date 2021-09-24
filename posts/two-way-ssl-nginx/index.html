@@ -20,7 +20,7 @@
 <link rel="mask-icon" href="https://darshit.dev/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<meta name="generator" content="Hugo 0.85.0" />
+<meta name="generator" content="Hugo 0.88.0" />
 <meta property="og:title" content="How To Implement Two Way SSL With Nginx" />
 <meta property="og:description" content="A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and have had only a limited experience with networking concepts like SSL/TLS in my short career." />
 <meta property="og:type" content="article" />
@@ -201,14 +201,14 @@
 <h1 id="installing-and-configuring-nginx">Installing and Configuring Nginx<a hidden class="anchor" aria-hidden="true" href="#installing-and-configuring-nginx">#</a></h1>
 <h2 id="install">Install<a hidden class="anchor" aria-hidden="true" href="#install">#</a></h2>
 <p>Install<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> nginx using <code>apt</code> command on your Linux system.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo apt update
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo apt update
 sudo apt install nginx
 </code></pre></div><p>This will install all of Nginx on the path <code>/opt/nginx</code>. All the configuration files we will be editing for two-way SSL would be found within this directory.</p>
 <h2 id="configure-nginx-to-start">Configure Nginx to start<a hidden class="anchor" aria-hidden="true" href="#configure-nginx-to-start">#</a></h2>
 <p>Before starting up Nginx for use, we need to enable some ports on the firewall that our Nginx can listen incoming connections from.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo ufw app list
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo ufw app list
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Available applications:
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Available applications:
   Nginx Full
   Nginx HTTP
   Nginx HTTPS
@@ -221,11 +221,11 @@ sudo apt install nginx
 <li><code>Nginx Full</code> is a combination of the above both, enabling port 80 and 443 both.</li>
 </ul>
 <p>We will enable <code>Nginx Full</code> as we have to use our server for SSL, but using normal HTTP connections is not an uncommon use-case either. To enable it, run:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo ufw allow <span style="color:#e6db74">&#39;Nginx Full&#39;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo ufw allow <span style="color:#e6db74">&#39;Nginx Full&#39;</span>
 </code></pre></div><p>You should see the activated profile if you run the below command</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo ufw status
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo ufw status
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Status: active
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Status: active
 
 To                         Action      From
 --                         ------      ----
@@ -234,9 +234,9 @@ Nginx Full                 ALLOW       Anywhere
 OpenSSH <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>               ALLOW       Anywhere <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>             
 Nginx Full <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>            ALLOW       Anywhere <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>
 </code></pre></div><p>The Nginx service should already be up and running now. You can check by executing</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">systemctl status nginx
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">systemctl status nginx
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">● nginx.service - A high performance web server and a reverse proxy server
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">● nginx.service - A high performance web server and a reverse proxy server
    Loaded: loaded <span style="color:#f92672">(</span>/lib/systemd/system/nginx.service; enabled; vendor preset: enabled<span style="color:#f92672">)</span>
    Active: active <span style="color:#f92672">(</span>running<span style="color:#f92672">)</span> since Fri 2018-04-20 16:08:19 UTC; <span style="color:#ae81ff">3</span> days ago
      Docs: man:nginx<span style="color:#f92672">(</span>8<span style="color:#f92672">)</span>
@@ -256,20 +256,20 @@ Nginx Full <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</
 </ul>
 <p>Now that we know the terminology, it would be easier to proceed with generating the certificates. The following part of the tutorial requires root/superuser privileges, so switch to the super user using the <code>sudo su</code> command.</p>
 <p>Create a directory called <code>certs</code> under the root of the file-system which will hold all the certificates and related files.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># Create directory</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># Create directory</span>
 mkdir /certs 
 <span style="color:#75715e"># Change directory to /certs</span>
 cd /certs
 <span style="color:#75715e"># Verify the present working directory</span>
 pwd
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">/certs
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">/certs
 </code></pre></div><p>In this tutorial, we would be designating ourselves as a Certificate Authority, and then self-sign and generate the certificates.</p>
 <h2 id="generate-certificate-authority-ca-files">Generate Certificate Authority (CA) files<a hidden class="anchor" aria-hidden="true" href="#generate-certificate-authority-ca-files">#</a></h2>
 <p>We would be first generating a CA key, which would be the basis for all further certificate generation.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl genrsa -des3 -out ca.key <span style="color:#ae81ff">4096</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl genrsa -des3 -out ca.key <span style="color:#ae81ff">4096</span>
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
 .............................................................++++
 ....................................................................................................................................................................................++++
 e is <span style="color:#ae81ff">65537</span> <span style="color:#f92672">(</span>0x010001<span style="color:#f92672">)</span>
@@ -285,9 +285,9 @@ Verifying - Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;
 <p>This generates a file named <code>ca.key</code> in the current directory. You would have to provide a password/passphrase for the key. For the purposes of this tutorial, I&rsquo;ll be using the same passphrase whenever required.</p>
 <p><code>&lt;passphrase&gt;</code> = <code>root</code></p>
 <p>The next step is the generation of <code>ca.crt</code></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl req -new -x509 -days <span style="color:#ae81ff">3650</span> -key ca.key -out ca.crt
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl req -new -x509 -days <span style="color:#ae81ff">3650</span> -key ca.key -out ca.crt
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
 </code></pre></div><p>Command options:</p>
 <ul>
 <li><code>req</code>: used for creating certificate requests</li>
@@ -298,7 +298,7 @@ Verifying - Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;
 <li><code>-out</code>: output file for the certificate</li>
 </ul>
 <p>Once you enter the passphrase (which is the same as we put in the previous step), it&rsquo;ll ask you to provide more information for the self-signed certificate.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">You are about to be asked to enter information that will be incorporated
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">You are about to be asked to enter information that will be incorporated
 into your certificate request.
 What you are about to enter is what is called a Distinguished Name or a DN.
 There are quite a few fields but you can leave some blank
@@ -314,10 +314,10 @@ Common Name <span style="color:#f92672">(</span>e.g. server FQDN or YOUR name<sp
 Email Address <span style="color:#f92672">[]</span>:
 </code></pre></div><p>Note the <code>Organization Name</code> parameter is named as <code>CertAuth</code> for this example. This is because we are a CA and CAs should ideally be independent to enable other parties to trust other parties and establish a chain of trust.</p>
 <p>A PEM file certificate would also be needed. This file is way of encoding the certificates.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> To create a PEM file, simply do the following:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">cat ca.key &gt; ca.pem
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">cat ca.key &gt; ca.pem
 cat ca.key &gt;&gt; ca.pem
 </code></pre></div><p>The <code>ca.key</code> would be something like</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">-----BEGIN RSA PRIVATE KEY-----
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">-----BEGIN RSA PRIVATE KEY-----
 Proc-Type: 4,ENCRYPTED
 DEK-Info: DES-EDE3-CBC,0E2D38C130456B75
 
@@ -330,14 +330,14 @@ BQAwNTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxETAPBgNVBAoM
 -----END CERTIFICATE-----
 </code></pre></div><h2 id="generating-clientuser-certificates">Generating Client/User Certificates<a hidden class="anchor" aria-hidden="true" href="#generating-clientuser-certificates">#</a></h2>
 <p>At this point, we have three files in the <code>certs</code> directory.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ca.key
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ca.key
 ca.crt
 ca.pem
 </code></pre></div><p>We now would be generating client/user certificates.
 The command to generate the <code>user.key</code> is similar to the one used to create the <code>ca.key</code></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl genrsa -des3 -out user.key <span style="color:#ae81ff">4096</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl genrsa -des3 -out user.key <span style="color:#ae81ff">4096</span>
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
 .....................................................................................................................................................++++
 .......................++++
 e is <span style="color:#ae81ff">65537</span> <span style="color:#f92672">(</span>0x010001<span style="color:#f92672">)</span>
@@ -345,9 +345,9 @@ Enter pass phrase <span style="color:#66d9ef">for</span> user.key:
 Verifying - Enter pass phrase <span style="color:#66d9ef">for</span> user.key:
 </code></pre></div><p>As mentioned earlier, the passphrase to be used for <code>user.key</code> is still the same.</p>
 <p>The client/user certificate aren&rsquo;t supposed to be self-signed, and we would need to generate a CSR. It means the signing is to be done by a CA(even though in this case, we own the CA!). The way to do this is</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl req -new -key user.key -out user.csr
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl req -new -key user.key -out user.csr
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Enter pass phrase <span style="color:#66d9ef">for</span> user.key:&lt;passphrase&gt; 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Enter pass phrase <span style="color:#66d9ef">for</span> user.key:&lt;passphrase&gt; 
 You are about to be asked to enter information that will be incorporated
 into your certificate request.
 What you are about to enter is what is called a Distinguished Name or a DN.
@@ -369,9 +369,9 @@ A challenge password <span style="color:#f92672">[]</span>:
 An optional company name <span style="color:#f92672">[]</span>:
 </code></pre></div><p>The <code>Organization Name</code> would be <code>User</code> as this certificate is for a Client/User. <strong>DO NOT</strong> keep it the same as the one for CA.</p>
 <p>The next step would be to create a User Certificate from the User CSR.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl x509 -req -days <span style="color:#ae81ff">365</span> -in user.csr -CA ca.crt -CAkey ca.key -set_serial <span style="color:#ae81ff">01</span> -out user.crt
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl x509 -req -days <span style="color:#ae81ff">365</span> -in user.csr -CA ca.crt -CAkey ca.key -set_serial <span style="color:#ae81ff">01</span> -out user.crt
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Signature ok
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Signature ok
 subject<span style="color:#f92672">=</span>C <span style="color:#f92672">=</span> AU, ST <span style="color:#f92672">=</span> Some-State, O <span style="color:#f92672">=</span> User
 Getting CA Private Key
 Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
@@ -384,17 +384,17 @@ Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&g
 </ul>
 <p>You can see that it displays data from the CSR, and then uses the CA key to generate <code>user.crt</code>.</p>
 <p>To enable us to use the certificate from a web browser, we would need to create the certificate in the PFX file format.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl pkcs12 -export -out user.pfx -inkey user.key -in user.crt -certfile ca.crt
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl pkcs12 -export -out user.pfx -inkey user.key -in user.crt -certfile ca.crt
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Enter pass phrase <span style="color:#66d9ef">for</span> user.key:&lt;passphrase&gt;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Enter pass phrase <span style="color:#66d9ef">for</span> user.key:&lt;passphrase&gt;
 Enter Export Password:&lt;passphrase&gt;
 Verifying - Enter Export Password:&lt;passphrase&gt;
 </code></pre></div><p>You can verify if the generated certificate can be decrypted using the CA certificate by the following command</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl verify -verbose -CAfile ca.crt user.crt
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl verify -verbose -CAfile ca.crt user.crt
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">user.crt: OK
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">user.crt: OK
 </code></pre></div><p>The files that we currently have in the directory are</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ca.key
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ca.key
 ca.crt
 ca.pem
 user.key
@@ -404,16 +404,16 @@ user.pfx
 </code></pre></div><h2 id="generating-server-certificates">Generating Server Certificates<a hidden class="anchor" aria-hidden="true" href="#generating-server-certificates">#</a></h2>
 <p>This is similar to generating the User certificates, with the following commands</p>
 <p>Generate the Server key. For server certificates, the standard naming convention seems to be <code>&lt;website-domain-name&gt;</code>.<code>&lt;key&gt;</code></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl genrsa -out nginx.mssl.com.key <span style="color:#ae81ff">4096</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl genrsa -out nginx.mssl.com.key <span style="color:#ae81ff">4096</span>
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
 .....................................++++
 .........................++++
 e is <span style="color:#ae81ff">65537</span> <span style="color:#f92672">(</span>0x010001<span style="color:#f92672">)</span>
 </code></pre></div><p>Use the above generated key to generate a CSR.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl req -new -key nginx.mssl.com.key -out nginx.mssl.com.csr
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl req -new -key nginx.mssl.com.key -out nginx.mssl.com.csr
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">You are about to be asked to enter information that will be incorporated
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">You are about to be asked to enter information that will be incorporated
 into your certificate request.
 What you are about to enter is what is called a Distinguished Name or a DN.
 There are quite a few fields but you can leave some blank
@@ -434,14 +434,14 @@ A challenge password <span style="color:#f92672">[]</span>:
 An optional company name <span style="color:#f92672">[]</span>:
 </code></pre></div><p>Make sure to put the <code>Organization Name</code> as <code>Server</code> and <code>Common Name</code> (which is the website name) as <code>nginx.mssl.com</code></p>
 <p>We can now use the CSR along with the CA files to generate the CRT for our server.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl x509 -req -days <span style="color:#ae81ff">365</span> -sha256 -in nginx.mssl.com.csr -CA ca.crt -CAkey ca.key -set_serial <span style="color:#ae81ff">1</span> -out nginx.mssl.com.crt
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl x509 -req -days <span style="color:#ae81ff">365</span> -sha256 -in nginx.mssl.com.csr -CA ca.crt -CAkey ca.key -set_serial <span style="color:#ae81ff">1</span> -out nginx.mssl.com.crt
 </code></pre></div><p>Output:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Signature ok
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Signature ok
 subject<span style="color:#f92672">=</span>C <span style="color:#f92672">=</span> AU, ST <span style="color:#f92672">=</span> Some-State, O <span style="color:#f92672">=</span> Server, CN <span style="color:#f92672">=</span> nginx.mssl.com
 Getting CA Private Key
 Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
 </code></pre></div><p>All the certificates are now ready for our use!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ca.key
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ca.key
 ca.crt
 ca.pem
 user.key
@@ -454,13 +454,13 @@ nginx.mssl.com.crt
 </code></pre></div><h1 id="setting-up-our-website-with-nginx">Setting up our &ldquo;Website&rdquo; with Nginx<a hidden class="anchor" aria-hidden="true" href="#setting-up-our-website-with-nginx">#</a></h1>
 <p>Of course, we aren&rsquo;t setting up a <em>real</em> website. But we do want to make our SSL authentication work on the domain <code>nginx.mssl.com</code>. We can do this by a little &ldquo;hack&rdquo; by changing our <code>/etc/hosts</code> file.</p>
 <p>Fire up a new shell, and use</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo vim /etc/hosts
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo vim /etc/hosts
 </code></pre></div><p>Add the following line to the file and save.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">127.0.0.1 nginx.mssl.com
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">127.0.0.1 nginx.mssl.com
 </code></pre></div><p>This will enable your local machine to resolve the domain <code>nginx.mssl.com</code> to your locahost.</p>
 <p>The website will not work at the moment &ndash; you&rsquo;d have to specify the sources/web pages it needs to serve when requested.</p>
 <p>Create a file <code>index.html</code> on the directory path <code>/usr/share/nginx/mssl</code> with the contents:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">html</span>&gt;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">html</span>&gt;
   &lt;<span style="color:#f92672">body</span>&gt;
     &lt;<span style="color:#f92672">h1</span>&gt;Welcome to nginx!-mutual ssl test&lt;/<span style="color:#f92672">h1</span>&gt;
   &lt;/<span style="color:#f92672">body</span>&gt;
@@ -468,15 +468,15 @@ nginx.mssl.com.crt
 </code></pre></div><p>If the TLS handshake is successful, the web server should serve the file created above.</p>
 <h1 id="configuring-the-nginx-server-to-enable-two-way-ssl">Configuring the Nginx server to enable two way SSL<a hidden class="anchor" aria-hidden="true" href="#configuring-the-nginx-server-to-enable-two-way-ssl">#</a></h1>
 <p>All our certificates are at root in <code>/certs</code> directory. For simplicity, we would be copying the certificates to <code>/etc/nginx/certs</code> directory.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">cp -r /certs /etc/nginx/certs
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">cp -r /certs /etc/nginx/certs
 </code></pre></div><p>Also ensure that the certificates can be used by nginx service by providing them the access</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">chmod <span style="color:#ae81ff">777</span> -R certs/
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">chmod <span style="color:#ae81ff">777</span> -R certs/
 </code></pre></div><p>We would not be fiddling with the default nginx configuration which is present in the <code>nginx.conf</code> file. Instead, we would be creating a new file called <code>proxy.conf</code> using in the <code>/etc/nginx/sites-available</code> directory.</p>
 <p>Create the file <code>proxy.conf</code> using the command</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">cd /etc/nginx/sites-available
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">cd /etc/nginx/sites-available
 touch proxy.conf
 </code></pre></div><p>Enter the contents as the following (Notice the comments have more explanation):</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">server {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">server {
     # Listen on port 443 for HTTPS connections
     listen  443;
 
@@ -533,10 +533,10 @@ touch proxy.conf
 </code></pre></div><p>Nginx has a good <a href="https://nginx.org/en/docs/beginners_guide.html">Beginner&rsquo;s Guide to Nginx</a>.</p>
 <p>To enable Nginx to use the above configuration, we also have to link the same in the <code>/etc/nginx/sites-enabled</code> directory.</p>
 <p>To accomplish this, use</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ln -s /etc/nginx/sites-available/proxy.conf /etc/nginx/sites-enabled/proxy.conf
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ln -s /etc/nginx/sites-available/proxy.conf /etc/nginx/sites-enabled/proxy.conf
 </code></pre></div><p>This creates a symbolic link into <code>/etc/nginx/sites-enabled/proxy.conf</code> from <code>/etc/nginx/sites-available/proxy.conf</code>. Consider it as you having many server configurations in the <code>sites-available</code>, but only what you chose to &ldquo;enable&rdquo; in the <code>sites-enabled</code> will be active.</p>
 <p>We now just have to restart the Nginx for the configuration to be active!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">systemctl restart nginx
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">systemctl restart nginx
 </code></pre></div><p>I&rsquo;ll be using Postman to test our changes. However, you&rsquo;ll need to configure Postman to send the Client Certificates with the request<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>.</p>
 <p>To configure the Certificates, navigate to Settings -&gt; Certificates Tab.</p>
 <p>There will be a section to add the CA Certificate named <code>CA Certificates</code>, and this certificate should be a PEM file. Select the <code>ca.pem</code> from <code>/etc/nginx/certs</code>. A mistake would be to select the file from the root directory <code>/certs</code> but this will not work as Postman wouldn&rsquo;t be able to access the file.</p>
@@ -549,13 +549,13 @@ touch proxy.conf
 <li>Passphrase: <code>&lt;passphrase&gt;</code></li>
 </ul>
 <p>Now try to fire a GET request to the domain <code>https://nginx.mssl.com</code>. If everything was configured successfully, you&rsquo;ll get the following response:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">html</span>&gt;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">html</span>&gt;
   &lt;<span style="color:#f92672">body</span>&gt;
     &lt;<span style="color:#f92672">h1</span>&gt;Welcome to nginx!-mutual ssl test&lt;/<span style="color:#f92672">h1</span>&gt;
   &lt;/<span style="color:#f92672">body</span>&gt;
 &lt;/<span style="color:#f92672">html</span>&gt;
 </code></pre></div><p>If there&rsquo;s an error in the configuration, you&rsquo;ll get the following error response:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">html</span>&gt;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">html</span>&gt;
   &lt;<span style="color:#f92672">head</span>&gt;
     &lt;<span style="color:#f92672">title</span>&gt;400 No required SSL certificate was sent&lt;/<span style="color:#f92672">title</span>&gt;
   &lt;/<span style="color:#f92672">head</span>&gt;

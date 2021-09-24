@@ -21,7 +21,7 @@ Live Templates enable you to use code snippets with just a few keystrokes. A lot
 <link rel="mask-icon" href="https://darshit.dev/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<meta name="generator" content="Hugo 0.85.0" />
+<meta name="generator" content="Hugo 0.88.0" />
 <meta property="og:title" content="Using IntelliJ IDEA Live Templates" />
 <meta property="og:description" content="IntelliJ IDEA is an awesome IDE, and a lesser known and used feature is Live Templates.
 Live Templates enable you to use code snippets with just a few keystrokes. A lot of great ones are provided out-of-the-box by IntelliJ." />
@@ -192,13 +192,13 @@ Live Templates enable you to use code snippets with just a few keystrokes. A lot
 <p>Live Templates enable you to use code snippets with just a few keystrokes. A lot of great ones are provided out-of-the-box by IntelliJ. You can view them using the shortcut press <code>Double Shift</code> and then typing <code>Live Templates</code>. The shortcut works regardless of the OS you&rsquo;re currently using (and I am too lazy to specify OS specific menus).</p>
 <p>Some of the examples of Live Templates are:</p>
 <p>Typing <code>psvm</code> replaces it with</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">){</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> args<span style="color:#f92672">){</span>
   
 <span style="color:#f92672">}</span>
 </code></pre></div><p>Typing <code>psfs</code> magically turns it into</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String
 </code></pre></div><p>I was recently refactoring a lot of <code>class</code>es and I had to replace a lot of legacy logging initialization statements to using <code>slf4j</code> logging library like the following:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> org.slf4j.Logger<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> org.slf4j.Logger<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> org.slf4j.LoggerFactory<span style="color:#f92672">;</span>
 
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LoggerTest</span> <span style="color:#f92672">{</span>
@@ -213,7 +213,7 @@ Live Templates enable you to use code snippets with just a few keystrokes. A lot
 </p>
 <p>Let&rsquo;s input the abbreviation as <code>psfl</code> which stands for <code>public static final Logger</code>, which can be also put in the description.</p>
 <p>Write the following code in the Template text box:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Logger logger <span style="color:#f92672">=</span> LoggerFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">getLogger</span><span style="color:#f92672">();</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Logger logger <span style="color:#f92672">=</span> LoggerFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">getLogger</span><span style="color:#f92672">();</span>
 </code></pre></div><p><img loading="lazy" src="https://imgur.com/ZTj7Wj7.png" alt="Template"  />
 </p>
 <p>But hang on, the IDE gives us a warning to define a context where it would be used at. We want the template to be only used in Java, so we click on the <code>Define</code> button, and select <code>Java</code>.</p>
@@ -222,7 +222,7 @@ Live Templates enable you to use code snippets with just a few keystrokes. A lot
 <p>You may now notice the IDE now applies syntax highlighting on the template.</p>
 <p>Wait, we are still not there yet. I certainly don&rsquo;t want to manually write every class name inside the <code>getLogger</code> function! At this point, I was not sure how I could achieve that. Cue in a bit of googling, stackoverflow again came to the rescue.</p>
 <p>I found the following answer: <a href="https://stackoverflow.com/a/8552882/4840501">https://stackoverflow.com/a/8552882/4840501</a></p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> org<span style="color:#f92672">.</span><span style="color:#a6e22e">slf4j</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Logger</span> logger <span style="color:#f92672">=</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> org<span style="color:#f92672">.</span><span style="color:#a6e22e">slf4j</span><span style="color:#f92672">.</span><span style="color:#a6e22e">Logger</span> logger <span style="color:#f92672">=</span>
 org<span style="color:#f92672">.</span><span style="color:#a6e22e">slf4j</span><span style="color:#f92672">.</span><span style="color:#a6e22e">LoggerFactory</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getLogger</span><span style="color:#f92672">(</span>$CLASS_NAME$<span style="color:#f92672">);</span>
 $END$
 </code></pre></div><p>So I copy-pasted the code in my template screen(what did you expect? :P)</p>

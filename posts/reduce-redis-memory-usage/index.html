@@ -21,7 +21,7 @@ To give you some context, some time ago, our (my org&rsquo;s) Redis usage was un
 <link rel="mask-icon" href="https://darshit.dev/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<meta name="generator" content="Hugo 0.85.0" />
+<meta name="generator" content="Hugo 0.88.0" />
 <meta property="og:title" content="How to achieve a 50% reduction in Redis memory usage" />
 <meta property="og:description" content="Yes, you read that right.
 To give you some context, some time ago, our (my org&rsquo;s) Redis usage was un-tracked &ndash; meaning we didn&rsquo;t know why our Redis memory was being occupied as much as it was." />
@@ -198,7 +198,7 @@ To give you some context, some time ago, our (my org&rsquo;s) Redis usage was un
 <p>Note that I&rsquo;m going to skip the installation of Redis, as there are other guides available for every operating system. You do need the Redis Server to be started for our application to work successfully.</p>
 <p>After downloading the basic application, you&rsquo;ll need to extract and open it in your favourite IDE (my favourite one is IntelliJ IDEA).</p>
 <p>In my case the project name is <code>redis-util</code>, and you&rsquo;ll find my &ldquo;base packages&rdquo; to be named <code>com.darshitpp.redis.redisutil</code>. This base package would have a class called <code>RedisUtilApplication</code>, which in my case has the following configuration.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@SpringBootApplication</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@SpringBootApplication</span>
 <span style="color:#a6e22e">@ComponentScan</span><span style="color:#f92672">(</span>basePackages <span style="color:#f92672">=</span> <span style="color:#f92672">{</span><span style="color:#e6db74">&#34;com.darshitpp.redis.redisutil&#34;</span><span style="color:#f92672">})</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RedisUtilApplication</span> <span style="color:#f92672">{</span>
 
@@ -211,7 +211,7 @@ To give you some context, some time ago, our (my org&rsquo;s) Redis usage was un
 <p>To connect to Redis, I create a configuration class called <code>LettuceRedisConfiguration</code>, under a new package named <code>configuration</code>(note that this should be under the <code>basePackages</code> path defined above.</p>
 <p>You could define the configuration in the <code>RedisUtilApplication</code> class itself, but I want this to be as &ldquo;production-ready&rdquo; as possible. Thus, it&rsquo;s a good practice to separate out your different parts of application.</p>
 <p>My configuration class is</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Configuration</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Configuration</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LettuceRedisConfiguration</span> <span style="color:#f92672">{</span>
 
     <span style="color:#a6e22e">@Bean</span>
@@ -222,7 +222,7 @@ To give you some context, some time ago, our (my org&rsquo;s) Redis usage was un
 <span style="color:#f92672">}</span>
 </code></pre></div><p>It is a very simple class, which has the configuration of which URL to connect to for Redis. In my case, it is <code>localhost</code>, but in most production apps, it would be an external Redis server. Port <code>6379</code> is the default port on which the Redis server starts. This <code>Bean</code> would return us a &ldquo;factory&rdquo; of Redis connections. Think of this as something which would allow you to connect to Redis when required.</p>
 <p>At this point, my package structure looks like:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">-&gt;src
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">-&gt;src
   -&gt;main
     -&gt;java
       -&gt;com.darshitpp.redis.redisutil
@@ -231,7 +231,7 @@ To give you some context, some time ago, our (my org&rsquo;s) Redis usage was un
 <p>The <code>User</code> would have three fields, namely, <code>firstName</code>, <code>lastName</code>, and <code>birthday</code>.</p>
 <p>Before storing the objects in Redis, it is a good idea to identify <em>how</em> you will store the data so that it&rsquo;s efficient to fetch it back. What that means is Redis being a simple Key-Value store, you would need to identify the Key you would be storing the Value with. In our case, I am choosing <code>firstName</code> as the key. The data would be stored in a hash, so the <code>hashKey</code> that we select would be the <code>lastName</code> and the value mapped to the <code>hashKey</code> is the <code>User</code> object.</p>
 <p>This is because Hashes in Redis have the following structure:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">key1 --- hashKey1 === value1
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">key1 --- hashKey1 === value1
      --- hashKey2 === value2
      --- hashKey3 === value3
 key2 --- hashKey4 === value4
@@ -242,7 +242,7 @@ key2 --- hashKey4 === value4
 </code></pre></div><p>You could also imagine it as a tree with the top level nodes being the Keys, the immediate next level to be hashKeys, and the leaf nodes to be the values. To access <code>value2</code>, you would need to have <code>key1</code> and <code>hashKey2</code>.</p>
 <p>Our example is a bit incorrect, as a <code>User</code> could have same key=<code>firstName</code> and hashKey=<code>lastName</code> as another user, and Redis will overwrite <code>value</code>. However, for brevity, we will assume there are unique <code>User</code>s using our application.</p>
 <p>We would now be creating a controller class called <code>NormalController</code> which would act as an entry point for our API. We have named it <code>NormalController</code> for reasons that will be clear further in this article.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@RestController</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@RestController</span>
 <span style="color:#a6e22e">@RequestMapping</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/normal&#34;</span><span style="color:#f92672">)</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NormalController</span> <span style="color:#f92672">{</span>
 
@@ -270,7 +270,7 @@ key2 --- hashKey4 === value4
 <span style="color:#f92672">}</span>
 </code></pre></div><p><code>NormalController</code> also has a service named <code>NormalService</code> which is <code>Autowired</code>.
 The class should be defined in a new packaged named <code>controller</code> after which the package structure would look like</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">-&gt;src
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">-&gt;src
   -&gt;main
     -&gt;java
       -&gt;com.darshitpp.redis.redisutil
@@ -278,7 +278,7 @@ The class should be defined in a new packaged named <code>controller</code> afte
         -&gt;domain
         -&gt;controller
 </code></pre></div><p>Our basic operations would be simple CRUD like operations which <code>NormalService</code> implements using a custom <code>Operations</code> interface.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Operations</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Operations</span> <span style="color:#f92672">{</span>
     User <span style="color:#a6e22e">get</span><span style="color:#f92672">(</span>String firstName<span style="color:#f92672">,</span> String lastName<span style="color:#f92672">);</span>
     <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">put</span><span style="color:#f92672">(</span>User user<span style="color:#f92672">);</span>
     <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">delete</span><span style="color:#f92672">(</span>String firstName<span style="color:#f92672">);</span>
@@ -289,7 +289,7 @@ The class should be defined in a new packaged named <code>controller</code> afte
 Spanish to English = Deserialization</p>
 <p>Thus, we need a translator or a Serializer in our case too. We would be using <a href="https://github.com/FasterXML/jackson">Jackson</a> for this process. Jackson is a nifty library which Spring Boot supports out-of-the-box to handle Json.</p>
 <p>We would need to create a Serializer which <code>implements</code> <code>RedisSerializer</code> for our purposes. In our case, I have created a class <code>JsonRedisSerializer</code> inside a new package called <code>serializer</code>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">JsonRedisSerializer</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">implements</span> RedisSerializer<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">JsonRedisSerializer</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">implements</span> RedisSerializer<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Charset DEFAULT_CHARSET<span style="color:#f92672">;</span>
     <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> JavaType javaType<span style="color:#f92672">;</span>
     <span style="color:#66d9ef">private</span> ObjectMapper objectMapper <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ObjectMapper<span style="color:#f92672">()</span>
@@ -334,7 +334,7 @@ Spanish to English = Deserialization</p>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>As you can see, it has two methods called <code>serialize</code> and <code>deserialize</code>. Each of these methods use the Jackson&rsquo;s <code>ObjectMapper</code> for conversion.</p>
 <p>There is also a class named <code>JavaTypeHandler</code> which helps you get the Type of the object you&rsquo;re trying to serialize.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">JavaTypeHandler</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">JavaTypeHandler</span> <span style="color:#f92672">{</span>
 
     <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> JavaType <span style="color:#a6e22e">getJavaType</span><span style="color:#f92672">(</span>Class<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> clazz<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
         <span style="color:#66d9ef">return</span> TypeFactory<span style="color:#f92672">.</span><span style="color:#a6e22e">defaultInstance</span><span style="color:#f92672">().</span><span style="color:#a6e22e">constructType</span><span style="color:#f92672">(</span>clazz<span style="color:#f92672">);</span>
@@ -342,7 +342,7 @@ Spanish to English = Deserialization</p>
 
 <span style="color:#f92672">}</span>
 </code></pre></div><p>Consequently, we would also need a class which returns us a <code>RedisTemplate</code> which utilizes this serializer. I would name this class <code>RedisSerializationBuilder</code>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RedisSerializationBuilder</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">RedisSerializationBuilder</span> <span style="color:#f92672">{</span>
 
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> RedisTemplate<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getNormalRedisTemplate</span><span style="color:#f92672">(</span><span style="color:#66d9ef">final</span> LettuceConnectionFactory factory<span style="color:#f92672">,</span> <span style="color:#66d9ef">final</span> Class<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> clazz<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
         JsonRedisSerializer<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> jsonRedisSerializer <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> JsonRedisSerializer<span style="color:#f92672">&lt;&gt;(</span>clazz<span style="color:#f92672">);</span>
@@ -361,7 +361,7 @@ Spanish to English = Deserialization</p>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>Notice that the above method will return you a template specific to a particular domain model(in our case, the <code>User</code>) using Generics. It also specifies what connection factory is to be used, what should be the default <code>key</code>/<code>value</code>/<code>hashKey</code>/<code>hashValue</code> serializers.</p>
 <p>Consequently, the <code>NormalService</code> looks like</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Service</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#a6e22e">@Service</span>
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NormalService</span> <span style="color:#66d9ef">implements</span> Operations<span style="color:#f92672">{</span>
 
     <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> RedisTemplate<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">,</span> User<span style="color:#f92672">&gt;</span> redisTemplate<span style="color:#f92672">;</span>
@@ -389,20 +389,20 @@ Spanish to English = Deserialization</p>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>I then inserted a <code>User</code>, using the <code>POST</code> method, and URL: <code>localhost:8080/normalService/insert</code>
 Request Body:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
   <span style="color:#f92672">&#34;firstName&#34;</span>: <span style="color:#e6db74">&#34;Priscilla&#34;</span>,
   <span style="color:#f92672">&#34;lastName&#34;</span>: <span style="color:#e6db74">&#34;Haymes&#34;</span>,
   <span style="color:#f92672">&#34;birthday&#34;</span>: <span style="color:#e6db74">&#34;2020-04-12T11:15:00Z&#34;</span>
 }
 </code></pre></div><p>If I then run this application for 100 Users, I find the following stats for the memory usage in Redis (I used the <code>memory stats</code> command using the <code>redis-cli</code>)</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">21) &#34;keys.count&#34;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">21) &#34;keys.count&#34;
 22) (integer) 100
 23) &#34;keys.bytes-per-key&#34;
 24) (integer) 1044
 25) &#34;dataset.bytes&#34;
 26) (integer) 32840
 </code></pre></div><p>Using the <code>hgetall</code> command for a key gives me</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">127.0.0.1:6379&gt;hgetall &#34;Priscilla&#34;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">127.0.0.1:6379&gt;hgetall &#34;Priscilla&#34;
 1) &#34;Haymes&#34;
 2) &#34;{\&#34;firstName\&#34;:\&#34;Priscilla\&#34;,\&#34;lastName\&#34;:\&#34;Haymes\&#34;,\&#34;birthday\&#34;:1586690100000}&#34;
 </code></pre></div><p>Notice that <code>2)</code> gives us the actual type of data stored in Redis -&gt; Json!</p>
@@ -410,7 +410,7 @@ Request Body:</p>
 <h1 id="optimization">Optimization<a hidden class="anchor" aria-hidden="true" href="#optimization">#</a></h1>
 <p><a href="https://msgpack.org/">MessagePack</a> is here to the rescue! As I said, you&rsquo;d need a &ldquo;transalation&rdquo; mechanism. What if the translator is an expert, and converts your English into Spanish in as few words as possible? MessagePack is the same!</p>
 <p>You would need to add two more dependencies in your <code>pom.xml</code> file.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml">	<span style="color:#f92672">&lt;dependency&gt;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml">	<span style="color:#f92672">&lt;dependency&gt;</span>
 		<span style="color:#f92672">&lt;groupId&gt;</span>org.msgpack<span style="color:#f92672">&lt;/groupId&gt;</span>
 		<span style="color:#f92672">&lt;artifactId&gt;</span>msgpack-core<span style="color:#f92672">&lt;/artifactId&gt;</span>
 		<span style="color:#f92672">&lt;version&gt;</span>0.8.20<span style="color:#f92672">&lt;/version&gt;</span>
@@ -421,7 +421,7 @@ Request Body:</p>
 		<span style="color:#f92672">&lt;version&gt;</span>0.8.20<span style="color:#f92672">&lt;/version&gt;</span>
 	<span style="color:#f92672">&lt;/dependency&gt;</span>
 </code></pre></div><p>We create a controller called <code>MsgPackController</code> and a service called <code>MsgPackService</code> almost similar to <code>NormalController</code> and <code>NormalService</code>. We  would create a <code>MsgPackSerializer</code> to serialize using MessagePack.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MsgPackRedisSerializer</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">implements</span> RedisSerializer<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MsgPackRedisSerializer</span><span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#66d9ef">implements</span> RedisSerializer<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">{</span>
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> Charset DEFAULT_CHARSET<span style="color:#f92672">;</span>
     <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">final</span> JavaType javaType<span style="color:#f92672">;</span>
     <span style="color:#66d9ef">private</span> ObjectMapper objectMapper <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ObjectMapper<span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> MessagePackFactory<span style="color:#f92672">())</span>
@@ -466,7 +466,7 @@ Request Body:</p>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>The only major noticeable change is an instance of <code>MessagePackFactory</code> being passed into the <code>ObjectMapper</code>. This would act as a bridge between binary and String formats of data between Redis and our Spring Boot application.</p>
 <p>Testing our changes (after clearing the previously utilized storage from redis gives us the following:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">127.0.0.1:6379&gt; hgetall &#34;Priscilla&#34;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">127.0.0.1:6379&gt; hgetall &#34;Priscilla&#34;
 1) &#34;Haymes&#34;
 2) &#34;\x83\xa9firstName\xa9Priscilla\xa8lastName\xa6Haymes\xa8birthday\xcf\x00\x00\x01qn\x19\x8b &#34;
 
@@ -487,13 +487,13 @@ Request Body:</p>
 <p>It does not aim for maximum compression, or compatibility with any other compression library; instead, it aims for very high speeds and reasonable compression.</p>
 </blockquote>
 <p>Using Snappy is also as simple as adding the dependency in <code>pom.xml</code>, and a couple of lines of code changes. Just add <code>Snappy.compress</code> while serialization and <code>Snappy.decompress</code> while deserialization.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml">	<span style="color:#f92672">&lt;dependency&gt;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml">	<span style="color:#f92672">&lt;dependency&gt;</span>
 		<span style="color:#f92672">&lt;groupId&gt;</span>org.xerial.snappy<span style="color:#f92672">&lt;/groupId&gt;</span>
 		<span style="color:#f92672">&lt;artifactId&gt;</span>snappy-java<span style="color:#f92672">&lt;/artifactId&gt;</span>
 		<span style="color:#f92672">&lt;version&gt;</span>1.1.7.3<span style="color:#f92672">&lt;/version&gt;</span>
 	<span style="color:#f92672">&lt;/dependency&gt;</span>
 </code></pre></div><p>Testing it again with the same inputs returns the following</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">127.0.0.1:6379&gt; hgetall &#34;Priscilla&#34;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt">127.0.0.1:6379&gt; hgetall &#34;Priscilla&#34;
 1) &#34;Haymes&#34;
 2) &#34;7\\\x83\xa9firstName\xa9Priscilla\xa8la\t\x13`\xa6Haymes\xa8birthday\xcf\x00\x00\x01qn\x19\x8b &#34;
 

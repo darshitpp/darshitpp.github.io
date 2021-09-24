@@ -20,7 +20,7 @@
 <link rel="mask-icon" href="https://darshit.dev/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<meta name="generator" content="Hugo 0.85.0" />
+<meta name="generator" content="Hugo 0.88.0" />
 <meta property="og:title" content="The Java Constants Interface Anti-Pattern" />
 <meta property="og:description" content="Should you use Interfaces for defining constant values?" />
 <meta property="og:type" content="article" />
@@ -196,12 +196,12 @@
 </ol>
 <p>The most common way to define a constant is in a class and using <code>public static final</code>. One can then use the constant in another class using <code>ClassName.CONSTANT_NAME</code>. Constants are usually defined in upper cases as a rule, atleast in Java.</p>
 <p>So if I were to define a constant for the value of Pi(π), it would be something like:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Constants</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Constants</span> <span style="color:#f92672">{</span>
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">double</span> PI <span style="color:#f92672">=</span> 3<span style="color:#f92672">.</span><span style="color:#a6e22e">14</span><span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>This can then be used as <code>Constants.PI</code> whenever we want to reference the value of Pi.</p>
 <p>Another way one can define constants is by the use of interfaces.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Constants</span> <span style="color:#f92672">{</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">Constants</span> <span style="color:#f92672">{</span>
     <span style="color:#66d9ef">double</span> PI <span style="color:#f92672">=</span> 3<span style="color:#f92672">.</span><span style="color:#a6e22e">14</span><span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span> 
 </code></pre></div><p>However, this is not recommended by most sources on the internet. Why? Because it is an anti-pattern.</p>
@@ -210,7 +210,7 @@
 <ol>
 <li>Creating a Constants class:</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> constants<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> constants<span style="color:#f92672">;</span>
 
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MathConstantsClass</span> <span style="color:#f92672">{</span>
     <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">double</span> PI <span style="color:#f92672">=</span> 3<span style="color:#f92672">.</span><span style="color:#a6e22e">14</span><span style="color:#f92672">;</span>
@@ -218,20 +218,20 @@
 </code></pre></div><ol start="2">
 <li>Creating an interface:</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> constants<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> constants<span style="color:#f92672">;</span>
 
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">MathConstantsInterface</span> <span style="color:#f92672">{</span>
     <span style="color:#66d9ef">double</span> PI <span style="color:#f92672">=</span> 3<span style="color:#f92672">.</span><span style="color:#a6e22e">14</span><span style="color:#f92672">;</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>Let us define another interface which will help us test both the above methods.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> operations<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">package</span> operations<span style="color:#f92672">;</span>
 
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">CircleArea</span> <span style="color:#f92672">{</span>
     <span style="color:#66d9ef">double</span> <span style="color:#a6e22e">calculate</span><span style="color:#f92672">(</span><span style="color:#66d9ef">double</span> radius<span style="color:#f92672">);</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>The above interface would help us define a contract to calculate the area of a circle. As we know, the area of a circle is dependent only on its radius, and thus is reflected in the above interface.</p>
 <p>The following class provides the implementation of calculating the area of a circle.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> constants.MathConstantsClass<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> constants.MathConstantsClass<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
 
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MathConstantsClassImplementation</span> <span style="color:#66d9ef">implements</span> CircleArea <span style="color:#f92672">{</span>
@@ -240,7 +240,7 @@
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>To test the the above code, let us write a Test class using JUnit.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> org.junit.jupiter.api.Test<span style="color:#f92672">;</span>
 
 <span style="color:#f92672">import static</span> org.junit.jupiter.api.Assertions.*<span style="color:#f92672">;</span>
@@ -257,7 +257,7 @@
 <span style="color:#f92672">}</span>
 </code></pre></div><p>If you run the above piece of test code, the test would pass.</p>
 <p>For testing how we can use the constants with Interface, let&rsquo;s write another class called <code>MathConstantsInterfaceImplementation</code>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> constants.MathConstantsInterface<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> constants.MathConstantsInterface<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
 
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MathConstantsInterfaceImplementation</span> <span style="color:#66d9ef">implements</span> MathConstantsInterface<span style="color:#f92672">,</span> CircleArea <span style="color:#f92672">{</span>
@@ -266,7 +266,7 @@
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>Similarly a test for the above class is as follows:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> org.junit.jupiter.api.Test<span style="color:#f92672">;</span>
 
 <span style="color:#f92672">import static</span> org.junit.jupiter.api.Assertions.*<span style="color:#f92672">;</span>
@@ -283,7 +283,7 @@
 <span style="color:#f92672">}</span>
 </code></pre></div><p>The above Test would pass. However, the argument against the implementation is that it is not a good practice as there could be field shadowing, and that will override the original value of the constant within the class.</p>
 <p>It can be better understood with the following example:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> constants.MathConstantsInterface<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> constants.MathConstantsInterface<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
 
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MathConstantsWithInterfaceImplementationAndConstantShadowing</span> <span style="color:#66d9ef">implements</span> MathConstantsInterface<span style="color:#f92672">,</span> CircleArea <span style="color:#f92672">{</span>
@@ -294,7 +294,7 @@
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>If, by chance, someone overrode the value of <code>PI</code> inside the class, it would lead to an incorrect output. It can be easily verified by the following test.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> org.junit.jupiter.api.Test<span style="color:#f92672">;</span>
 
 <span style="color:#f92672">import static</span> org.junit.jupiter.api.Assertions.*<span style="color:#f92672">;</span>
@@ -313,7 +313,7 @@
 <p>The above arguments are valid, and hold true.</p>
 <p>However, what no one mentions is that you can still directly use the constants from the interface <em>without</em> implementing the interface. Just like the first example where we use <code>MathConstantsClass.PI</code>, we can also use <code>MathConstantsInterface.PI</code> without affecting the namespace and inheritance and shadowing issues.</p>
 <p>This can also be easily verified:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> constants.MathConstantsInterface<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> constants.MathConstantsInterface<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
 
 <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MathConstantsInterfaceWithoutImplementation</span> <span style="color:#66d9ef">implements</span> CircleArea <span style="color:#f92672">{</span>
@@ -322,7 +322,7 @@
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>Test class:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#f92672">import</span> operations.CircleArea<span style="color:#f92672">;</span>
 <span style="color:#f92672">import</span> org.junit.jupiter.api.Test<span style="color:#f92672">;</span>
 
 <span style="color:#f92672">import static</span> org.junit.jupiter.api.Assertions.*<span style="color:#f92672">;</span>
@@ -338,9 +338,9 @@
     <span style="color:#f92672">}</span>
 <span style="color:#f92672">}</span>
 </code></pre></div><p>It would make no difference to our way of implementation. Even the number of imports remain same. Moreover, you do not need additional boilerplate of <code>public static final</code> as members in an interface are <code>public static final</code> by default.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">double</span> PI <span style="color:#f92672">=</span> 3<span style="color:#f92672">.</span><span style="color:#a6e22e">14</span><span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> <span style="color:#66d9ef">double</span> PI <span style="color:#f92672">=</span> 3<span style="color:#f92672">.</span><span style="color:#a6e22e">14</span><span style="color:#f92672">;</span>
 </code></pre></div><p>vs</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">double</span> PI <span style="color:#f92672">=</span> 3<span style="color:#f92672">.</span><span style="color:#a6e22e">14</span><span style="color:#f92672">;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-java" data-lang="java"><span style="color:#66d9ef">double</span> PI <span style="color:#f92672">=</span> 3<span style="color:#f92672">.</span><span style="color:#a6e22e">14</span><span style="color:#f92672">;</span>
 </code></pre></div><p>What would you prefer? Cleaner code, anyone?</p>
 <p>I have seen most constants almost grouped together if they are used throughout the application. You could also suggest that interface should only be used for contracts, and in most cases they are. However, keeping an interface for solely storing constants doesn&rsquo;t seem to be wrong to me either!</p>
 <p>Unless, of course, some developer tries to implement a class which solely contains constants &ndash; which would beget the question &ndash; WHY?</p>

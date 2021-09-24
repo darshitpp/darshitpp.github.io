@@ -7,6 +7,16 @@
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Sat, 03 Jul 2021 20:12:52 +0530</lastBuildDate><atom:link href="https://darshit.dev/index.xml" rel="self" type="application/rss+xml" />
     <item>
+      <title>About</title>
+      <link>https://darshit.dev/about/</link>
+      <pubDate>Fri, 24 Sep 2021 11:08:57 +0530</pubDate>
+      
+      <guid>https://darshit.dev/about/</guid>
+      <description>I currently work as a Software Engineer with Gupshup.
+I am involved in the computing community by volunteering at ACM. I have been an editor with ACM XRDS, and I&amp;rsquo;m now a member of the ACM Future of Computing Academy (FCA).</description>
+    </item>
+    
+    <item>
       <title>Dynamic Enums</title>
       <link>https://darshit.dev/posts/dynamic-enums/</link>
       <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
@@ -41,16 +51,6 @@ Want to change Java Version/JAVA_HOME for Ant builds?  Open ~/.antrc file by run
       
       <guid>https://darshit.dev/posts/two-way-ssl-nginx/</guid>
       <description>A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and have had only a limited experience with networking concepts like SSL/TLS in my short career.</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://darshit.dev/about/</link>
-      <pubDate>Mon, 01 Jun 2020 11:08:57 +0530</pubDate>
-      
-      <guid>https://darshit.dev/about/</guid>
-      <description>I currently work as a Software Engineer with Gupshup.
-I am involved in the computing community by volunteering at ACM. I have been an editor with ACM XRDS, and I&amp;rsquo;m now a member of the ACM Future of Computing Academy (FCA).</description>
     </item>
     
     <item>

@@ -5,6 +5,9 @@
     <loc>https://darshit.dev/posts/</loc>
     <lastmod>2021-07-03T20:12:52+05:30</lastmod>
   </url><url>
+    <loc>https://darshit.dev/about/</loc>
+    <lastmod>2021-09-24T11:08:57+05:30</lastmod>
+  </url><url>
     <loc>https://darshit.dev/tags/class/</loc>
     <lastmod>2021-07-03T20:12:52+05:30</lastmod>
   </url><url>
@@ -49,9 +52,6 @@
   </url><url>
     <loc>https://darshit.dev/posts/two-way-ssl-nginx/</loc>
     <lastmod>2020-06-13T18:30:13+05:30</lastmod>
-  </url><url>
-    <loc>https://darshit.dev/about/</loc>
-    <lastmod>2020-06-01T11:08:57+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/posts/reduce-redis-memory-usage/</loc>
     <lastmod>2020-05-10T21:25:01+05:30</lastmod>
