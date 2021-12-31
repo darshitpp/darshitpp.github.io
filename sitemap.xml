@@ -3,15 +3,33 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://darshit.dev/posts/</loc>
-    <lastmod>2021-07-03T20:12:52+05:30</lastmod>
+    <lastmod>2021-12-31T19:00:26+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/cyber-security/</loc>
+    <lastmod>2021-12-31T19:00:26+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/dark-patterns/</loc>
+    <lastmod>2021-12-31T19:00:26+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/</loc>
+    <lastmod>2021-12-31T19:00:26+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/product-managers/</loc>
+    <lastmod>2021-12-31T19:00:26+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/posts/stupid-patterns/</loc>
+    <lastmod>2021-12-31T19:00:26+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/stupid-patterns/</loc>
+    <lastmod>2021-12-31T19:00:26+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/</loc>
+    <lastmod>2021-12-31T19:00:26+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/about/</loc>
     <lastmod>2021-09-24T11:08:57+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/class/</loc>
-    <lastmod>2021-07-03T20:12:52+05:30</lastmod>
-  </url><url>
-    <loc>https://darshit.dev/</loc>
     <lastmod>2021-07-03T20:12:52+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/posts/dynamic-enums/</loc>
@@ -27,9 +45,6 @@
     <lastmod>2021-07-03T20:12:52+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/singleton/</loc>
-    <lastmod>2021-07-03T20:12:52+05:30</lastmod>
-  </url><url>
-    <loc>https://darshit.dev/tags/</loc>
     <lastmod>2021-07-03T20:12:52+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/type-safe-enums/</loc>
@@ -74,5 +89,7 @@
     <loc>https://darshit.dev/categories/</loc>
   </url><url>
     <loc>https://darshit.dev/search/</loc>
+  </url><url>
+    <loc>https://darshit.dev/tags/ui/ux/</loc>
   </url>
 </urlset>

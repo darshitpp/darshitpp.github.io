@@ -10,7 +10,7 @@
 <meta name="description" content="Darshit Patel&#39;s Blog: Some things that I learn and find interesting">
 <meta name="author" content="">
 <link rel="canonical" href="https://darshit.dev/tags/best-practices/" />
-<link crossorigin="anonymous" href="https://darshit.dev/assets/css/stylesheet.min.35cd0f65a15cafa92372b8313deef5960aae04b90ad722f2bbf509eb0468137e.css" integrity="sha256-Nc0PZaFcr6kjcrgxPe71lgquBLkK1yLyu/UJ6wRoE34=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="https://darshit.dev/assets/css/stylesheet.min.c88963fe2d79462000fd0fb1b3737783c32855d340583e4523343f8735c787f0.css" integrity="sha256-yIlj/i15RiAA/Q&#43;xs3N3g8MoVdNAWD5FIzQ/hzXHh/A=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://darshit.dev/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://darshit.dev/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://darshit.dev/favicon-32x32.png">
@@ -20,7 +20,43 @@
 <meta name="msapplication-TileColor" content="#2e2e33">
 <meta name="generator" content="Hugo 0.88.0" />
 <link rel="alternate" type="application/rss+xml" href="https://darshit.dev/tags/best-practices/index.xml">
-<meta property="og:title" content="best-practices" />
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="best-practices" />
 <meta property="og:description" content="Darshit Patel&#39;s Blog: Some things that I learn and find interesting" />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://darshit.dev/tags/best-practices/" />
@@ -42,43 +78,6 @@
     }
 
 </script>
-<noscript>
-    <style type="text/css">
-        #theme-toggle,
-        .top-link {
-            display: none;
-        }
-
-    </style>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --theme: #1d1e20;
-                --entry: #2e2e33;
-                --primary: rgba(255, 255, 255, 0.84);
-                --secondary: rgba(255, 255, 255, 0.56);
-                --tertiary: rgba(255, 255, 255, 0.16);
-                --content: rgba(255, 255, 255, 0.74);
-                --hljs-bg: #2e2e33;
-                --code-bg: #37383e;
-                --border: #333;
-            }
-
-            .list {
-                background: var(--theme);
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-track {
-                background: 0 0;
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-thumb {
-                border-color: var(--theme);
-            }
-        }
-
-    </style>
-</noscript>
 
 <header class="header">
     <nav class="nav">
@@ -128,18 +127,20 @@
 
 <article class="post-entry tag-entry"> 
   <header class="entry-header">
-    <h2>The Java Constants Interface Anti-Pattern</h2>
+    <h2>The Java Constants Interface Anti-Pattern
+    </h2>
   </header>
   <section class="entry-content">
     <p>How do you define and use constants in Java?
 Most advice on Internet has the following opinions:
  Declare public static final for constants in a class Do not use Interfaces for constants  The most common way to define a constant is in a class and using public static final....</p>
   </section>
-  <footer class="entry-footer">November 8, 2020&nbsp;·&nbsp;5 min</footer>
+  <footer class="entry-footer"><span title='2020-11-08 04:29:47 +0530 +0530'>November 8, 2020</span>&nbsp;·&nbsp;5 min</footer>
   <a class="entry-link" aria-label="post link to The Java Constants Interface Anti-Pattern" href="https://darshit.dev/posts/java-constants-interface/"></a>
 </article>
     </main>
-    <footer class="footer">
+    
+<footer class="footer">
     <span>&copy; 2021 <a href="https://darshit.dev/">Darshit Patel&#39;s Blog</a></span>
     <span>
         Powered by
@@ -147,19 +148,19 @@ Most advice on Internet has the following opinions:
         <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
     </span>
 </footer>
-<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)">
-    <button class="top-link" id="top-link" type="button" accesskey="g">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
-            <path d="M12 6H0l6-6z" />
-        </svg>
-    </button>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
 </a>
 
 <script>
     let menu = document.getElementById('menu')
-    menu.scrollLeft = localStorage.getItem("menu-scroll-position");
-    menu.onscroll = function () {
-        localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
     }
 
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
