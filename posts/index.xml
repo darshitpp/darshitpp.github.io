@@ -6,8 +6,15 @@
     <description>Recent content in Posts on Darshit Patel&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 31 Dec 2021 19:00:26 +0530</lastBuildDate>
+    <lastBuildDate>Fri, 29 Mar 2024 18:52:27 +0530</lastBuildDate>
     <atom:link href="https://darshit.dev/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Handling limited sudo access through Ansible</title>
+      <link>https://darshit.dev/posts/partial-sudo-ansible/</link>
+      <pubDate>Fri, 29 Mar 2024 18:52:27 +0530</pubDate>
+      <guid>https://darshit.dev/posts/partial-sudo-ansible/</guid>
+      <description>Especially useful if you don&amp;#39;t have root access or access to the sudoers file</description>
+    </item>
     <item>
       <title>Stupid Patterns</title>
       <link>https://darshit.dev/posts/stupid-patterns/</link>

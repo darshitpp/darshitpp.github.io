@@ -3,15 +3,42 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://darshit.dev/posts/</loc>
-    <lastmod>2021-12-31T19:00:26+05:30</lastmod>
+    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/ansible/</loc>
+    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/</loc>
+    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/posts/partial-sudo-ansible/</loc>
+    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/nopasswd/</loc>
+    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/password/</loc>
+    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/python/</loc>
+    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/root/</loc>
+    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/sudo/</loc>
+    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/sudoers/</loc>
+    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/</loc>
+    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/cyber-security/</loc>
     <lastmod>2021-12-31T19:00:26+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/dark-patterns/</loc>
-    <lastmod>2021-12-31T19:00:26+05:30</lastmod>
-  </url><url>
-    <loc>https://darshit.dev/</loc>
     <lastmod>2021-12-31T19:00:26+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/product-managers/</loc>
@@ -21,9 +48,6 @@
     <lastmod>2021-12-31T19:00:26+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/posts/stupid-patterns/</loc>
-    <lastmod>2021-12-31T19:00:26+05:30</lastmod>
-  </url><url>
-    <loc>https://darshit.dev/tags/</loc>
     <lastmod>2021-12-31T19:00:26+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/about/</loc>
