@@ -6,13 +6,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="robots" content="index, follow">
 <title>How To Implement Two Way SSL With Nginx | Darshit Patel&#39;s Blog</title>
-<meta name="keywords" content="" />
+<meta name="keywords" content="">
 <meta name="description" content="A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and have had only a limited experience with networking concepts like SSL/TLS in my short career.">
 <meta name="author" content="">
-<link rel="canonical" href="https://darshit.dev/posts/two-way-ssl-nginx/" />
-<link crossorigin="anonymous" href="https://darshit.dev/assets/css/stylesheet.min.c88963fe2d79462000fd0fb1b3737783c32855d340583e4523343f8735c787f0.css" integrity="sha256-yIlj/i15RiAA/Q&#43;xs3N3g8MoVdNAWD5FIzQ/hzXHh/A=" rel="preload stylesheet" as="style">
-<script defer crossorigin="anonymous" src="https://darshit.dev/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js" integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5&#43;kdJvBz5iKbt6B5PJI="
-    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="canonical" href="https://darshit.dev/posts/two-way-ssl-nginx/">
+<link crossorigin="anonymous" href="https://darshit.dev/assets/css/stylesheet.2d50b1531bd1b3146d65c5543bd298f7f982786aadee4c223cb3a1cb51906106.css" integrity="sha256-LVCxUxvRsxRtZcVUO9KY9/mCeGqt7kwiPLOhy1GQYQY=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://darshit.dev/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://darshit.dev/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://darshit.dev/favicon-32x32.png">
@@ -20,7 +18,6 @@
 <link rel="mask-icon" href="https://darshit.dev/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<meta name="generator" content="Hugo 0.88.0" />
 <noscript>
     <style>
         #theme-toggle,
@@ -38,7 +35,7 @@
                 --secondary: rgb(155, 156, 157);
                 --tertiary: rgb(65, 66, 68);
                 --content: rgb(196, 196, 197);
-                --hljs-bg: rgb(46, 46, 51);
+                --code-block-bg: rgb(46, 46, 51);
                 --code-bg: rgb(55, 56, 62);
                 --border: rgb(51, 51, 51);
             }
@@ -62,8 +59,8 @@
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://darshit.dev/posts/two-way-ssl-nginx/" />
 <meta property="og:image" content="https://supporthost.in/wp-content/uploads/2017/10/nginx-9.jpg" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2020-06-13T18:30:13&#43;05:30" />
-<meta property="article:modified_time" content="2020-06-13T18:30:13&#43;05:30" />
+<meta property="article:published_time" content="2020-06-13T18:30:13+05:30" />
+<meta property="article:modified_time" content="2020-06-13T18:30:13+05:30" />
 
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content="https://supporthost.in/wp-content/uploads/2017/10/nginx-9.jpg" />
@@ -101,7 +98,7 @@
   "keywords": [
     
   ],
-  "articleBody": "A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and have had only a limited experience with networking concepts like SSL/TLS in my short career. So I turned up blank on how I could make it possible. Moreover, the terminology you’d find online is not uniform. From a programming point of view, the term “Two way SSL” led me to limited results, and I soon realized that other communities have different terminology. For example the “Two way SSL” is also known as “Mutual TLS” or “mTLS” or “Client Certificate Authentication” in Cloud/DevOps communitites. This makes finding the right resources online more difficult.\nOur services have SSL enabled, but only the usual one – similar to the one you’d find while visiting this website, but this was a unique thing for me as I didn’t even know two way SSL existed. I figured out how it works. However, there were more problems with trying to understand how to implement this. Most guides that I found on the internet were very incomplete, and straight away skipped many parts for someone who’d be new to this. This is my attempt at explaining what I have learned, and documenting the same for future reference. It will not explain how two way SSL works, but how to make it work. If you need a quick refresher however, I would direct you to this easy to understand article by Cloudflare explaining where and how mTLS is used.\nThis guide is only for Unix like systems like macOS or Linux. Though I tried this on Windows, but could not make it work.\nPrerequisites  Nginx sudo privileges on your system  Installing and Configuring Nginx Install Install1 nginx using apt command on your Linux system.\nsudo apt update sudo apt install nginx This will install all of Nginx on the path /opt/nginx. All the configuration files we will be editing for two-way SSL would be found within this directory.\nConfigure Nginx to start Before starting up Nginx for use, we need to enable some ports on the firewall that our Nginx can listen incoming connections from.\nsudo ufw app list Output:\nAvailable applications: Nginx Full Nginx HTTP Nginx HTTPS OpenSSH The utility ufw can be used to manage our firewall. Though a knowledge of ufw is not necessary for us, more information can be found here.\nYou can see in the above output that the utility responds us with four profiles. When we installed Nginx, it registered itself with the ufw utility with three profiles.\n Nginx HTTP allows Nginx to listen through port 80, for normal HTTP traffic. Nginx HTTPS allows Nginx to listen through port 443, for HTTPS traffic. Nginx Full is a combination of the above both, enabling port 80 and 443 both.  We will enable Nginx Full as we have to use our server for SSL, but using normal HTTP connections is not an uncommon use-case either. To enable it, run:\nsudo ufw allow 'Nginx Full' You should see the activated profile if you run the below command\nsudo ufw status Output:\nStatus: active To Action From -- ------ ---- OpenSSH ALLOW Anywhere Nginx Full ALLOW Anywhere OpenSSH (v6) ALLOW Anywhere (v6) Nginx Full (v6) ALLOW Anywhere (v6) The Nginx service should already be up and running now. You can check by executing\nsystemctl status nginx Output:\n● nginx.service - A high performance web server and a reverse proxy server Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled) Active: active (running) since Fri 2018-04-20 16:08:19 UTC; 3 days ago Docs: man:nginx(8) Main PID: 2369 (nginx) Tasks: 2 (limit: 1153) CGroup: /system.slice/nginx.service ├─2369 nginx: master process /usr/sbin/nginx -g daemon on; master_process on; └─2380 nginx: worker process Creating Certificates Terminology  Certificate Authority (CA): This is an Organization which provides you a Certificate (the .crt file). In reality, anyone (including yourself) can be the CA which issues certificates Certificate Signing Request (CSR .csr): An “input form” with details (like Name, Organization, Address, etc.) filled by the requester of the certificate which is submitted to the CA Private Key (.key): The private key file used by the CA in conjunction with CSR to sign and generate the certificates Certificate (.crt): The certificate generated by the CA Self Signed Certificate: Consider yourself as a Certificate Authority (CA) and generate the .crt files.  Now that we know the terminology, it would be easier to proceed with generating the certificates. The following part of the tutorial requires root/superuser privileges, so switch to the super user using the sudo su command.\nCreate a directory called certs under the root of the file-system which will hold all the certificates and related files.\n# Create directory mkdir /certs # Change directory to /certs cd /certs # Verify the present working directory pwd Output:\n/certs In this tutorial, we would be designating ourselves as a Certificate Authority, and then self-sign and generate the certificates.\nGenerate Certificate Authority (CA) files We would be first generating a CA key, which would be the basis for all further certificate generation.\nopenssl genrsa -des3 -out ca.key 4096 Output:\nGenerating RSA private key, 4096 bit long modulus (2 primes) .............................................................++++ ....................................................................................................................................................................................++++ e is 65537 (0x010001) Enter pass phrase for ca.key: Verifying - Enter pass phrase for ca.key: Command options:\n genrsa: generate RSA private key -des3: encrypts the output key using des3 encryption -out: specifying the output key file 4096: size of private key in bits  This generates a file named ca.key in the current directory. You would have to provide a password/passphrase for the key. For the purposes of this tutorial, I’ll be using the same passphrase whenever required.\n = root\nThe next step is the generation of ca.crt\nopenssl req -new -x509 -days 3650 -key ca.key -out ca.crt Output:\nEnter pass phrase for ca.key: Command options:\n req: used for creating certificate requests -new: generates new certificate request -x509: outputs a new self-signed certificate instead of a certificate request -days 3650: validity of certificate (in this case, 10 years/3650 days) -key: RSA key to be used for generating the certificate -out: output file for the certificate  Once you enter the passphrase (which is the same as we put in the previous step), it’ll ask you to provide more information for the self-signed certificate.\nYou are about to be asked to enter information that will be incorporated into your certificate request. What you are about to enter is what is called a Distinguished Name or a DN. There are quite a few fields but you can leave some blank For some fields there will be a default value, If you enter '.', the field will be left blank. ----- Country Name (2 letter code) [AU]: State or Province Name (full name) [Some-State]: Locality Name (eg, city) []: Organization Name (eg, company) [Internet Widgits Pty Ltd]:CertAuth Organizational Unit Name (eg, section) []: Common Name (e.g. server FQDN or YOUR name) []: Email Address []: Note the Organization Name parameter is named as CertAuth for this example. This is because we are a CA and CAs should ideally be independent to enable other parties to trust other parties and establish a chain of trust.\nA PEM file certificate would also be needed. This file is way of encoding the certificates.2 To create a PEM file, simply do the following:\ncat ca.key  ca.pem cat ca.key  ca.pem The ca.key would be something like\n-----BEGIN RSA PRIVATE KEY----- Proc-Type: 4,ENCRYPTED DEK-Info: DES-EDE3-CBC,0E2D38C130456B75 3+0Em2EKRkmCCu79bR7E2uFy/G1huIGEGsItwDf0C70Hf2bmUUDYazK/CPZxZCut PDximngoGaLSdLQ2HWGjjCe59pJxxZknxHu9QVy3mIWLixAZWevDUnoK1q+Wqy0M -----END RSA PRIVATE KEY----- -----BEGIN CERTIFICATE----- MIIFSzCCAzOgAwIBAgIUeawaQJUIAPKOKhrIJDjMVCYVx4MwDQYJKoZIhvcNAQEL BQAwNTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxETAPBgNVBAoM -----END CERTIFICATE----- Generating Client/User Certificates At this point, we have three files in the certs directory.\nca.key ca.crt ca.pem We now would be generating client/user certificates. The command to generate the user.key is similar to the one used to create the ca.key\nopenssl genrsa -des3 -out user.key 4096 Output:\nGenerating RSA private key, 4096 bit long modulus (2 primes) .....................................................................................................................................................++++ .......................++++ e is 65537 (0x010001) Enter pass phrase for user.key: Verifying - Enter pass phrase for user.key: As mentioned earlier, the passphrase to be used for user.key is still the same.\nThe client/user certificate aren’t supposed to be self-signed, and we would need to generate a CSR. It means the signing is to be done by a CA(even though in this case, we own the CA!). The way to do this is\nopenssl req -new -key user.key -out user.csr Output:\nEnter pass phrase for user.key: You are about to be asked to enter information that will be incorporated into your certificate request. What you are about to enter is what is called a Distinguished Name or a DN. There are quite a few fields but you can leave some blank For some fields there will be a default value, If you enter '.', the field will be left blank. ----- Country Name (2 letter code) [AU]: State or Province Name (full name) [Some-State]: Locality Name (eg, city) []: Organization Name (eg, company) [Internet Widgits Pty Ltd]:User Organizational Unit Name (eg, section) []: Common Name (e.g. server FQDN or YOUR name) []: Email Address []: Please enter the following 'extra' attributes to be sent with your certificate request A challenge password []: An optional company name []: The Organization Name would be User as this certificate is for a Client/User. DO NOT keep it the same as the one for CA.\nThe next step would be to create a User Certificate from the User CSR.\nopenssl x509 -req -days 365 -in user.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out user.crt Output:\nSignature ok subject=C = AU, ST = Some-State, O = User Getting CA Private Key Enter pass phrase for ca.key: Command options:\n x509: standard format for public key certificates -CA: the CA certificate -CAkey: the key to generate the certificate from -set_serial 01: the serial version of the certificate to be generated. The user certificate can be regenerated by incrementing the serial number from the same user.csr after 365 days when it expires.  You can see that it displays data from the CSR, and then uses the CA key to generate user.crt.\nTo enable us to use the certificate from a web browser, we would need to create the certificate in the PFX file format.\nopenssl pkcs12 -export -out user.pfx -inkey user.key -in user.crt -certfile ca.crt Output:\nEnter pass phrase for user.key: Enter Export Password: Verifying - Enter Export Password: You can verify if the generated certificate can be decrypted using the CA certificate by the following command\nopenssl verify -verbose -CAfile ca.crt user.crt Output:\nuser.crt: OK The files that we currently have in the directory are\nca.key ca.crt ca.pem user.key user.csr user.crt user.pfx Generating Server Certificates This is similar to generating the User certificates, with the following commands\nGenerate the Server key. For server certificates, the standard naming convention seems to be .\nopenssl genrsa -out nginx.mssl.com.key 4096 Output:\nGenerating RSA private key, 4096 bit long modulus (2 primes) .....................................++++ .........................++++ e is 65537 (0x010001) Use the above generated key to generate a CSR.\nopenssl req -new -key nginx.mssl.com.key -out nginx.mssl.com.csr Output:\nYou are about to be asked to enter information that will be incorporated into your certificate request. What you are about to enter is what is called a Distinguished Name or a DN. There are quite a few fields but you can leave some blank For some fields there will be a default value, If you enter '.', the field will be left blank. ----- Country Name (2 letter code) [AU]: State or Province Name (full name) [Some-State]: Locality Name (eg, city) []: Organization Name (eg, company) [Internet Widgits Pty Ltd]:Server Organizational Unit Name (eg, section) []: Common Name (e.g. server FQDN or YOUR name) []:nginx.mssl.com Email Address []: Please enter the following 'extra' attributes to be sent with your certificate request A challenge password []: An optional company name []: Make sure to put the Organization Name as Server and Common Name (which is the website name) as nginx.mssl.com\nWe can now use the CSR along with the CA files to generate the CRT for our server.\nopenssl x509 -req -days 365 -sha256 -in nginx.mssl.com.csr -CA ca.crt -CAkey ca.key -set_serial 1 -out nginx.mssl.com.crt Output:\nSignature ok subject=C = AU, ST = Some-State, O = Server, CN = nginx.mssl.com Getting CA Private Key Enter pass phrase for ca.key: All the certificates are now ready for our use!\nca.key ca.crt ca.pem user.key user.csr user.crt user.pfx nginx.mssl.com.key nginx.mssl.com.csr nginx.mssl.com.crt Setting up our “Website” with Nginx Of course, we aren’t setting up a real website. But we do want to make our SSL authentication work on the domain nginx.mssl.com. We can do this by a little “hack” by changing our /etc/hosts file.\nFire up a new shell, and use\nsudo vim /etc/hosts Add the following line to the file and save.\n127.0.0.1 nginx.mssl.com This will enable your local machine to resolve the domain nginx.mssl.com to your locahost.\nThe website will not work at the moment – you’d have to specify the sources/web pages it needs to serve when requested.\nCreate a file index.html on the directory path /usr/share/nginx/mssl with the contents:\nhtml body h1Welcome to nginx!-mutual ssl testh1 body html If the TLS handshake is successful, the web server should serve the file created above.\nConfiguring the Nginx server to enable two way SSL All our certificates are at root in /certs directory. For simplicity, we would be copying the certificates to /etc/nginx/certs directory.\ncp -r /certs /etc/nginx/certs Also ensure that the certificates can be used by nginx service by providing them the access\nchmod 777 -R certs/ We would not be fiddling with the default nginx configuration which is present in the nginx.conf file. Instead, we would be creating a new file called proxy.conf using in the /etc/nginx/sites-available directory.\nCreate the file proxy.conf using the command\ncd /etc/nginx/sites-available touch proxy.conf Enter the contents as the following (Notice the comments have more explanation):\nserver { # Listen on port 443 for HTTPS connections listen 443; # Turn SSL on ssl on; # Name of the server/website server_name nginx.mssl.com; # See https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_ssl_server_name proxy_ssl_server_name on; # This is the server SSL certificate ssl_certificate /etc/nginx/certs/nginx.mssl.com.crt; # This is the server certificate key ssl_certificate_key /etc/nginx/certs/nginx.mssl.com.key; # Important: # This is the CA cert against which the client/user will be validated # In our case since the Server and the Client certificate is # generated from the same CA, we use the ca.crt # But in actual production, the Client certificate might be # created from a different CA ssl_client_certificate /etc/nginx/certs/ca.crt; # Enables mutual TLS/two way SSL to verify the client ssl_verify_client on; # Number of intermediate certificates to verify. Good explanation of # certificate chaining can be found at # https://cheapsslsecurity.com/p/what-is-ssl-certificate-chain/ ssl_verify_depth 2; # Any error during the connection can be found on the following path error_log /var/log/nginx/error.log debug; ssl_prefer_server_ciphers on; ssl_protocols TLSv1.1 TLSv1.2; ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:ECDHE-RSA-RC4-SHA:ECDHE-ECDSA-RC4-SHA:RC4-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!3DES:!MD5:!PSK'; keepalive_timeout 10; ssl_session_timeout 5m; # Matches the \"root\" of the website # If TLS handshake is successful, the request is routed to this block location / { # path from which the website is served from root /usr/share/nginx/mssl; # index file name index index.html index.htm; } } Nginx has a good Beginner’s Guide to Nginx.\nTo enable Nginx to use the above configuration, we also have to link the same in the /etc/nginx/sites-enabled directory.\nTo accomplish this, use\nln -s /etc/nginx/sites-available/proxy.conf /etc/nginx/sites-enabled/proxy.conf This creates a symbolic link into /etc/nginx/sites-enabled/proxy.conf from /etc/nginx/sites-available/proxy.conf. Consider it as you having many server configurations in the sites-available, but only what you chose to “enable” in the sites-enabled will be active.\nWe now just have to restart the Nginx for the configuration to be active!\nsystemctl restart nginx I’ll be using Postman to test our changes. However, you’ll need to configure Postman to send the Client Certificates with the request3.\nTo configure the Certificates, navigate to Settings - Certificates Tab.\nThere will be a section to add the CA Certificate named CA Certificates, and this certificate should be a PEM file. Select the ca.pem from /etc/nginx/certs. A mistake would be to select the file from the root directory /certs but this will not work as Postman wouldn’t be able to access the file.\nThere would be another section below for Client Certificates. Click on Add Certificate, and put the details as the following:\n Host: nginx.mssl.com CRT File: /etc/nginx/certs/user.crt KEY File: /etc/nginx/certs/user.key PFX File: /etc/nginx/certs/user.pfx Passphrase:   Now try to fire a GET request to the domain https://nginx.mssl.com. If everything was configured successfully, you’ll get the following response:\nhtml body h1Welcome to nginx!-mutual ssl testh1 body html If there’s an error in the configuration, you’ll get the following error response:\nhtml head title400 No required SSL certificate was senttitle head body bgcolor=\"white\" center h1400 Bad Requesth1 center centerNo required SSL certificate was sentcenter hr centernginx/1.14.0 (Ubuntu)center body html Hope this post was of some help!!\nReference:\n This article is good for the demo part. The post Client Certificate Auth With Nginx was instrumental in explaining the ssl_client_certificate directive and how to use it. This post is as close to perfection as it gets regarding the steps for generating Certificates, but I couldn’t manage to make it work fully with Nginx. (Especially because it skips the demo part + it could be a little more descriptive with generation of the certificates) This article is good, but still unclear for someone starting out. I used this article to actually learn about generating the certificates especially because it provides easy commands and decent explanation.    The main resource for installing Nginx is this tutorial by DigitalOcean. All the relevant steps have been described in my article. ↩︎\n More info here ↩︎\n Client Certificates: Postman Learning Center ↩︎\n   ",
+  "articleBody": "A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and have had only a limited experience with networking concepts like SSL/TLS in my short career. So I turned up blank on how I could make it possible. Moreover, the terminology you’d find online is not uniform. From a programming point of view, the term “Two way SSL” led me to limited results, and I soon realized that other communities have different terminology. For example the “Two way SSL” is also known as “Mutual TLS” or “mTLS” or “Client Certificate Authentication” in Cloud/DevOps communitites. This makes finding the right resources online more difficult.\nOur services have SSL enabled, but only the usual one – similar to the one you’d find while visiting this website, but this was a unique thing for me as I didn’t even know two way SSL existed. I figured out how it works. However, there were more problems with trying to understand how to implement this. Most guides that I found on the internet were very incomplete, and straight away skipped many parts for someone who’d be new to this. This is my attempt at explaining what I have learned, and documenting the same for future reference. It will not explain how two way SSL works, but how to make it work. If you need a quick refresher however, I would direct you to this easy to understand article by Cloudflare explaining where and how mTLS is used.\nThis guide is only for Unix like systems like macOS or Linux. Though I tried this on Windows, but could not make it work.\nPrerequisites Nginx sudo privileges on your system Installing and Configuring Nginx Install Install1 nginx using apt command on your Linux system.\nsudo apt update sudo apt install nginx This will install all of Nginx on the path /opt/nginx. All the configuration files we will be editing for two-way SSL would be found within this directory.\nConfigure Nginx to start Before starting up Nginx for use, we need to enable some ports on the firewall that our Nginx can listen incoming connections from.\nsudo ufw app list Output:\nAvailable applications: Nginx Full Nginx HTTP Nginx HTTPS OpenSSH The utility ufw can be used to manage our firewall. Though a knowledge of ufw is not necessary for us, more information can be found here.\nYou can see in the above output that the utility responds us with four profiles. When we installed Nginx, it registered itself with the ufw utility with three profiles.\nNginx HTTP allows Nginx to listen through port 80, for normal HTTP traffic. Nginx HTTPS allows Nginx to listen through port 443, for HTTPS traffic. Nginx Full is a combination of the above both, enabling port 80 and 443 both. We will enable Nginx Full as we have to use our server for SSL, but using normal HTTP connections is not an uncommon use-case either. To enable it, run:\nsudo ufw allow 'Nginx Full' You should see the activated profile if you run the below command\nsudo ufw status Output:\nStatus: active To Action From -- ------ ---- OpenSSH ALLOW Anywhere Nginx Full ALLOW Anywhere OpenSSH (v6) ALLOW Anywhere (v6) Nginx Full (v6) ALLOW Anywhere (v6) The Nginx service should already be up and running now. You can check by executing\nsystemctl status nginx Output:\n● nginx.service - A high performance web server and a reverse proxy server Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled) Active: active (running) since Fri 2018-04-20 16:08:19 UTC; 3 days ago Docs: man:nginx(8) Main PID: 2369 (nginx) Tasks: 2 (limit: 1153) CGroup: /system.slice/nginx.service ├─2369 nginx: master process /usr/sbin/nginx -g daemon on; master_process on; └─2380 nginx: worker process Creating Certificates Terminology Certificate Authority (CA): This is an Organization which provides you a Certificate (the .crt file). In reality, anyone (including yourself) can be the CA which issues certificates Certificate Signing Request (CSR .csr): An “input form” with details (like Name, Organization, Address, etc.) filled by the requester of the certificate which is submitted to the CA Private Key (.key): The private key file used by the CA in conjunction with CSR to sign and generate the certificates Certificate (.crt): The certificate generated by the CA Self Signed Certificate: Consider yourself as a Certificate Authority (CA) and generate the .crt files. Now that we know the terminology, it would be easier to proceed with generating the certificates. The following part of the tutorial requires root/superuser privileges, so switch to the super user using the sudo su command.\nCreate a directory called certs under the root of the file-system which will hold all the certificates and related files.\n# Create directory mkdir /certs # Change directory to /certs cd /certs # Verify the present working directory pwd Output:\n/certs In this tutorial, we would be designating ourselves as a Certificate Authority, and then self-sign and generate the certificates.\nGenerate Certificate Authority (CA) files We would be first generating a CA key, which would be the basis for all further certificate generation.\nopenssl genrsa -des3 -out ca.key 4096 Output:\nGenerating RSA private key, 4096 bit long modulus (2 primes) .............................................................++++ ....................................................................................................................................................................................++++ e is 65537 (0x010001) Enter pass phrase for ca.key: Verifying - Enter pass phrase for ca.key: Command options:\ngenrsa: generate RSA private key -des3: encrypts the output key using des3 encryption -out: specifying the output key file 4096: size of private key in bits This generates a file named ca.key in the current directory. You would have to provide a password/passphrase for the key. For the purposes of this tutorial, I’ll be using the same passphrase whenever required.\n= root\nThe next step is the generation of ca.crt\nopenssl req -new -x509 -days 3650 -key ca.key -out ca.crt Output:\nEnter pass phrase for ca.key: Command options:\nreq: used for creating certificate requests -new: generates new certificate request -x509: outputs a new self-signed certificate instead of a certificate request -days 3650: validity of certificate (in this case, 10 years/3650 days) -key: RSA key to be used for generating the certificate -out: output file for the certificate Once you enter the passphrase (which is the same as we put in the previous step), it’ll ask you to provide more information for the self-signed certificate.\nYou are about to be asked to enter information that will be incorporated into your certificate request. What you are about to enter is what is called a Distinguished Name or a DN. There are quite a few fields but you can leave some blank For some fields there will be a default value, If you enter '.', the field will be left blank. ----- Country Name (2 letter code) [AU]: State or Province Name (full name) [Some-State]: Locality Name (eg, city) []: Organization Name (eg, company) [Internet Widgits Pty Ltd]:CertAuth Organizational Unit Name (eg, section) []: Common Name (e.g. server FQDN or YOUR name) []: Email Address []: Note the Organization Name parameter is named as CertAuth for this example. This is because we are a CA and CAs should ideally be independent to enable other parties to trust other parties and establish a chain of trust.\nA PEM file certificate would also be needed. This file is way of encoding the certificates.2 To create a PEM file, simply do the following:\ncat ca.key \u003e ca.pem cat ca.key \u003e\u003e ca.pem The ca.key would be something like\n-----BEGIN RSA PRIVATE KEY----- Proc-Type: 4,ENCRYPTED DEK-Info: DES-EDE3-CBC,0E2D38C130456B75 3+0Em2EKRkmCCu79bR7E2uFy/G1huIGEGsItwDf0C70Hf2bmUUDYazK/CPZxZCut PDximngoGaLSdLQ2HWGjjCe59pJxxZknxHu9QVy3mIWLixAZWevDUnoK1q+Wqy0M -----END RSA PRIVATE KEY----- -----BEGIN CERTIFICATE----- MIIFSzCCAzOgAwIBAgIUeawaQJUIAPKOKhrIJDjMVCYVx4MwDQYJKoZIhvcNAQEL BQAwNTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxETAPBgNVBAoM -----END CERTIFICATE----- Generating Client/User Certificates At this point, we have three files in the certs directory.\nca.key ca.crt ca.pem We now would be generating client/user certificates. The command to generate the user.key is similar to the one used to create the ca.key\nopenssl genrsa -des3 -out user.key 4096 Output:\nGenerating RSA private key, 4096 bit long modulus (2 primes) .....................................................................................................................................................++++ .......................++++ e is 65537 (0x010001) Enter pass phrase for user.key: Verifying - Enter pass phrase for user.key: As mentioned earlier, the passphrase to be used for user.key is still the same.\nThe client/user certificate aren’t supposed to be self-signed, and we would need to generate a CSR. It means the signing is to be done by a CA(even though in this case, we own the CA!). The way to do this is\nopenssl req -new -key user.key -out user.csr Output:\nEnter pass phrase for user.key: You are about to be asked to enter information that will be incorporated into your certificate request. What you are about to enter is what is called a Distinguished Name or a DN. There are quite a few fields but you can leave some blank For some fields there will be a default value, If you enter '.', the field will be left blank. ----- Country Name (2 letter code) [AU]: State or Province Name (full name) [Some-State]: Locality Name (eg, city) []: Organization Name (eg, company) [Internet Widgits Pty Ltd]:User Organizational Unit Name (eg, section) []: Common Name (e.g. server FQDN or YOUR name) []: Email Address []: Please enter the following 'extra' attributes to be sent with your certificate request A challenge password []: An optional company name []: The Organization Name would be User as this certificate is for a Client/User. DO NOT keep it the same as the one for CA.\nThe next step would be to create a User Certificate from the User CSR.\nopenssl x509 -req -days 365 -in user.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out user.crt Output:\nSignature ok subject=C = AU, ST = Some-State, O = User Getting CA Private Key Enter pass phrase for ca.key: Command options:\nx509: standard format for public key certificates -CA: the CA certificate -CAkey: the key to generate the certificate from -set_serial 01: the serial version of the certificate to be generated. The user certificate can be regenerated by incrementing the serial number from the same user.csr after 365 days when it expires. You can see that it displays data from the CSR, and then uses the CA key to generate user.crt.\nTo enable us to use the certificate from a web browser, we would need to create the certificate in the PFX file format.\nopenssl pkcs12 -export -out user.pfx -inkey user.key -in user.crt -certfile ca.crt Output:\nEnter pass phrase for user.key: Enter Export Password: Verifying - Enter Export Password: You can verify if the generated certificate can be decrypted using the CA certificate by the following command\nopenssl verify -verbose -CAfile ca.crt user.crt Output:\nuser.crt: OK The files that we currently have in the directory are\nca.key ca.crt ca.pem user.key user.csr user.crt user.pfx Generating Server Certificates This is similar to generating the User certificates, with the following commands\nGenerate the Server key. For server certificates, the standard naming convention seems to be .\nopenssl genrsa -out nginx.mssl.com.key 4096 Output:\nGenerating RSA private key, 4096 bit long modulus (2 primes) .....................................++++ .........................++++ e is 65537 (0x010001) Use the above generated key to generate a CSR.\nopenssl req -new -key nginx.mssl.com.key -out nginx.mssl.com.csr Output:\nYou are about to be asked to enter information that will be incorporated into your certificate request. What you are about to enter is what is called a Distinguished Name or a DN. There are quite a few fields but you can leave some blank For some fields there will be a default value, If you enter '.', the field will be left blank. ----- Country Name (2 letter code) [AU]: State or Province Name (full name) [Some-State]: Locality Name (eg, city) []: Organization Name (eg, company) [Internet Widgits Pty Ltd]:Server Organizational Unit Name (eg, section) []: Common Name (e.g. server FQDN or YOUR name) []:nginx.mssl.com Email Address []: Please enter the following 'extra' attributes to be sent with your certificate request A challenge password []: An optional company name []: Make sure to put the Organization Name as Server and Common Name (which is the website name) as nginx.mssl.com\nWe can now use the CSR along with the CA files to generate the CRT for our server.\nopenssl x509 -req -days 365 -sha256 -in nginx.mssl.com.csr -CA ca.crt -CAkey ca.key -set_serial 1 -out nginx.mssl.com.crt Output:\nSignature ok subject=C = AU, ST = Some-State, O = Server, CN = nginx.mssl.com Getting CA Private Key Enter pass phrase for ca.key: All the certificates are now ready for our use!\nca.key ca.crt ca.pem user.key user.csr user.crt user.pfx nginx.mssl.com.key nginx.mssl.com.csr nginx.mssl.com.crt Setting up our “Website” with Nginx Of course, we aren’t setting up a real website. But we do want to make our SSL authentication work on the domain nginx.mssl.com. We can do this by a little “hack” by changing our /etc/hosts file.\nFire up a new shell, and use\nsudo vim /etc/hosts Add the following line to the file and save.\n127.0.0.1 nginx.mssl.com This will enable your local machine to resolve the domain nginx.mssl.com to your locahost.\nThe website will not work at the moment – you’d have to specify the sources/web pages it needs to serve when requested.\nCreate a file index.html on the directory path /usr/share/nginx/mssl with the contents:\n\u003chtml\u003e \u003cbody\u003e \u003ch1\u003eWelcome to nginx!-mutual ssl test\u003c/h1\u003e \u003c/body\u003e \u003c/html\u003e If the TLS handshake is successful, the web server should serve the file created above.\nConfiguring the Nginx server to enable two way SSL All our certificates are at root in /certs directory. For simplicity, we would be copying the certificates to /etc/nginx/certs directory.\ncp -r /certs /etc/nginx/certs Also ensure that the certificates can be used by nginx service by providing them the access\nchmod 777 -R certs/ We would not be fiddling with the default nginx configuration which is present in the nginx.conf file. Instead, we would be creating a new file called proxy.conf using in the /etc/nginx/sites-available directory.\nCreate the file proxy.conf using the command\ncd /etc/nginx/sites-available touch proxy.conf Enter the contents as the following (Notice the comments have more explanation):\nserver { # Listen on port 443 for HTTPS connections listen 443; # Turn SSL on ssl on; # Name of the server/website server_name nginx.mssl.com; # See https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_ssl_server_name proxy_ssl_server_name on; # This is the server SSL certificate ssl_certificate /etc/nginx/certs/nginx.mssl.com.crt; # This is the server certificate key ssl_certificate_key /etc/nginx/certs/nginx.mssl.com.key; # Important: # This is the CA cert against which the client/user will be validated # In our case since the Server and the Client certificate is # generated from the same CA, we use the ca.crt # But in actual production, the Client certificate might be # created from a different CA ssl_client_certificate /etc/nginx/certs/ca.crt; # Enables mutual TLS/two way SSL to verify the client ssl_verify_client on; # Number of intermediate certificates to verify. Good explanation of # certificate chaining can be found at # https://cheapsslsecurity.com/p/what-is-ssl-certificate-chain/ ssl_verify_depth 2; # Any error during the connection can be found on the following path error_log /var/log/nginx/error.log debug; ssl_prefer_server_ciphers on; ssl_protocols TLSv1.1 TLSv1.2; ssl_ciphers 'ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:ECDHE-RSA-RC4-SHA:ECDHE-ECDSA-RC4-SHA:RC4-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!3DES:!MD5:!PSK'; keepalive_timeout 10; ssl_session_timeout 5m; # Matches the \"root\" of the website # If TLS handshake is successful, the request is routed to this block location / { # path from which the website is served from root /usr/share/nginx/mssl; # index file name index index.html index.htm; } } Nginx has a good Beginner’s Guide to Nginx.\nTo enable Nginx to use the above configuration, we also have to link the same in the /etc/nginx/sites-enabled directory.\nTo accomplish this, use\nln -s /etc/nginx/sites-available/proxy.conf /etc/nginx/sites-enabled/proxy.conf This creates a symbolic link into /etc/nginx/sites-enabled/proxy.conf from /etc/nginx/sites-available/proxy.conf. Consider it as you having many server configurations in the sites-available, but only what you chose to “enable” in the sites-enabled will be active.\nWe now just have to restart the Nginx for the configuration to be active!\nsystemctl restart nginx I’ll be using Postman to test our changes. However, you’ll need to configure Postman to send the Client Certificates with the request3.\nTo configure the Certificates, navigate to Settings -\u003e Certificates Tab.\nThere will be a section to add the CA Certificate named CA Certificates, and this certificate should be a PEM file. Select the ca.pem from /etc/nginx/certs. A mistake would be to select the file from the root directory /certs but this will not work as Postman wouldn’t be able to access the file.\nThere would be another section below for Client Certificates. Click on Add Certificate, and put the details as the following:\nHost: nginx.mssl.com CRT File: /etc/nginx/certs/user.crt KEY File: /etc/nginx/certs/user.key PFX File: /etc/nginx/certs/user.pfx Passphrase: Now try to fire a GET request to the domain https://nginx.mssl.com. If everything was configured successfully, you’ll get the following response:\n\u003chtml\u003e \u003cbody\u003e \u003ch1\u003eWelcome to nginx!-mutual ssl test\u003c/h1\u003e \u003c/body\u003e \u003c/html\u003e If there’s an error in the configuration, you’ll get the following error response:\n\u003chtml\u003e \u003chead\u003e \u003ctitle\u003e400 No required SSL certificate was sent\u003c/title\u003e \u003c/head\u003e \u003cbody bgcolor=\"white\"\u003e \u003ccenter\u003e \u003ch1\u003e400 Bad Request\u003c/h1\u003e \u003c/center\u003e \u003ccenter\u003eNo required SSL certificate was sent\u003c/center\u003e \u003chr\u003e \u003ccenter\u003enginx/1.14.0 (Ubuntu)\u003c/center\u003e \u003c/body\u003e \u003c/html\u003e Hope this post was of some help!!\nReference:\nThis article is good for the demo part. The post Client Certificate Auth With Nginx was instrumental in explaining the ssl_client_certificate directive and how to use it. This post is as close to perfection as it gets regarding the steps for generating Certificates, but I couldn’t manage to make it work fully with Nginx. (Especially because it skips the demo part + it could be a little more descriptive with generation of the certificates) This article is good, but still unclear for someone starting out. I used this article to actually learn about generating the certificates especially because it provides easy commands and decent explanation. The main resource for installing Nginx is this tutorial by DigitalOcean. All the relevant steps have been described in my article. ↩︎\nMore info here ↩︎\nClient Certificates: Postman Learning Center ↩︎\n",
   "wordCount" : "2924",
   "inLanguage": "en",
   "image":"https://supporthost.in/wp-content/uploads/2017/10/nginx-9.jpg","datePublished": "2020-06-13T18:30:13+05:30",
@@ -138,14 +135,14 @@
     <nav class="nav">
         <div class="logo">
             <a href="https://darshit.dev/" accesskey="h" title="Darshit Patel&#39;s Blog (Alt + H)">Darshit Patel&#39;s Blog</a>
-            <span class="logo-switches">
+            <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)">
-                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round">
                         <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                     </svg>
-                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round">
                         <circle cx="12" cy="12" r="5"></circle>
@@ -159,7 +156,7 @@
                         <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                     </svg>
                 </button>
-            </span>
+            </div>
         </div>
         <ul id="menu">
             <li>
@@ -180,14 +177,14 @@
 <article class="post-single">
   <header class="post-header">
     
-    <h1 class="post-title">
+    <h1 class="post-title entry-hint-parent">
       How To Implement Two Way SSL With Nginx
     </h1>
-    <div class="post-meta"><span title='2020-06-13 18:30:13 +0530 +0530'>June 13, 2020</span>&nbsp;·&nbsp;14 min
+    <div class="post-meta"><span title='2020-06-13 18:30:13 +0530 IST'>June 13, 2020</span>&nbsp;·&nbsp;14 min
 
 </div>
   </header> 
-<figure class="entry-cover"><img loading="lazy" src="https://supporthost.in/wp-content/uploads/2017/10/nginx-9.jpg" alt="">
+<figure class="entry-cover"><img loading="eager" src="https://supporthost.in/wp-content/uploads/2017/10/nginx-9.jpg" alt="">
         
 </figure>
   <div class="post-content"><p>A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and have had only a limited experience with networking concepts like SSL/TLS in my short career. So I turned up blank on how I could make it possible. Moreover, the terminology you&rsquo;d find online is not uniform. From a programming point of view, the term &ldquo;Two way SSL&rdquo; led me to limited  results, and I soon realized that other communities have different terminology. For example the &ldquo;Two way SSL&rdquo; is also known as &ldquo;Mutual TLS&rdquo; or &ldquo;mTLS&rdquo; or &ldquo;Client Certificate Authentication&rdquo; in Cloud/DevOps communitites. This makes finding the right resources online more difficult.</p>
@@ -201,19 +198,19 @@
 <h1 id="installing-and-configuring-nginx">Installing and Configuring Nginx<a hidden class="anchor" aria-hidden="true" href="#installing-and-configuring-nginx">#</a></h1>
 <h2 id="install">Install<a hidden class="anchor" aria-hidden="true" href="#install">#</a></h2>
 <p>Install<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> nginx using <code>apt</code> command on your Linux system.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo apt update
-sudo apt install nginx
-</code></pre></div><p>This will install all of Nginx on the path <code>/opt/nginx</code>. All the configuration files we will be editing for two-way SSL would be found within this directory.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo apt update
+</span></span><span style="display:flex;"><span>sudo apt install nginx
+</span></span></code></pre></div><p>This will install all of Nginx on the path <code>/opt/nginx</code>. All the configuration files we will be editing for two-way SSL would be found within this directory.</p>
 <h2 id="configure-nginx-to-start">Configure Nginx to start<a hidden class="anchor" aria-hidden="true" href="#configure-nginx-to-start">#</a></h2>
 <p>Before starting up Nginx for use, we need to enable some ports on the firewall that our Nginx can listen incoming connections from.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo ufw app list
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Available applications:
-  Nginx Full
-  Nginx HTTP
-  Nginx HTTPS
-  OpenSSH
-</code></pre></div><p>The utility <code>ufw</code> can be used to manage our firewall. Though a knowledge of <code>ufw</code> is not necessary for us, more information can be found <a href="https://www.linux.com/training-tutorials/introduction-uncomplicated-firewall-ufw/">here</a>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo ufw app list
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Available applications:
+</span></span><span style="display:flex;"><span>  Nginx Full
+</span></span><span style="display:flex;"><span>  Nginx HTTP
+</span></span><span style="display:flex;"><span>  Nginx HTTPS
+</span></span><span style="display:flex;"><span>  OpenSSH
+</span></span></code></pre></div><p>The utility <code>ufw</code> can be used to manage our firewall. Though a knowledge of <code>ufw</code> is not necessary for us, more information can be found <a href="https://www.linux.com/training-tutorials/introduction-uncomplicated-firewall-ufw/">here</a>.</p>
 <p>You can see in the above output that the utility responds us with four profiles. When we installed Nginx, it registered itself with the <code>ufw</code> utility with three profiles.</p>
 <ul>
 <li><code>Nginx HTTP</code> allows Nginx to listen through port 80, for normal HTTP traffic.</li>
@@ -221,31 +218,31 @@ sudo apt install nginx
 <li><code>Nginx Full</code> is a combination of the above both, enabling port 80 and 443 both.</li>
 </ul>
 <p>We will enable <code>Nginx Full</code> as we have to use our server for SSL, but using normal HTTP connections is not an uncommon use-case either. To enable it, run:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo ufw allow <span style="color:#e6db74">&#39;Nginx Full&#39;</span>
-</code></pre></div><p>You should see the activated profile if you run the below command</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo ufw status
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Status: active
-
-To                         Action      From
---                         ------      ----
-OpenSSH                    ALLOW       Anywhere                  
-Nginx Full                 ALLOW       Anywhere                  
-OpenSSH <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>               ALLOW       Anywhere <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>             
-Nginx Full <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>            ALLOW       Anywhere <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>
-</code></pre></div><p>The Nginx service should already be up and running now. You can check by executing</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">systemctl status nginx
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">● nginx.service - A high performance web server and a reverse proxy server
-   Loaded: loaded <span style="color:#f92672">(</span>/lib/systemd/system/nginx.service; enabled; vendor preset: enabled<span style="color:#f92672">)</span>
-   Active: active <span style="color:#f92672">(</span>running<span style="color:#f92672">)</span> since Fri 2018-04-20 16:08:19 UTC; <span style="color:#ae81ff">3</span> days ago
-     Docs: man:nginx<span style="color:#f92672">(</span>8<span style="color:#f92672">)</span>
- Main PID: <span style="color:#ae81ff">2369</span> <span style="color:#f92672">(</span>nginx<span style="color:#f92672">)</span>
-    Tasks: <span style="color:#ae81ff">2</span> <span style="color:#f92672">(</span>limit: 1153<span style="color:#f92672">)</span>
-   CGroup: /system.slice/nginx.service
-           ├─2369 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
-           └─2380 nginx: worker process
-</code></pre></div><h1 id="creating-certificates">Creating Certificates<a hidden class="anchor" aria-hidden="true" href="#creating-certificates">#</a></h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo ufw allow <span style="color:#e6db74">&#39;Nginx Full&#39;</span>
+</span></span></code></pre></div><p>You should see the activated profile if you run the below command</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo ufw status
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Status: active
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>To                         Action      From
+</span></span><span style="display:flex;"><span>--                         ------      ----
+</span></span><span style="display:flex;"><span>OpenSSH                    ALLOW       Anywhere                  
+</span></span><span style="display:flex;"><span>Nginx Full                 ALLOW       Anywhere                  
+</span></span><span style="display:flex;"><span>OpenSSH <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>               ALLOW       Anywhere <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>             
+</span></span><span style="display:flex;"><span>Nginx Full <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>            ALLOW       Anywhere <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>The Nginx service should already be up and running now. You can check by executing</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl status nginx
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>● nginx.service - A high performance web server and a reverse proxy server
+</span></span><span style="display:flex;"><span>   Loaded: loaded <span style="color:#f92672">(</span>/lib/systemd/system/nginx.service; enabled; vendor preset: enabled<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   Active: active <span style="color:#f92672">(</span>running<span style="color:#f92672">)</span> since Fri 2018-04-20 16:08:19 UTC; <span style="color:#ae81ff">3</span> days ago
+</span></span><span style="display:flex;"><span>     Docs: man:nginx<span style="color:#f92672">(</span>8<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span> Main PID: <span style="color:#ae81ff">2369</span> <span style="color:#f92672">(</span>nginx<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    Tasks: <span style="color:#ae81ff">2</span> <span style="color:#f92672">(</span>limit: 1153<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>   CGroup: /system.slice/nginx.service
+</span></span><span style="display:flex;"><span>           ├─2369 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
+</span></span><span style="display:flex;"><span>           └─2380 nginx: worker process
+</span></span></code></pre></div><h1 id="creating-certificates">Creating Certificates<a hidden class="anchor" aria-hidden="true" href="#creating-certificates">#</a></h1>
 <h2 id="terminology">Terminology<a hidden class="anchor" aria-hidden="true" href="#terminology">#</a></h2>
 <ul>
 <li><strong>Certificate Authority (CA)</strong>: This is an Organization which provides you a Certificate (the <code>.crt</code> file). In reality, anyone (including yourself) can be the CA which issues certificates</li>
@@ -256,26 +253,26 @@ Nginx Full <span style="color:#f92672">(</span>v6<span style="color:#f92672">)</
 </ul>
 <p>Now that we know the terminology, it would be easier to proceed with generating the certificates. The following part of the tutorial requires root/superuser privileges, so switch to the super user using the <code>sudo su</code> command.</p>
 <p>Create a directory called <code>certs</code> under the root of the file-system which will hold all the certificates and related files.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="color:#75715e"># Create directory</span>
-mkdir /certs 
-<span style="color:#75715e"># Change directory to /certs</span>
-cd /certs
-<span style="color:#75715e"># Verify the present working directory</span>
-pwd
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">/certs
-</code></pre></div><p>In this tutorial, we would be designating ourselves as a Certificate Authority, and then self-sign and generate the certificates.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span><span style="color:#75715e"># Create directory</span>
+</span></span><span style="display:flex;"><span>mkdir /certs 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Change directory to /certs</span>
+</span></span><span style="display:flex;"><span>cd /certs
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Verify the present working directory</span>
+</span></span><span style="display:flex;"><span>pwd
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>/certs
+</span></span></code></pre></div><p>In this tutorial, we would be designating ourselves as a Certificate Authority, and then self-sign and generate the certificates.</p>
 <h2 id="generate-certificate-authority-ca-files">Generate Certificate Authority (CA) files<a hidden class="anchor" aria-hidden="true" href="#generate-certificate-authority-ca-files">#</a></h2>
 <p>We would be first generating a CA key, which would be the basis for all further certificate generation.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl genrsa -des3 -out ca.key <span style="color:#ae81ff">4096</span>
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
-.............................................................++++
-....................................................................................................................................................................................++++
-e is <span style="color:#ae81ff">65537</span> <span style="color:#f92672">(</span>0x010001<span style="color:#f92672">)</span>
-Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
-Verifying - Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt; 
-</code></pre></div><p>Command options:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>openssl genrsa -des3 -out ca.key <span style="color:#ae81ff">4096</span>
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>.............................................................++++
+</span></span><span style="display:flex;"><span>....................................................................................................................................................................................++++
+</span></span><span style="display:flex;"><span>e is <span style="color:#ae81ff">65537</span> <span style="color:#f92672">(</span>0x010001<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
+</span></span><span style="display:flex;"><span>Verifying - Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt; 
+</span></span></code></pre></div><p>Command options:</p>
 <ul>
 <li><code>genrsa</code>: generate RSA private key</li>
 <li><code>-des3</code>: encrypts the output key using des3 encryption</li>
@@ -285,10 +282,10 @@ Verifying - Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;
 <p>This generates a file named <code>ca.key</code> in the current directory. You would have to provide a password/passphrase for the key. For the purposes of this tutorial, I&rsquo;ll be using the same passphrase whenever required.</p>
 <p><code>&lt;passphrase&gt;</code> = <code>root</code></p>
 <p>The next step is the generation of <code>ca.crt</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl req -new -x509 -days <span style="color:#ae81ff">3650</span> -key ca.key -out ca.crt
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
-</code></pre></div><p>Command options:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>openssl req -new -x509 -days <span style="color:#ae81ff">3650</span> -key ca.key -out ca.crt
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
+</span></span></code></pre></div><p>Command options:</p>
 <ul>
 <li><code>req</code>: used for creating certificate requests</li>
 <li><code>-new</code>: generates new certificate request</li>
@@ -298,84 +295,84 @@ Verifying - Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;
 <li><code>-out</code>: output file for the certificate</li>
 </ul>
 <p>Once you enter the passphrase (which is the same as we put in the previous step), it&rsquo;ll ask you to provide more information for the self-signed certificate.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter <span style="color:#e6db74">&#39;.&#39;</span>, the field will be left blank.
------
-Country Name <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> letter code<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>AU<span style="color:#f92672">]</span>:
-State or Province Name <span style="color:#f92672">(</span>full name<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Some-State<span style="color:#f92672">]</span>:
-Locality Name <span style="color:#f92672">(</span>eg, city<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
-Organization Name <span style="color:#f92672">(</span>eg, company<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Internet Widgits Pty Ltd<span style="color:#f92672">]</span>:CertAuth
-Organizational Unit Name <span style="color:#f92672">(</span>eg, section<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
-Common Name <span style="color:#f92672">(</span>e.g. server FQDN or YOUR name<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
-Email Address <span style="color:#f92672">[]</span>:
-</code></pre></div><p>Note the <code>Organization Name</code> parameter is named as <code>CertAuth</code> for this example. This is because we are a CA and CAs should ideally be independent to enable other parties to trust other parties and establish a chain of trust.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>You are about to be asked to enter information that will be incorporated
+</span></span><span style="display:flex;"><span>into your certificate request.
+</span></span><span style="display:flex;"><span>What you are about to enter is what is called a Distinguished Name or a DN.
+</span></span><span style="display:flex;"><span>There are quite a few fields but you can leave some blank
+</span></span><span style="display:flex;"><span>For some fields there will be a default value,
+</span></span><span style="display:flex;"><span>If you enter <span style="color:#e6db74">&#39;.&#39;</span>, the field will be left blank.
+</span></span><span style="display:flex;"><span>-----
+</span></span><span style="display:flex;"><span>Country Name <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> letter code<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>AU<span style="color:#f92672">]</span>:
+</span></span><span style="display:flex;"><span>State or Province Name <span style="color:#f92672">(</span>full name<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Some-State<span style="color:#f92672">]</span>:
+</span></span><span style="display:flex;"><span>Locality Name <span style="color:#f92672">(</span>eg, city<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>Organization Name <span style="color:#f92672">(</span>eg, company<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Internet Widgits Pty Ltd<span style="color:#f92672">]</span>:CertAuth
+</span></span><span style="display:flex;"><span>Organizational Unit Name <span style="color:#f92672">(</span>eg, section<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>Common Name <span style="color:#f92672">(</span>e.g. server FQDN or YOUR name<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>Email Address <span style="color:#f92672">[]</span>:
+</span></span></code></pre></div><p>Note the <code>Organization Name</code> parameter is named as <code>CertAuth</code> for this example. This is because we are a CA and CAs should ideally be independent to enable other parties to trust other parties and establish a chain of trust.</p>
 <p>A PEM file certificate would also be needed. This file is way of encoding the certificates.<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> To create a PEM file, simply do the following:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">cat ca.key &gt; ca.pem
-cat ca.key &gt;&gt; ca.pem
-</code></pre></div><p>The <code>ca.key</code> would be something like</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">-----BEGIN RSA PRIVATE KEY-----
-Proc-Type: 4,ENCRYPTED
-DEK-Info: DES-EDE3-CBC,0E2D38C130456B75
-
-3+0Em2EKRkmCCu79bR7E2uFy/G1huIGEGsItwDf0C70Hf2bmUUDYazK/CPZxZCut
-PDximngoGaLSdLQ2HWGjjCe59pJxxZknxHu9QVy3mIWLixAZWevDUnoK1q+Wqy0M
------END RSA PRIVATE KEY-----
------BEGIN CERTIFICATE-----
-MIIFSzCCAzOgAwIBAgIUeawaQJUIAPKOKhrIJDjMVCYVx4MwDQYJKoZIhvcNAQEL
-BQAwNTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxETAPBgNVBAoM
------END CERTIFICATE-----
-</code></pre></div><h2 id="generating-clientuser-certificates">Generating Client/User Certificates<a hidden class="anchor" aria-hidden="true" href="#generating-clientuser-certificates">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cat ca.key &gt; ca.pem
+</span></span><span style="display:flex;"><span>cat ca.key &gt;&gt; ca.pem
+</span></span></code></pre></div><p>The <code>ca.key</code> would be something like</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>-----BEGIN RSA PRIVATE KEY-----
+</span></span><span style="display:flex;"><span>Proc-Type: 4,ENCRYPTED
+</span></span><span style="display:flex;"><span>DEK-Info: DES-EDE3-CBC,0E2D38C130456B75
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>3+0Em2EKRkmCCu79bR7E2uFy/G1huIGEGsItwDf0C70Hf2bmUUDYazK/CPZxZCut
+</span></span><span style="display:flex;"><span>PDximngoGaLSdLQ2HWGjjCe59pJxxZknxHu9QVy3mIWLixAZWevDUnoK1q+Wqy0M
+</span></span><span style="display:flex;"><span>-----END RSA PRIVATE KEY-----
+</span></span><span style="display:flex;"><span>-----BEGIN CERTIFICATE-----
+</span></span><span style="display:flex;"><span>MIIFSzCCAzOgAwIBAgIUeawaQJUIAPKOKhrIJDjMVCYVx4MwDQYJKoZIhvcNAQEL
+</span></span><span style="display:flex;"><span>BQAwNTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxETAPBgNVBAoM
+</span></span><span style="display:flex;"><span>-----END CERTIFICATE-----
+</span></span></code></pre></div><h2 id="generating-clientuser-certificates">Generating Client/User Certificates<a hidden class="anchor" aria-hidden="true" href="#generating-clientuser-certificates">#</a></h2>
 <p>At this point, we have three files in the <code>certs</code> directory.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ca.key
-ca.crt
-ca.pem
-</code></pre></div><p>We now would be generating client/user certificates.
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>ca.key
+</span></span><span style="display:flex;"><span>ca.crt
+</span></span><span style="display:flex;"><span>ca.pem
+</span></span></code></pre></div><p>We now would be generating client/user certificates.
 The command to generate the <code>user.key</code> is similar to the one used to create the <code>ca.key</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl genrsa -des3 -out user.key <span style="color:#ae81ff">4096</span>
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
-.....................................................................................................................................................++++
-.......................++++
-e is <span style="color:#ae81ff">65537</span> <span style="color:#f92672">(</span>0x010001<span style="color:#f92672">)</span>
-Enter pass phrase <span style="color:#66d9ef">for</span> user.key:
-Verifying - Enter pass phrase <span style="color:#66d9ef">for</span> user.key:
-</code></pre></div><p>As mentioned earlier, the passphrase to be used for <code>user.key</code> is still the same.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>openssl genrsa -des3 -out user.key <span style="color:#ae81ff">4096</span>
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>.....................................................................................................................................................++++
+</span></span><span style="display:flex;"><span>.......................++++
+</span></span><span style="display:flex;"><span>e is <span style="color:#ae81ff">65537</span> <span style="color:#f92672">(</span>0x010001<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>Enter pass phrase <span style="color:#66d9ef">for</span> user.key:
+</span></span><span style="display:flex;"><span>Verifying - Enter pass phrase <span style="color:#66d9ef">for</span> user.key:
+</span></span></code></pre></div><p>As mentioned earlier, the passphrase to be used for <code>user.key</code> is still the same.</p>
 <p>The client/user certificate aren&rsquo;t supposed to be self-signed, and we would need to generate a CSR. It means the signing is to be done by a CA(even though in this case, we own the CA!). The way to do this is</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl req -new -key user.key -out user.csr
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Enter pass phrase <span style="color:#66d9ef">for</span> user.key:&lt;passphrase&gt; 
-You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter <span style="color:#e6db74">&#39;.&#39;</span>, the field will be left blank.
------
-Country Name <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> letter code<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>AU<span style="color:#f92672">]</span>:
-State or Province Name <span style="color:#f92672">(</span>full name<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Some-State<span style="color:#f92672">]</span>:
-Locality Name <span style="color:#f92672">(</span>eg, city<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
-Organization Name <span style="color:#f92672">(</span>eg, company<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Internet Widgits Pty Ltd<span style="color:#f92672">]</span>:User
-Organizational Unit Name <span style="color:#f92672">(</span>eg, section<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
-Common Name <span style="color:#f92672">(</span>e.g. server FQDN or YOUR name<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
-Email Address <span style="color:#f92672">[]</span>:
-
-Please enter the following <span style="color:#e6db74">&#39;extra&#39;</span> attributes
-to be sent with your certificate request
-A challenge password <span style="color:#f92672">[]</span>:
-An optional company name <span style="color:#f92672">[]</span>:
-</code></pre></div><p>The <code>Organization Name</code> would be <code>User</code> as this certificate is for a Client/User. <strong>DO NOT</strong> keep it the same as the one for CA.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>openssl req -new -key user.key -out user.csr
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Enter pass phrase <span style="color:#66d9ef">for</span> user.key:&lt;passphrase&gt; 
+</span></span><span style="display:flex;"><span>You are about to be asked to enter information that will be incorporated
+</span></span><span style="display:flex;"><span>into your certificate request.
+</span></span><span style="display:flex;"><span>What you are about to enter is what is called a Distinguished Name or a DN.
+</span></span><span style="display:flex;"><span>There are quite a few fields but you can leave some blank
+</span></span><span style="display:flex;"><span>For some fields there will be a default value,
+</span></span><span style="display:flex;"><span>If you enter <span style="color:#e6db74">&#39;.&#39;</span>, the field will be left blank.
+</span></span><span style="display:flex;"><span>-----
+</span></span><span style="display:flex;"><span>Country Name <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> letter code<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>AU<span style="color:#f92672">]</span>:
+</span></span><span style="display:flex;"><span>State or Province Name <span style="color:#f92672">(</span>full name<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Some-State<span style="color:#f92672">]</span>:
+</span></span><span style="display:flex;"><span>Locality Name <span style="color:#f92672">(</span>eg, city<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>Organization Name <span style="color:#f92672">(</span>eg, company<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Internet Widgits Pty Ltd<span style="color:#f92672">]</span>:User
+</span></span><span style="display:flex;"><span>Organizational Unit Name <span style="color:#f92672">(</span>eg, section<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>Common Name <span style="color:#f92672">(</span>e.g. server FQDN or YOUR name<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>Email Address <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Please enter the following <span style="color:#e6db74">&#39;extra&#39;</span> attributes
+</span></span><span style="display:flex;"><span>to be sent with your certificate request
+</span></span><span style="display:flex;"><span>A challenge password <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>An optional company name <span style="color:#f92672">[]</span>:
+</span></span></code></pre></div><p>The <code>Organization Name</code> would be <code>User</code> as this certificate is for a Client/User. <strong>DO NOT</strong> keep it the same as the one for CA.</p>
 <p>The next step would be to create a User Certificate from the User CSR.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl x509 -req -days <span style="color:#ae81ff">365</span> -in user.csr -CA ca.crt -CAkey ca.key -set_serial <span style="color:#ae81ff">01</span> -out user.crt
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Signature ok
-subject<span style="color:#f92672">=</span>C <span style="color:#f92672">=</span> AU, ST <span style="color:#f92672">=</span> Some-State, O <span style="color:#f92672">=</span> User
-Getting CA Private Key
-Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
-</code></pre></div><p>Command options:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>openssl x509 -req -days <span style="color:#ae81ff">365</span> -in user.csr -CA ca.crt -CAkey ca.key -set_serial <span style="color:#ae81ff">01</span> -out user.crt
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Signature ok
+</span></span><span style="display:flex;"><span>subject<span style="color:#f92672">=</span>C <span style="color:#f92672">=</span> AU, ST <span style="color:#f92672">=</span> Some-State, O <span style="color:#f92672">=</span> User
+</span></span><span style="display:flex;"><span>Getting CA Private Key
+</span></span><span style="display:flex;"><span>Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
+</span></span></code></pre></div><p>Command options:</p>
 <ul>
 <li><code>x509</code>: standard format for public key certificates</li>
 <li><code>-CA</code>: the CA certificate</li>
@@ -384,160 +381,160 @@ Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&g
 </ul>
 <p>You can see that it displays data from the CSR, and then uses the CA key to generate <code>user.crt</code>.</p>
 <p>To enable us to use the certificate from a web browser, we would need to create the certificate in the PFX file format.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl pkcs12 -export -out user.pfx -inkey user.key -in user.crt -certfile ca.crt
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Enter pass phrase <span style="color:#66d9ef">for</span> user.key:&lt;passphrase&gt;
-Enter Export Password:&lt;passphrase&gt;
-Verifying - Enter Export Password:&lt;passphrase&gt;
-</code></pre></div><p>You can verify if the generated certificate can be decrypted using the CA certificate by the following command</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl verify -verbose -CAfile ca.crt user.crt
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">user.crt: OK
-</code></pre></div><p>The files that we currently have in the directory are</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ca.key
-ca.crt
-ca.pem
-user.key
-user.csr
-user.crt
-user.pfx
-</code></pre></div><h2 id="generating-server-certificates">Generating Server Certificates<a hidden class="anchor" aria-hidden="true" href="#generating-server-certificates">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>openssl pkcs12 -export -out user.pfx -inkey user.key -in user.crt -certfile ca.crt
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Enter pass phrase <span style="color:#66d9ef">for</span> user.key:&lt;passphrase&gt;
+</span></span><span style="display:flex;"><span>Enter Export Password:&lt;passphrase&gt;
+</span></span><span style="display:flex;"><span>Verifying - Enter Export Password:&lt;passphrase&gt;
+</span></span></code></pre></div><p>You can verify if the generated certificate can be decrypted using the CA certificate by the following command</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>openssl verify -verbose -CAfile ca.crt user.crt
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>user.crt: OK
+</span></span></code></pre></div><p>The files that we currently have in the directory are</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>ca.key
+</span></span><span style="display:flex;"><span>ca.crt
+</span></span><span style="display:flex;"><span>ca.pem
+</span></span><span style="display:flex;"><span>user.key
+</span></span><span style="display:flex;"><span>user.csr
+</span></span><span style="display:flex;"><span>user.crt
+</span></span><span style="display:flex;"><span>user.pfx
+</span></span></code></pre></div><h2 id="generating-server-certificates">Generating Server Certificates<a hidden class="anchor" aria-hidden="true" href="#generating-server-certificates">#</a></h2>
 <p>This is similar to generating the User certificates, with the following commands</p>
 <p>Generate the Server key. For server certificates, the standard naming convention seems to be <code>&lt;website-domain-name&gt;</code>.<code>&lt;key&gt;</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl genrsa -out nginx.mssl.com.key <span style="color:#ae81ff">4096</span>
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
-.....................................++++
-.........................++++
-e is <span style="color:#ae81ff">65537</span> <span style="color:#f92672">(</span>0x010001<span style="color:#f92672">)</span>
-</code></pre></div><p>Use the above generated key to generate a CSR.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl req -new -key nginx.mssl.com.key -out nginx.mssl.com.csr
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">You are about to be asked to enter information that will be incorporated
-into your certificate request.
-What you are about to enter is what is called a Distinguished Name or a DN.
-There are quite a few fields but you can leave some blank
-For some fields there will be a default value,
-If you enter <span style="color:#e6db74">&#39;.&#39;</span>, the field will be left blank.
------
-Country Name <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> letter code<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>AU<span style="color:#f92672">]</span>:
-State or Province Name <span style="color:#f92672">(</span>full name<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Some-State<span style="color:#f92672">]</span>:
-Locality Name <span style="color:#f92672">(</span>eg, city<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
-Organization Name <span style="color:#f92672">(</span>eg, company<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Internet Widgits Pty Ltd<span style="color:#f92672">]</span>:Server
-Organizational Unit Name <span style="color:#f92672">(</span>eg, section<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
-Common Name <span style="color:#f92672">(</span>e.g. server FQDN or YOUR name<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:nginx.mssl.com
-Email Address <span style="color:#f92672">[]</span>:
-
-Please enter the following <span style="color:#e6db74">&#39;extra&#39;</span> attributes
-to be sent with your certificate request
-A challenge password <span style="color:#f92672">[]</span>:
-An optional company name <span style="color:#f92672">[]</span>:
-</code></pre></div><p>Make sure to put the <code>Organization Name</code> as <code>Server</code> and <code>Common Name</code> (which is the website name) as <code>nginx.mssl.com</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>openssl genrsa -out nginx.mssl.com.key <span style="color:#ae81ff">4096</span>
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Generating RSA private key, <span style="color:#ae81ff">4096</span> bit long modulus <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> primes<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>.....................................++++
+</span></span><span style="display:flex;"><span>.........................++++
+</span></span><span style="display:flex;"><span>e is <span style="color:#ae81ff">65537</span> <span style="color:#f92672">(</span>0x010001<span style="color:#f92672">)</span>
+</span></span></code></pre></div><p>Use the above generated key to generate a CSR.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>openssl req -new -key nginx.mssl.com.key -out nginx.mssl.com.csr
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>You are about to be asked to enter information that will be incorporated
+</span></span><span style="display:flex;"><span>into your certificate request.
+</span></span><span style="display:flex;"><span>What you are about to enter is what is called a Distinguished Name or a DN.
+</span></span><span style="display:flex;"><span>There are quite a few fields but you can leave some blank
+</span></span><span style="display:flex;"><span>For some fields there will be a default value,
+</span></span><span style="display:flex;"><span>If you enter <span style="color:#e6db74">&#39;.&#39;</span>, the field will be left blank.
+</span></span><span style="display:flex;"><span>-----
+</span></span><span style="display:flex;"><span>Country Name <span style="color:#f92672">(</span><span style="color:#ae81ff">2</span> letter code<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>AU<span style="color:#f92672">]</span>:
+</span></span><span style="display:flex;"><span>State or Province Name <span style="color:#f92672">(</span>full name<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Some-State<span style="color:#f92672">]</span>:
+</span></span><span style="display:flex;"><span>Locality Name <span style="color:#f92672">(</span>eg, city<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>Organization Name <span style="color:#f92672">(</span>eg, company<span style="color:#f92672">)</span> <span style="color:#f92672">[</span>Internet Widgits Pty Ltd<span style="color:#f92672">]</span>:Server
+</span></span><span style="display:flex;"><span>Organizational Unit Name <span style="color:#f92672">(</span>eg, section<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>Common Name <span style="color:#f92672">(</span>e.g. server FQDN or YOUR name<span style="color:#f92672">)</span> <span style="color:#f92672">[]</span>:nginx.mssl.com
+</span></span><span style="display:flex;"><span>Email Address <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>Please enter the following <span style="color:#e6db74">&#39;extra&#39;</span> attributes
+</span></span><span style="display:flex;"><span>to be sent with your certificate request
+</span></span><span style="display:flex;"><span>A challenge password <span style="color:#f92672">[]</span>:
+</span></span><span style="display:flex;"><span>An optional company name <span style="color:#f92672">[]</span>:
+</span></span></code></pre></div><p>Make sure to put the <code>Organization Name</code> as <code>Server</code> and <code>Common Name</code> (which is the website name) as <code>nginx.mssl.com</code></p>
 <p>We can now use the CSR along with the CA files to generate the CRT for our server.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">openssl x509 -req -days <span style="color:#ae81ff">365</span> -sha256 -in nginx.mssl.com.csr -CA ca.crt -CAkey ca.key -set_serial <span style="color:#ae81ff">1</span> -out nginx.mssl.com.crt
-</code></pre></div><p>Output:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">Signature ok
-subject<span style="color:#f92672">=</span>C <span style="color:#f92672">=</span> AU, ST <span style="color:#f92672">=</span> Some-State, O <span style="color:#f92672">=</span> Server, CN <span style="color:#f92672">=</span> nginx.mssl.com
-Getting CA Private Key
-Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
-</code></pre></div><p>All the certificates are now ready for our use!</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">ca.key
-ca.crt
-ca.pem
-user.key
-user.csr
-user.crt
-user.pfx
-nginx.mssl.com.key
-nginx.mssl.com.csr
-nginx.mssl.com.crt
-</code></pre></div><h1 id="setting-up-our-website-with-nginx">Setting up our &ldquo;Website&rdquo; with Nginx<a hidden class="anchor" aria-hidden="true" href="#setting-up-our-website-with-nginx">#</a></h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>openssl x509 -req -days <span style="color:#ae81ff">365</span> -sha256 -in nginx.mssl.com.csr -CA ca.crt -CAkey ca.key -set_serial <span style="color:#ae81ff">1</span> -out nginx.mssl.com.crt
+</span></span></code></pre></div><p>Output:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>Signature ok
+</span></span><span style="display:flex;"><span>subject<span style="color:#f92672">=</span>C <span style="color:#f92672">=</span> AU, ST <span style="color:#f92672">=</span> Some-State, O <span style="color:#f92672">=</span> Server, CN <span style="color:#f92672">=</span> nginx.mssl.com
+</span></span><span style="display:flex;"><span>Getting CA Private Key
+</span></span><span style="display:flex;"><span>Enter pass phrase <span style="color:#66d9ef">for</span> ca.key:&lt;passphrase&gt;
+</span></span></code></pre></div><p>All the certificates are now ready for our use!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>ca.key
+</span></span><span style="display:flex;"><span>ca.crt
+</span></span><span style="display:flex;"><span>ca.pem
+</span></span><span style="display:flex;"><span>user.key
+</span></span><span style="display:flex;"><span>user.csr
+</span></span><span style="display:flex;"><span>user.crt
+</span></span><span style="display:flex;"><span>user.pfx
+</span></span><span style="display:flex;"><span>nginx.mssl.com.key
+</span></span><span style="display:flex;"><span>nginx.mssl.com.csr
+</span></span><span style="display:flex;"><span>nginx.mssl.com.crt
+</span></span></code></pre></div><h1 id="setting-up-our-website-with-nginx">Setting up our &ldquo;Website&rdquo; with Nginx<a hidden class="anchor" aria-hidden="true" href="#setting-up-our-website-with-nginx">#</a></h1>
 <p>Of course, we aren&rsquo;t setting up a <em>real</em> website. But we do want to make our SSL authentication work on the domain <code>nginx.mssl.com</code>. We can do this by a little &ldquo;hack&rdquo; by changing our <code>/etc/hosts</code> file.</p>
 <p>Fire up a new shell, and use</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">sudo vim /etc/hosts
-</code></pre></div><p>Add the following line to the file and save.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">127.0.0.1 nginx.mssl.com
-</code></pre></div><p>This will enable your local machine to resolve the domain <code>nginx.mssl.com</code> to your locahost.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>sudo vim /etc/hosts
+</span></span></code></pre></div><p>Add the following line to the file and save.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>127.0.0.1 nginx.mssl.com
+</span></span></code></pre></div><p>This will enable your local machine to resolve the domain <code>nginx.mssl.com</code> to your locahost.</p>
 <p>The website will not work at the moment &ndash; you&rsquo;d have to specify the sources/web pages it needs to serve when requested.</p>
 <p>Create a file <code>index.html</code> on the directory path <code>/usr/share/nginx/mssl</code> with the contents:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">html</span>&gt;
-  &lt;<span style="color:#f92672">body</span>&gt;
-    &lt;<span style="color:#f92672">h1</span>&gt;Welcome to nginx!-mutual ssl test&lt;/<span style="color:#f92672">h1</span>&gt;
-  &lt;/<span style="color:#f92672">body</span>&gt;
-&lt;/<span style="color:#f92672">html</span>&gt;
-</code></pre></div><p>If the TLS handshake is successful, the web server should serve the file created above.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">html</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">h1</span>&gt;Welcome to nginx!-mutual ssl test&lt;/<span style="color:#f92672">h1</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">html</span>&gt;
+</span></span></code></pre></div><p>If the TLS handshake is successful, the web server should serve the file created above.</p>
 <h1 id="configuring-the-nginx-server-to-enable-two-way-ssl">Configuring the Nginx server to enable two way SSL<a hidden class="anchor" aria-hidden="true" href="#configuring-the-nginx-server-to-enable-two-way-ssl">#</a></h1>
 <p>All our certificates are at root in <code>/certs</code> directory. For simplicity, we would be copying the certificates to <code>/etc/nginx/certs</code> directory.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">cp -r /certs /etc/nginx/certs
-</code></pre></div><p>Also ensure that the certificates can be used by nginx service by providing them the access</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">chmod <span style="color:#ae81ff">777</span> -R certs/
-</code></pre></div><p>We would not be fiddling with the default nginx configuration which is present in the <code>nginx.conf</code> file. Instead, we would be creating a new file called <code>proxy.conf</code> using in the <code>/etc/nginx/sites-available</code> directory.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cp -r /certs /etc/nginx/certs
+</span></span></code></pre></div><p>Also ensure that the certificates can be used by nginx service by providing them the access</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>chmod <span style="color:#ae81ff">777</span> -R certs/
+</span></span></code></pre></div><p>We would not be fiddling with the default nginx configuration which is present in the <code>nginx.conf</code> file. Instead, we would be creating a new file called <code>proxy.conf</code> using in the <code>/etc/nginx/sites-available</code> directory.</p>
 <p>Create the file <code>proxy.conf</code> using the command</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">cd /etc/nginx/sites-available
-touch proxy.conf
-</code></pre></div><p>Enter the contents as the following (Notice the comments have more explanation):</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">server {
-    # Listen on port 443 for HTTPS connections
-    listen  443;
-
-    # Turn SSL on
-    ssl on;
-
-    # Name of the server/website
-    server_name nginx.mssl.com;
-
-    # See https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_ssl_server_name
-    proxy_ssl_server_name on;
-    
-    # This is the server SSL certificate
-    ssl_certificate      /etc/nginx/certs/nginx.mssl.com.crt;
-
-    # This is the server certificate key
-    ssl_certificate_key /etc/nginx/certs/nginx.mssl.com.key;
-
-    # Important: 
-    # This is the CA cert against which the client/user will be validated
-    # In our case since the Server and the Client certificate is 
-    # generated from the same CA, we use the ca.crt 
-    # But in actual production, the Client certificate might be 
-    # created from a different CA
-    ssl_client_certificate /etc/nginx/certs/ca.crt;
-
-    # Enables mutual TLS/two way SSL to verify the client
-    ssl_verify_client on;
-
-    # Number of intermediate certificates to verify. Good explanation of 
-    # certificate chaining can be found at
-    # https://cheapsslsecurity.com/p/what-is-ssl-certificate-chain/
-    ssl_verify_depth 2;
-
-    # Any error during the connection can be found on the following path
-    error_log /var/log/nginx/error.log debug;
-    
-    ssl_prefer_server_ciphers on;
-    ssl_protocols TLSv1.1 TLSv1.2;
-    ssl_ciphers &#39;ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:ECDHE-RSA-RC4-SHA:ECDHE-ECDSA-RC4-SHA:RC4-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!3DES:!MD5:!PSK&#39;;
-
-    keepalive_timeout 10;
-    ssl_session_timeout 5m;
-
-    # Matches the &#34;root&#34; of the website
-    # If TLS handshake is successful, the request is routed to this block
-    location / {
-        # path from which the website is served from
-        root /usr/share/nginx/mssl;
-        # index file name
-        index index.html index.htm;
-    }
-}
-</code></pre></div><p>Nginx has a good <a href="https://nginx.org/en/docs/beginners_guide.html">Beginner&rsquo;s Guide to Nginx</a>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>cd /etc/nginx/sites-available
+</span></span><span style="display:flex;"><span>touch proxy.conf
+</span></span></code></pre></div><p>Enter the contents as the following (Notice the comments have more explanation):</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>server {
+</span></span><span style="display:flex;"><span>    # Listen on port 443 for HTTPS connections
+</span></span><span style="display:flex;"><span>    listen  443;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    # Turn SSL on
+</span></span><span style="display:flex;"><span>    ssl on;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    # Name of the server/website
+</span></span><span style="display:flex;"><span>    server_name nginx.mssl.com;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    # See https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_ssl_server_name
+</span></span><span style="display:flex;"><span>    proxy_ssl_server_name on;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    # This is the server SSL certificate
+</span></span><span style="display:flex;"><span>    ssl_certificate      /etc/nginx/certs/nginx.mssl.com.crt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    # This is the server certificate key
+</span></span><span style="display:flex;"><span>    ssl_certificate_key /etc/nginx/certs/nginx.mssl.com.key;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    # Important: 
+</span></span><span style="display:flex;"><span>    # This is the CA cert against which the client/user will be validated
+</span></span><span style="display:flex;"><span>    # In our case since the Server and the Client certificate is 
+</span></span><span style="display:flex;"><span>    # generated from the same CA, we use the ca.crt 
+</span></span><span style="display:flex;"><span>    # But in actual production, the Client certificate might be 
+</span></span><span style="display:flex;"><span>    # created from a different CA
+</span></span><span style="display:flex;"><span>    ssl_client_certificate /etc/nginx/certs/ca.crt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    # Enables mutual TLS/two way SSL to verify the client
+</span></span><span style="display:flex;"><span>    ssl_verify_client on;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    # Number of intermediate certificates to verify. Good explanation of 
+</span></span><span style="display:flex;"><span>    # certificate chaining can be found at
+</span></span><span style="display:flex;"><span>    # https://cheapsslsecurity.com/p/what-is-ssl-certificate-chain/
+</span></span><span style="display:flex;"><span>    ssl_verify_depth 2;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    # Any error during the connection can be found on the following path
+</span></span><span style="display:flex;"><span>    error_log /var/log/nginx/error.log debug;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    ssl_prefer_server_ciphers on;
+</span></span><span style="display:flex;"><span>    ssl_protocols TLSv1.1 TLSv1.2;
+</span></span><span style="display:flex;"><span>    ssl_ciphers &#39;ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:ECDHE-RSA-RC4-SHA:ECDHE-ECDSA-RC4-SHA:RC4-SHA:HIGH:!aNULL:!eNULL:!EXPORT:!DES:!3DES:!MD5:!PSK&#39;;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    keepalive_timeout 10;
+</span></span><span style="display:flex;"><span>    ssl_session_timeout 5m;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    # Matches the &#34;root&#34; of the website
+</span></span><span style="display:flex;"><span>    # If TLS handshake is successful, the request is routed to this block
+</span></span><span style="display:flex;"><span>    location / {
+</span></span><span style="display:flex;"><span>        # path from which the website is served from
+</span></span><span style="display:flex;"><span>        root /usr/share/nginx/mssl;
+</span></span><span style="display:flex;"><span>        # index file name
+</span></span><span style="display:flex;"><span>        index index.html index.htm;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>Nginx has a good <a href="https://nginx.org/en/docs/beginners_guide.html">Beginner&rsquo;s Guide to Nginx</a>.</p>
 <p>To enable Nginx to use the above configuration, we also have to link the same in the <code>/etc/nginx/sites-enabled</code> directory.</p>
 <p>To accomplish this, use</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">ln -s /etc/nginx/sites-available/proxy.conf /etc/nginx/sites-enabled/proxy.conf
-</code></pre></div><p>This creates a symbolic link into <code>/etc/nginx/sites-enabled/proxy.conf</code> from <code>/etc/nginx/sites-available/proxy.conf</code>. Consider it as you having many server configurations in the <code>sites-available</code>, but only what you chose to &ldquo;enable&rdquo; in the <code>sites-enabled</code> will be active.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>ln -s /etc/nginx/sites-available/proxy.conf /etc/nginx/sites-enabled/proxy.conf
+</span></span></code></pre></div><p>This creates a symbolic link into <code>/etc/nginx/sites-enabled/proxy.conf</code> from <code>/etc/nginx/sites-available/proxy.conf</code>. Consider it as you having many server configurations in the <code>sites-available</code>, but only what you chose to &ldquo;enable&rdquo; in the <code>sites-enabled</code> will be active.</p>
 <p>We now just have to restart the Nginx for the configuration to be active!</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell">systemctl restart nginx
-</code></pre></div><p>I&rsquo;ll be using Postman to test our changes. However, you&rsquo;ll need to configure Postman to send the Client Certificates with the request<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-shell" data-lang="shell"><span style="display:flex;"><span>systemctl restart nginx
+</span></span></code></pre></div><p>I&rsquo;ll be using Postman to test our changes. However, you&rsquo;ll need to configure Postman to send the Client Certificates with the request<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>.</p>
 <p>To configure the Certificates, navigate to Settings -&gt; Certificates Tab.</p>
 <p>There will be a section to add the CA Certificate named <code>CA Certificates</code>, and this certificate should be a PEM file. Select the <code>ca.pem</code> from <code>/etc/nginx/certs</code>. A mistake would be to select the file from the root directory <code>/certs</code> but this will not work as Postman wouldn&rsquo;t be able to access the file.</p>
 <p>There would be another section below for <code>Client Certificates</code>. Click on <code>Add Certificate</code>, and put the details as the following:</p>
@@ -549,27 +546,27 @@ touch proxy.conf
 <li>Passphrase: <code>&lt;passphrase&gt;</code></li>
 </ul>
 <p>Now try to fire a GET request to the domain <code>https://nginx.mssl.com</code>. If everything was configured successfully, you&rsquo;ll get the following response:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">html</span>&gt;
-  &lt;<span style="color:#f92672">body</span>&gt;
-    &lt;<span style="color:#f92672">h1</span>&gt;Welcome to nginx!-mutual ssl test&lt;/<span style="color:#f92672">h1</span>&gt;
-  &lt;/<span style="color:#f92672">body</span>&gt;
-&lt;/<span style="color:#f92672">html</span>&gt;
-</code></pre></div><p>If there&rsquo;s an error in the configuration, you&rsquo;ll get the following error response:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">html</span>&gt;
-  &lt;<span style="color:#f92672">head</span>&gt;
-    &lt;<span style="color:#f92672">title</span>&gt;400 No required SSL certificate was sent&lt;/<span style="color:#f92672">title</span>&gt;
-  &lt;/<span style="color:#f92672">head</span>&gt;
-
-  &lt;<span style="color:#f92672">body</span> <span style="color:#a6e22e">bgcolor</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;white&#34;</span>&gt;
-    &lt;<span style="color:#f92672">center</span>&gt;
-      &lt;<span style="color:#f92672">h1</span>&gt;400 Bad Request&lt;/<span style="color:#f92672">h1</span>&gt;
-    &lt;/<span style="color:#f92672">center</span>&gt;
-    &lt;<span style="color:#f92672">center</span>&gt;No required SSL certificate was sent&lt;/<span style="color:#f92672">center</span>&gt;
-    &lt;<span style="color:#f92672">hr</span>&gt;
-    &lt;<span style="color:#f92672">center</span>&gt;nginx/1.14.0 (Ubuntu)&lt;/<span style="color:#f92672">center</span>&gt;
-  &lt;/<span style="color:#f92672">body</span>&gt;
-&lt;/<span style="color:#f92672">html</span>&gt;
-</code></pre></div><p>Hope this post was of some help!!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">html</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">h1</span>&gt;Welcome to nginx!-mutual ssl test&lt;/<span style="color:#f92672">h1</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">html</span>&gt;
+</span></span></code></pre></div><p>If there&rsquo;s an error in the configuration, you&rsquo;ll get the following error response:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-html" data-lang="html"><span style="display:flex;"><span>&lt;<span style="color:#f92672">html</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">title</span>&gt;400 No required SSL certificate was sent&lt;/<span style="color:#f92672">title</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">head</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>  &lt;<span style="color:#f92672">body</span> <span style="color:#a6e22e">bgcolor</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;white&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">center</span>&gt;
+</span></span><span style="display:flex;"><span>      &lt;<span style="color:#f92672">h1</span>&gt;400 Bad Request&lt;/<span style="color:#f92672">h1</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">center</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">center</span>&gt;No required SSL certificate was sent&lt;/<span style="color:#f92672">center</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">hr</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">center</span>&gt;nginx/1.14.0 (Ubuntu)&lt;/<span style="color:#f92672">center</span>&gt;
+</span></span><span style="display:flex;"><span>  &lt;/<span style="color:#f92672">body</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">html</span>&gt;
+</span></span></code></pre></div><p>Hope this post was of some help!!</p>
 <p>Reference:</p>
 <ol>
 <li><a href="https://medium.com/@Jenananthan/nginx-mutual-ssl-one-way-ssl-with-multiple-clients-ae87b3de0935">This</a> article is good for the demo part.</li>
@@ -578,87 +575,111 @@ touch proxy.conf
 <li><a href="https://rollout.io/blog/how-to-set-up-mutual-tls-authentication/">This article</a> is good, but still unclear for someone starting out.</li>
 <li>I used <a href="https://www.ssltrust.in/help/setup-guides/client-certificate-authentication">this article</a> to actually learn about generating the certificates especially because it provides easy commands and decent explanation.</li>
 </ol>
-<section class="footnotes" role="doc-endnotes">
+<div class="footnotes" role="doc-endnotes">
 <hr>
 <ol>
-<li id="fn:1" role="doc-endnote">
+<li id="fn:1">
 <p>The main resource for installing Nginx is this <a href="https://www.digitalocean.com/community/tutorials/how-to-install-nginx-on-ubuntu-18-04">tutorial by DigitalOcean</a>. All the relevant steps have been described in my article.&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:2" role="doc-endnote">
+<li id="fn:2">
 <p>More info <a href="https://serverfault.com/questions/9708/what-is-a-pem-file-and-how-does-it-differ-from-other-openssl-generated-key-file">here</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
-<li id="fn:3" role="doc-endnote">
+<li id="fn:3">
 <p><a href="https://learning.postman.com/docs/postman/sending-api-requests/certificates/">Client Certificates: Postman Learning Center</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
 </li>
 </ol>
-</section>
+</div>
 
 
   </div>
 
   <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
 <nav class="paginav">
   <a class="prev" href="https://darshit.dev/posts/change-java-version-ant/">
-    <span class="title">« Prev Page</span>
+    <span class="title">« Prev</span>
     <br>
     <span>How to change Java Version/JAVA_HOME for Ant?</span>
   </a>
   <a class="next" href="https://darshit.dev/posts/reduce-redis-memory-usage/">
-    <span class="title">Next Page »</span>
+    <span class="title">Next »</span>
     <br>
     <span>How to achieve a 50% reduction in Redis memory usage</span>
   </a>
 </nav>
 
 
-<div class="share-buttons">
-    <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on twitter"
-        href="https://twitter.com/intent/tweet/?text=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx&amp;url=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f&amp;hashtags=">
-        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
-            <path
-                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-253.927,424.544c135.939,0 210.268,-112.643 210.268,-210.268c0,-3.218 0,-6.437 -0.153,-9.502c14.406,-10.421 26.973,-23.448 36.935,-38.314c-13.18,5.824 -27.433,9.809 -42.452,11.648c15.326,-9.196 26.973,-23.602 32.49,-40.92c-14.252,8.429 -30.038,14.56 -46.896,17.931c-13.487,-14.406 -32.644,-23.295 -53.946,-23.295c-40.767,0 -73.87,33.104 -73.87,73.87c0,5.824 0.613,11.494 1.992,16.858c-61.456,-3.065 -115.862,-32.49 -152.337,-77.241c-6.284,10.881 -9.962,23.601 -9.962,37.088c0,25.594 13.027,48.276 32.95,61.456c-12.107,-0.307 -23.448,-3.678 -33.41,-9.196l0,0.92c0,35.862 25.441,65.594 59.311,72.49c-6.13,1.686 -12.72,2.606 -19.464,2.606c-4.751,0 -9.348,-0.46 -13.946,-1.38c9.349,29.426 36.628,50.728 68.965,51.341c-25.287,19.771 -57.164,31.571 -91.8,31.571c-5.977,0 -11.801,-0.306 -17.625,-1.073c32.337,21.15 71.264,33.41 112.95,33.41Z" />
-        </svg>
-    </a>
-    <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on linkedin"
-        href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f&amp;title=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx&amp;summary=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx&amp;source=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f">
-        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
-            <path
-                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
-        </svg>
-    </a>
-    <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on reddit"
-        href="https://reddit.com/submit?url=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f&title=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx">
-        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
-            <path
-                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
-        </svg>
-    </a>
-    <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on facebook"
-        href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f">
-        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
-            <path
-                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
-        </svg>
-    </a>
-    <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on whatsapp"
-        href="https://api.whatsapp.com/send?text=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx%20-%20https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f">
-        <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve">
-            <path
-                d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
-        </svg>
-    </a>
-    <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on telegram"
-        href="https://telegram.me/share/url?text=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx&amp;url=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f">
-        <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28">
-            <path
-                d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
-        </svg>
-    </a>
-</div>
+<ul class="share-buttons">
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on x"
+            href="https://x.com/intent/tweet/?text=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx&amp;url=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f&amp;hashtags=">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M512 62.554 L 512 449.446 C 512 483.97 483.97 512 449.446 512 L 62.554 512 C 28.03 512 0 483.97 0 449.446 L 0 62.554 C 0 28.03 28.029 0 62.554 0 L 449.446 0 C 483.971 0 512 28.03 512 62.554 Z M 269.951 190.75 L 182.567 75.216 L 56 75.216 L 207.216 272.95 L 63.9 436.783 L 125.266 436.783 L 235.9 310.383 L 332.567 436.783 L 456 436.783 L 298.367 228.367 L 432.367 75.216 L 371.033 75.216 Z M 127.633 110 L 164.101 110 L 383.481 400.065 L 349.5 400.065 Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on linkedin"
+            href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f&amp;title=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx&amp;summary=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx&amp;source=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-288.985,423.278l0,-225.717l-75.04,0l0,225.717l75.04,0Zm270.539,0l0,-129.439c0,-69.333 -37.018,-101.586 -86.381,-101.586c-39.804,0 -57.634,21.891 -67.617,37.266l0,-31.958l-75.021,0c0.995,21.181 0,225.717 0,225.717l75.02,0l0,-126.056c0,-6.748 0.486,-13.492 2.474,-18.315c5.414,-13.475 17.767,-27.434 38.494,-27.434c27.135,0 38.007,20.707 38.007,51.037l0,120.768l75.024,0Zm-307.552,-334.556c-25.674,0 -42.448,16.879 -42.448,39.002c0,21.658 16.264,39.002 41.455,39.002l0.484,0c26.165,0 42.452,-17.344 42.452,-39.002c-0.485,-22.092 -16.241,-38.954 -41.943,-39.002Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on reddit"
+            href="https://reddit.com/submit?url=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f&title=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-3.446,265.638c0,-22.964 -18.616,-41.58 -41.58,-41.58c-11.211,0 -21.361,4.457 -28.841,11.666c-28.424,-20.508 -67.586,-33.757 -111.204,-35.278l18.941,-89.121l61.884,13.157c0.756,15.734 13.642,28.29 29.56,28.29c16.407,0 29.706,-13.299 29.706,-29.701c0,-16.403 -13.299,-29.702 -29.706,-29.702c-11.666,0 -21.657,6.792 -26.515,16.578l-69.105,-14.69c-1.922,-0.418 -3.939,-0.042 -5.585,1.036c-1.658,1.073 -2.811,2.761 -3.224,4.686l-21.152,99.438c-44.258,1.228 -84.046,14.494 -112.837,35.232c-7.468,-7.164 -17.589,-11.591 -28.757,-11.591c-22.965,0 -41.585,18.616 -41.585,41.58c0,16.896 10.095,31.41 24.568,37.918c-0.639,4.135 -0.99,8.328 -0.99,12.576c0,63.977 74.469,115.836 166.33,115.836c91.861,0 166.334,-51.859 166.334,-115.836c0,-4.218 -0.347,-8.387 -0.977,-12.493c14.564,-6.47 24.735,-21.034 24.735,-38.001Zm-119.474,108.193c-20.27,20.241 -59.115,21.816 -70.534,21.816c-11.428,0 -50.277,-1.575 -70.522,-21.82c-3.007,-3.008 -3.007,-7.882 0,-10.889c3.003,-2.999 7.882,-3.003 10.885,0c12.777,12.781 40.11,17.317 59.637,17.317c19.522,0 46.86,-4.536 59.657,-17.321c3.016,-2.999 7.886,-2.995 10.885,0.008c3.008,3.011 3.003,7.882 -0.008,10.889Zm-5.23,-48.781c-16.373,0 -29.701,-13.324 -29.701,-29.698c0,-16.381 13.328,-29.714 29.701,-29.714c16.378,0 29.706,13.333 29.706,29.714c0,16.374 -13.328,29.698 -29.706,29.698Zm-160.386,-29.702c0,-16.381 13.328,-29.71 29.714,-29.71c16.369,0 29.689,13.329 29.689,29.71c0,16.373 -13.32,29.693 -29.689,29.693c-16.386,0 -29.714,-13.32 -29.714,-29.693Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on facebook"
+            href="https://facebook.com/sharer/sharer.php?u=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-106.468,0l0,-192.915l66.6,0l12.672,-82.621l-79.272,0l0,-53.617c0,-22.603 11.073,-44.636 46.58,-44.636l36.042,0l0,-70.34c0,0 -32.71,-5.582 -63.982,-5.582c-65.288,0 -107.96,39.569 -107.96,111.204l0,62.971l-72.573,0l0,82.621l72.573,0l0,192.915l-191.104,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on whatsapp"
+            href="https://api.whatsapp.com/send?text=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx%20-%20https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f">
+            <svg version="1.1" viewBox="0 0 512 512" xml:space="preserve" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M449.446,0c34.525,0 62.554,28.03 62.554,62.554l0,386.892c0,34.524 -28.03,62.554 -62.554,62.554l-386.892,0c-34.524,0 -62.554,-28.03 -62.554,-62.554l0,-386.892c0,-34.524 28.029,-62.554 62.554,-62.554l386.892,0Zm-58.673,127.703c-33.842,-33.881 -78.847,-52.548 -126.798,-52.568c-98.799,0 -179.21,80.405 -179.249,179.234c-0.013,31.593 8.241,62.428 23.927,89.612l-25.429,92.884l95.021,-24.925c26.181,14.28 55.659,21.807 85.658,21.816l0.074,0c98.789,0 179.206,-80.413 179.247,-179.243c0.018,-47.895 -18.61,-92.93 -52.451,-126.81Zm-126.797,275.782l-0.06,0c-26.734,-0.01 -52.954,-7.193 -75.828,-20.767l-5.441,-3.229l-56.386,14.792l15.05,-54.977l-3.542,-5.637c-14.913,-23.72 -22.791,-51.136 -22.779,-79.287c0.033,-82.142 66.867,-148.971 149.046,-148.971c39.793,0.014 77.199,15.531 105.329,43.692c28.128,28.16 43.609,65.592 43.594,105.4c-0.034,82.149 -66.866,148.983 -148.983,148.984Zm81.721,-111.581c-4.479,-2.242 -26.499,-13.075 -30.604,-14.571c-4.105,-1.495 -7.091,-2.241 -10.077,2.241c-2.986,4.483 -11.569,14.572 -14.182,17.562c-2.612,2.988 -5.225,3.364 -9.703,1.12c-4.479,-2.241 -18.91,-6.97 -36.017,-22.23c-13.314,-11.876 -22.304,-26.542 -24.916,-31.026c-2.612,-4.484 -0.279,-6.908 1.963,-9.14c2.016,-2.007 4.48,-5.232 6.719,-7.847c2.24,-2.615 2.986,-4.484 4.479,-7.472c1.493,-2.99 0.747,-5.604 -0.374,-7.846c-1.119,-2.241 -10.077,-24.288 -13.809,-33.256c-3.635,-8.733 -7.327,-7.55 -10.077,-7.688c-2.609,-0.13 -5.598,-0.158 -8.583,-0.158c-2.986,0 -7.839,1.121 -11.944,5.604c-4.105,4.484 -15.675,15.32 -15.675,37.364c0,22.046 16.048,43.342 18.287,46.332c2.24,2.99 31.582,48.227 76.511,67.627c10.685,4.615 19.028,7.371 25.533,9.434c10.728,3.41 20.492,2.929 28.209,1.775c8.605,-1.285 26.499,-10.833 30.231,-21.295c3.732,-10.464 3.732,-19.431 2.612,-21.298c-1.119,-1.869 -4.105,-2.99 -8.583,-5.232Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on telegram"
+            href="https://telegram.me/share/url?text=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx&amp;url=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f">
+            <svg version="1.1" xml:space="preserve" viewBox="2 2 28 28" height="30px" width="30px" fill="currentColor">
+                <path
+                    d="M26.49,29.86H5.5a3.37,3.37,0,0,1-2.47-1,3.35,3.35,0,0,1-1-2.47V5.48A3.36,3.36,0,0,1,3,3,3.37,3.37,0,0,1,5.5,2h21A3.38,3.38,0,0,1,29,3a3.36,3.36,0,0,1,1,2.46V26.37a3.35,3.35,0,0,1-1,2.47A3.38,3.38,0,0,1,26.49,29.86Zm-5.38-6.71a.79.79,0,0,0,.85-.66L24.73,9.24a.55.55,0,0,0-.18-.46.62.62,0,0,0-.41-.17q-.08,0-16.53,6.11a.59.59,0,0,0-.41.59.57.57,0,0,0,.43.52l4,1.24,1.61,4.83a.62.62,0,0,0,.63.43.56.56,0,0,0,.4-.17L16.54,20l4.09,3A.9.9,0,0,0,21.11,23.15ZM13.8,20.71l-1.21-4q8.72-5.55,8.78-5.55c.15,0,.23,0,.23.16a.18.18,0,0,1,0,.06s-2.51,2.3-7.52,6.8Z" />
+            </svg>
+        </a>
+    </li>
+    <li>
+        <a target="_blank" rel="noopener noreferrer" aria-label="share How To Implement Two Way SSL With Nginx on ycombinator"
+            href="https://news.ycombinator.com/submitlink?t=How%20To%20Implement%20Two%20Way%20SSL%20With%20Nginx&u=https%3a%2f%2fdarshit.dev%2fposts%2ftwo-way-ssl-nginx%2f">
+            <svg version="1.1" xml:space="preserve" width="30px" height="30px" viewBox="0 0 512 512" fill="currentColor"
+                xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape">
+                <path
+                    d="M449.446 0C483.971 0 512 28.03 512 62.554L512 449.446C512 483.97 483.97 512 449.446 512L62.554 512C28.03 512 0 483.97 0 449.446L0 62.554C0 28.03 28.029 0 62.554 0L449.446 0ZM183.8767 87.9921H121.8427L230.6673 292.4508V424.0079H281.3328V292.4508L390.1575 87.9921H328.1233L256 238.2489z" />
+            </svg>
+        </a>
+    </li>
+</ul>
 
   </footer><div id="disqus_thread"></div>
-<script type="application/javascript">
-    var disqus_config = function () {
+<script>
+    window.disqus_config = function () {
     
     
     
@@ -680,11 +701,11 @@ touch proxy.conf
     </main>
     
 <footer class="footer">
-    <span>&copy; 2022 <a href="https://darshit.dev/">Darshit Patel&#39;s Blog</a></span>
+    <span>&copy; 2024 <a href="https://darshit.dev/">Darshit Patel&#39;s Blog</a></span>
     <span>
         Powered by
         <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
-        <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
     </span>
 </footer>
 <a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
@@ -753,12 +774,12 @@ touch proxy.conf
 
         const copybutton = document.createElement('button');
         copybutton.classList.add('copy-code');
-        copybutton.innerText = 'copy';
+        copybutton.innerHTML = 'copy';
 
         function copyingDone() {
-            copybutton.innerText = 'copied!';
+            copybutton.innerHTML = 'copied!';
             setTimeout(() => {
-                copybutton.innerText = 'copy';
+                copybutton.innerHTML = 'copy';
             }, 2000);
         }
 

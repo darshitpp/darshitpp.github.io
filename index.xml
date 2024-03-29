@@ -1,87 +1,72 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Darshit Patel&#39;s Blog</title>
     <link>https://darshit.dev/</link>
     <description>Recent content on Darshit Patel&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 31 Dec 2021 19:00:26 +0530</lastBuildDate><atom:link href="https://darshit.dev/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <lastBuildDate>Fri, 31 Dec 2021 19:00:26 +0530</lastBuildDate>
+    <atom:link href="https://darshit.dev/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Stupid Patterns</title>
       <link>https://darshit.dev/posts/stupid-patterns/</link>
       <pubDate>Fri, 31 Dec 2021 19:00:26 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/stupid-patterns/</guid>
       <description>Stupid patterns on the web (and how to prevent your bank account from getting hacked)</description>
     </item>
-    
     <item>
       <title>About</title>
       <link>https://darshit.dev/about/</link>
       <pubDate>Fri, 24 Sep 2021 11:08:57 +0530</pubDate>
-      
       <guid>https://darshit.dev/about/</guid>
       <description>I currently work as a Software Engineer with Gupshup.
 I am involved in the computing community by volunteering at ACM. I have been an editor with ACM XRDS, and I&amp;rsquo;m now a member of the ACM Future of Computing Academy (FCA).</description>
     </item>
-    
     <item>
       <title>Dynamic Enums</title>
       <link>https://darshit.dev/posts/dynamic-enums/</link>
       <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/dynamic-enums/</guid>
       <description>Enable Enums to load data from a Database</description>
     </item>
-    
     <item>
       <title>The Java Constants Interface Anti-Pattern</title>
       <link>https://darshit.dev/posts/java-constants-interface/</link>
       <pubDate>Sun, 08 Nov 2020 04:29:47 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/java-constants-interface/</guid>
       <description>Should you use Interfaces for defining constant values?</description>
     </item>
-    
     <item>
       <title>How to change Java Version/JAVA_HOME for Ant?</title>
       <link>https://darshit.dev/posts/change-java-version-ant/</link>
       <pubDate>Mon, 15 Jun 2020 10:40:40 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/change-java-version-ant/</guid>
       <description>I wrote this earlier on a Github gist, but putting it here for a consolidated reference.
-Want to change Java Version/JAVA_HOME for Ant builds?  Open ~/.antrc file by running vim ~/.</description>
+Want to change Java Version/JAVA_HOME for Ant builds? Open ~/.antrc file by running vim ~/.</description>
     </item>
-    
     <item>
       <title>How To Implement Two Way SSL With Nginx</title>
       <link>https://darshit.dev/posts/two-way-ssl-nginx/</link>
       <pubDate>Sat, 13 Jun 2020 18:30:13 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/two-way-ssl-nginx/</guid>
       <description>A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and have had only a limited experience with networking concepts like SSL/TLS in my short career.</description>
     </item>
-    
     <item>
       <title>How to achieve a 50% reduction in Redis memory usage</title>
       <link>https://darshit.dev/posts/reduce-redis-memory-usage/</link>
       <pubDate>Sun, 10 May 2020 21:25:01 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/reduce-redis-memory-usage/</guid>
       <description>Yes, you read that right.
 To give you some context, some time ago, our (my org&amp;rsquo;s) Redis usage was un-tracked &amp;ndash; meaning we didn&amp;rsquo;t know why our Redis memory was being occupied as much as it was.</description>
     </item>
-    
     <item>
       <title>Using IntelliJ IDEA Live Templates</title>
       <link>https://darshit.dev/posts/using-intellij-idea-live-templates/</link>
       <pubDate>Sun, 01 Sep 2019 14:02:10 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/using-intellij-idea-live-templates/</guid>
       <description>IntelliJ IDEA is an awesome IDE, and a lesser known and used feature is Live Templates.
 Live Templates enable you to use code snippets with just a few keystrokes. A lot of great ones are provided out-of-the-box by IntelliJ.</description>
     </item>
-    
-    
   </channel>
 </rss>

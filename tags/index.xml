@@ -1,172 +1,138 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tags on Darshit Patel&#39;s Blog</title>
     <link>https://darshit.dev/tags/</link>
     <description>Recent content in Tags on Darshit Patel&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Fri, 31 Dec 2021 19:00:26 +0530</lastBuildDate><atom:link href="https://darshit.dev/tags/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <lastBuildDate>Fri, 31 Dec 2021 19:00:26 +0530</lastBuildDate>
+    <atom:link href="https://darshit.dev/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>cyber-security</title>
       <link>https://darshit.dev/tags/cyber-security/</link>
       <pubDate>Fri, 31 Dec 2021 19:00:26 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/cyber-security/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>dark patterns</title>
       <link>https://darshit.dev/tags/dark-patterns/</link>
       <pubDate>Fri, 31 Dec 2021 19:00:26 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/dark-patterns/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>product managers</title>
       <link>https://darshit.dev/tags/product-managers/</link>
       <pubDate>Fri, 31 Dec 2021 19:00:26 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/product-managers/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>stupid patterns</title>
       <link>https://darshit.dev/tags/stupid-patterns/</link>
       <pubDate>Fri, 31 Dec 2021 19:00:26 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/stupid-patterns/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>class</title>
       <link>https://darshit.dev/tags/class/</link>
       <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/class/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>dynamic enums</title>
       <link>https://darshit.dev/tags/dynamic-enums/</link>
       <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/dynamic-enums/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>enums</title>
       <link>https://darshit.dev/tags/enums/</link>
       <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/enums/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>java</title>
       <link>https://darshit.dev/tags/java/</link>
       <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/java/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>singleton</title>
       <link>https://darshit.dev/tags/singleton/</link>
       <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/singleton/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>type-safe enums</title>
       <link>https://darshit.dev/tags/type-safe-enums/</link>
       <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/type-safe-enums/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>best-practices</title>
       <link>https://darshit.dev/tags/best-practices/</link>
       <pubDate>Sun, 08 Nov 2020 04:29:47 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/best-practices/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>ant</title>
       <link>https://darshit.dev/tags/ant/</link>
       <pubDate>Mon, 15 Jun 2020 10:40:40 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/ant/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>linux</title>
       <link>https://darshit.dev/tags/linux/</link>
       <pubDate>Mon, 15 Jun 2020 10:40:40 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/linux/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>redis</title>
       <link>https://darshit.dev/tags/redis/</link>
       <pubDate>Sun, 10 May 2020 21:25:01 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/redis/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>intellij</title>
       <link>https://darshit.dev/tags/intellij/</link>
       <pubDate>Sun, 01 Sep 2019 14:02:10 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/intellij/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>logger</title>
       <link>https://darshit.dev/tags/logger/</link>
       <pubDate>Sun, 01 Sep 2019 14:02:10 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/logger/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>productivity</title>
       <link>https://darshit.dev/tags/productivity/</link>
       <pubDate>Sun, 01 Sep 2019 14:02:10 +0530</pubDate>
-      
       <guid>https://darshit.dev/tags/productivity/</guid>
       <description></description>
     </item>
-    
     <item>
       <title>ui/ux</title>
       <link>https://darshit.dev/tags/ui/ux/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
       <guid>https://darshit.dev/tags/ui/ux/</guid>
       <description></description>
     </item>
-    
   </channel>
 </rss>

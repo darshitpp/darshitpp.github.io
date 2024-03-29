@@ -1,58 +1,50 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>java on Darshit Patel&#39;s Blog</title>
     <link>https://darshit.dev/tags/java/</link>
     <description>Recent content in java on Darshit Patel&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 03 Jul 2021 20:12:52 +0530</lastBuildDate><atom:link href="https://darshit.dev/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <lastBuildDate>Sat, 03 Jul 2021 20:12:52 +0530</lastBuildDate>
+    <atom:link href="https://darshit.dev/tags/java/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Dynamic Enums</title>
       <link>https://darshit.dev/posts/dynamic-enums/</link>
       <pubDate>Sat, 03 Jul 2021 20:12:52 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/dynamic-enums/</guid>
       <description>Enable Enums to load data from a Database</description>
     </item>
-    
     <item>
       <title>The Java Constants Interface Anti-Pattern</title>
       <link>https://darshit.dev/posts/java-constants-interface/</link>
       <pubDate>Sun, 08 Nov 2020 04:29:47 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/java-constants-interface/</guid>
       <description>Should you use Interfaces for defining constant values?</description>
     </item>
-    
     <item>
       <title>How to change Java Version/JAVA_HOME for Ant?</title>
       <link>https://darshit.dev/posts/change-java-version-ant/</link>
       <pubDate>Mon, 15 Jun 2020 10:40:40 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/change-java-version-ant/</guid>
       <description>I wrote this earlier on a Github gist, but putting it here for a consolidated reference.
-Want to change Java Version/JAVA_HOME for Ant builds?  Open ~/.antrc file by running vim ~/.</description>
+Want to change Java Version/JAVA_HOME for Ant builds? Open ~/.antrc file by running vim ~/.</description>
     </item>
-    
     <item>
       <title>How to achieve a 50% reduction in Redis memory usage</title>
       <link>https://darshit.dev/posts/reduce-redis-memory-usage/</link>
       <pubDate>Sun, 10 May 2020 21:25:01 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/reduce-redis-memory-usage/</guid>
       <description>Yes, you read that right.
 To give you some context, some time ago, our (my org&amp;rsquo;s) Redis usage was un-tracked &amp;ndash; meaning we didn&amp;rsquo;t know why our Redis memory was being occupied as much as it was.</description>
     </item>
-    
     <item>
       <title>Using IntelliJ IDEA Live Templates</title>
       <link>https://darshit.dev/posts/using-intellij-idea-live-templates/</link>
       <pubDate>Sun, 01 Sep 2019 14:02:10 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/using-intellij-idea-live-templates/</guid>
       <description>IntelliJ IDEA is an awesome IDE, and a lesser known and used feature is Live Templates.
 Live Templates enable you to use code snippets with just a few keystrokes. A lot of great ones are provided out-of-the-box by IntelliJ.</description>
     </item>
-    
   </channel>
 </rss>

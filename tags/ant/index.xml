@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>ant on Darshit Patel&#39;s Blog</title>
     <link>https://darshit.dev/tags/ant/</link>
     <description>Recent content in ant on Darshit Patel&#39;s Blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 15 Jun 2020 10:40:40 +0530</lastBuildDate><atom:link href="https://darshit.dev/tags/ant/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <lastBuildDate>Mon, 15 Jun 2020 10:40:40 +0530</lastBuildDate>
+    <atom:link href="https://darshit.dev/tags/ant/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>How to change Java Version/JAVA_HOME for Ant?</title>
       <link>https://darshit.dev/posts/change-java-version-ant/</link>
       <pubDate>Mon, 15 Jun 2020 10:40:40 +0530</pubDate>
-      
       <guid>https://darshit.dev/posts/change-java-version-ant/</guid>
       <description>I wrote this earlier on a Github gist, but putting it here for a consolidated reference.
-Want to change Java Version/JAVA_HOME for Ant builds?  Open ~/.antrc file by running vim ~/.</description>
+Want to change Java Version/JAVA_HOME for Ant builds? Open ~/.antrc file by running vim ~/.</description>
     </item>
-    
   </channel>
 </rss>
