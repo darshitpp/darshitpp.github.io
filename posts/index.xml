@@ -6,8 +6,15 @@
     <description>Recent content in Posts on Darshit Patel&#39;s Blog</description>
     <generator>Hugo -- 0.134.3</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 29 Mar 2024 18:52:27 +0530</lastBuildDate>
+    <lastBuildDate>Sat, 21 Sep 2024 16:10:34 +0530</lastBuildDate>
     <atom:link href="https://darshit.dev/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SSH Tunneling with Java</title>
+      <link>https://darshit.dev/posts/java-ssh-tunnel/</link>
+      <pubDate>Sat, 21 Sep 2024 16:10:34 +0530</pubDate>
+      <guid>https://darshit.dev/posts/java-ssh-tunnel/</guid>
+      <description>What to do when you have no local access to a remote resource</description>
+    </item>
     <item>
       <title>Handling limited sudo access through Ansible</title>
       <link>https://darshit.dev/posts/partial-sudo-ansible/</link>

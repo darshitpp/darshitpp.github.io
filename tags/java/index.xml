@@ -6,8 +6,15 @@
     <description>Recent content in Java on Darshit Patel&#39;s Blog</description>
     <generator>Hugo -- 0.134.3</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 03 Jul 2021 20:12:52 +0530</lastBuildDate>
+    <lastBuildDate>Sat, 21 Sep 2024 16:10:34 +0530</lastBuildDate>
     <atom:link href="https://darshit.dev/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>SSH Tunneling with Java</title>
+      <link>https://darshit.dev/posts/java-ssh-tunnel/</link>
+      <pubDate>Sat, 21 Sep 2024 16:10:34 +0530</pubDate>
+      <guid>https://darshit.dev/posts/java-ssh-tunnel/</guid>
+      <description>What to do when you have no local access to a remote resource</description>
+    </item>
     <item>
       <title>Dynamic Enums</title>
       <link>https://darshit.dev/posts/dynamic-enums/</link>

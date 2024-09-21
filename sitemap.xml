@@ -3,10 +3,34 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://darshit.dev/posts/</loc>
-    <lastmod>2024-09-21T17:10:34+05:30</lastmod>
+    <lastmod>2024-09-21T16:10:34+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/access/</loc>
+    <lastmod>2024-09-21T16:10:34+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/</loc>
-    <lastmod>2024-09-21T17:10:34+05:30</lastmod>
+    <lastmod>2024-09-21T16:10:34+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/java/</loc>
+    <lastmod>2024-09-21T16:10:34+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/jumphost/</loc>
+    <lastmod>2024-09-21T16:10:34+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/localhost/</loc>
+    <lastmod>2024-09-21T16:10:34+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/remote/</loc>
+    <lastmod>2024-09-21T16:10:34+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/ssh/</loc>
+    <lastmod>2024-09-21T16:10:34+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/posts/java-ssh-tunnel/</loc>
+    <lastmod>2024-09-21T16:10:34+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/</loc>
+    <lastmod>2024-09-21T16:10:34+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/ansible/</loc>
     <lastmod>2024-03-29T18:52:27+05:30</lastmod>
@@ -33,9 +57,6 @@
     <lastmod>2024-03-29T18:52:27+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/sudoers/</loc>
-    <lastmod>2024-03-29T18:52:27+05:30</lastmod>
-  </url><url>
-    <loc>https://darshit.dev/tags/</loc>
     <lastmod>2024-03-29T18:52:27+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/cyber-security/</loc>
@@ -69,9 +90,6 @@
     <lastmod>2021-07-03T20:12:52+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/enums/</loc>
-    <lastmod>2021-07-03T20:12:52+05:30</lastmod>
-  </url><url>
-    <loc>https://darshit.dev/tags/java/</loc>
     <lastmod>2021-07-03T20:12:52+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/singleton/</loc>
