@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Just on Darshit Patel&#39;s Blog</title>
+    <link>http://localhost:1313/tags/just/</link>
+    <description>Recent content in Just on Darshit Patel&#39;s Blog</description>
+    <generator>Hugo -- 0.134.3</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 15 Sep 2020 11:30:03 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/just/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>A self-hosted Java based URL shortener</title>
+      <link>http://localhost:1313/posts/just/</link>
+      <pubDate>Tue, 15 Sep 2020 11:30:03 +0000</pubDate>
+      <guid>http://localhost:1313/posts/just/</guid>
+      <description>Desc Text.</description>
+    </item>
+  </channel>
+</rss>
