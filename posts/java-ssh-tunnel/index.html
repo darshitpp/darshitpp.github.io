@@ -193,6 +193,7 @@
 </figure>
   <div class="post-content"><p>You heave a sigh of relief, as the QA has approved a long-awaited feature for deployment on Prod. However, as a part of the process, it is first deployed on the UAT env, where there are test accounts that can be used to certify the feature works outside of the local developer and QA testing systems.</p>
 <p>But&hellip; running the test suite results in a lot of failures!</p>
+<hr>
 <p><em>Reply with the always relevant &ldquo;But it works on my machine!&rdquo;</em></p>
 <p>What do you do? You&rsquo;re <em>sure</em> that the code works. Defintely sure. Maybe the problem is with the UAT environment then? But what could be the problem with the environment? Maybe the test accounts which are newly created, are configured incorrectly? Probably yes, you think. You have access to the logs for the environment, but the scenario which it is failing for, has limited to no logs to identify the problem. You internally curse your ancestral developers.</p>
 <p>Another option? Remote debugging! While this is a good idea, it is seldom practical for environments where the apps are under constant use. If your code is in the &ldquo;hot path&rdquo;, good luck figuring out what requests are yours. Also it may slow down the app significantly.</p>
