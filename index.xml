@@ -4,7 +4,7 @@
     <title>Darshit Patel&#39;s Blog</title>
     <link>https://darshit.dev/</link>
     <description>Recent content on Darshit Patel&#39;s Blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <generator>Hugo -- 0.134.3</generator>
     <language>en</language>
     <lastBuildDate>Fri, 29 Mar 2024 18:52:27 +0530</lastBuildDate>
     <atom:link href="https://darshit.dev/index.xml" rel="self" type="application/rss+xml" />
@@ -27,8 +27,8 @@
       <link>https://darshit.dev/about/</link>
       <pubDate>Fri, 24 Sep 2021 11:08:57 +0530</pubDate>
       <guid>https://darshit.dev/about/</guid>
-      <description>I currently work as a Software Engineer with Gupshup.
-I am involved in the computing community by volunteering at ACM. I have been an editor with ACM XRDS, and I&amp;rsquo;m now a member of the ACM Future of Computing Academy (FCA).</description>
+      <description>&lt;p&gt;I currently work as a Software Engineer with &lt;a href=&#34;https://gupshup.io&#34;&gt;Gupshup&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I am involved in the computing community by volunteering at ACM. I have been an editor with ACM &lt;a href=&#34;https://xrds.acm.org/&#34;&gt;&lt;strong&gt;XRDS&lt;/strong&gt;&lt;/a&gt;, and I&amp;rsquo;m now a member of the ACM &lt;a href=&#34;https://www.acm.org/fca/&#34;&gt;&lt;strong&gt;Future of Computing Academy (FCA)&lt;/strong&gt;&lt;/a&gt;. You can find the work that FCA is doing at &lt;a href=&#34;https://acm-fca.org/&#34;&gt;https://acm-fca.org/&lt;/a&gt;&lt;/p&gt;</description>
     </item>
     <item>
       <title>Dynamic Enums</title>
@@ -49,31 +49,39 @@ I am involved in the computing community by volunteering at ACM. I have been an 
       <link>https://darshit.dev/posts/change-java-version-ant/</link>
       <pubDate>Mon, 15 Jun 2020 10:40:40 +0530</pubDate>
       <guid>https://darshit.dev/posts/change-java-version-ant/</guid>
-      <description>I wrote this earlier on a Github gist, but putting it here for a consolidated reference.
-Want to change Java Version/JAVA_HOME for Ant builds? Open ~/.antrc file by running vim ~/.</description>
+      <description>&lt;p&gt;I wrote this earlier on a &lt;a href=&#34;https://gist.github.com/darshitpp/f8017cdb61f4056c100edbf0182a6be0&#34;&gt;Github gist&lt;/a&gt;, but putting it here for a consolidated reference.&lt;/p&gt;
+&lt;h2 id=&#34;want-to-change-java-versionjava_home-for-ant-builds&#34;&gt;Want to change Java Version/JAVA_HOME for Ant builds?&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Open &lt;code&gt;~/.antrc&lt;/code&gt; file by running &lt;code&gt;vim ~/.antrc&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Add &lt;code&gt;JAVACMD=&amp;lt;NEW_JAVA_HOME&amp;gt;/bin/java&lt;/code&gt; and save&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The Ant wrapper script for Unix will source (read and evaluate) the file ~/.antrc before it does anything.
+On Windows, the Ant wrapper batch-file invokes %HOME%\antrc_pre.bat at the start and %HOME%\antrc_post.bat at the end.
+You can use these files, for example, to set/unset environment variables that should only be visible during the execution of Ant.&lt;/p&gt;</description>
     </item>
     <item>
       <title>How To Implement Two Way SSL With Nginx</title>
       <link>https://darshit.dev/posts/two-way-ssl-nginx/</link>
       <pubDate>Sat, 13 Jun 2020 18:30:13 +0530</pubDate>
       <guid>https://darshit.dev/posts/two-way-ssl-nginx/</guid>
-      <description>A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and have had only a limited experience with networking concepts like SSL/TLS in my short career.</description>
+      <description>&lt;p&gt;A couple of weeks ago, I was tasked with figuring out a way to enable two way SSL. I am a programmer, and have had only a limited experience with networking concepts like SSL/TLS in my short career. So I turned up blank on how I could make it possible. Moreover, the terminology you&amp;rsquo;d find online is not uniform. From a programming point of view, the term &amp;ldquo;Two way SSL&amp;rdquo; led me to limited  results, and I soon realized that other communities have different terminology. For example the &amp;ldquo;Two way SSL&amp;rdquo; is also known as &amp;ldquo;Mutual TLS&amp;rdquo; or &amp;ldquo;mTLS&amp;rdquo; or &amp;ldquo;Client Certificate Authentication&amp;rdquo; in Cloud/DevOps communitites. This makes finding the right resources online more difficult.&lt;/p&gt;</description>
     </item>
     <item>
       <title>How to achieve a 50% reduction in Redis memory usage</title>
       <link>https://darshit.dev/posts/reduce-redis-memory-usage/</link>
       <pubDate>Sun, 10 May 2020 21:25:01 +0530</pubDate>
       <guid>https://darshit.dev/posts/reduce-redis-memory-usage/</guid>
-      <description>Yes, you read that right.
-To give you some context, some time ago, our (my org&amp;rsquo;s) Redis usage was un-tracked &amp;ndash; meaning we didn&amp;rsquo;t know why our Redis memory was being occupied as much as it was.</description>
+      <description>&lt;p&gt;Yes, you read that right.&lt;/p&gt;
+&lt;p&gt;To give you some context, some time ago, our (my org&amp;rsquo;s) Redis usage was un-tracked &amp;ndash; meaning we didn&amp;rsquo;t know why our Redis memory was being occupied as much as it was. Our 2.5GB of Redis ElastiCache was almost close to being full, and if it somehow reached its limit, our system would start to fail. Though there were fallbacks in place, Redis could turn out to be a bottle-neck.&lt;/p&gt;</description>
     </item>
     <item>
       <title>Using IntelliJ IDEA Live Templates</title>
       <link>https://darshit.dev/posts/using-intellij-idea-live-templates/</link>
       <pubDate>Sun, 01 Sep 2019 14:02:10 +0530</pubDate>
       <guid>https://darshit.dev/posts/using-intellij-idea-live-templates/</guid>
-      <description>IntelliJ IDEA is an awesome IDE, and a lesser known and used feature is Live Templates.
-Live Templates enable you to use code snippets with just a few keystrokes. A lot of great ones are provided out-of-the-box by IntelliJ.</description>
+      <description>&lt;p&gt;IntelliJ IDEA is an awesome IDE, and a lesser known and used feature is Live Templates.&lt;/p&gt;
+&lt;p&gt;Live Templates enable you to use code snippets with just a few keystrokes. A lot of great ones are provided out-of-the-box by IntelliJ. You can view them using the shortcut press &lt;code&gt;Double Shift&lt;/code&gt; and then typing &lt;code&gt;Live Templates&lt;/code&gt;. The shortcut works regardless of the OS you&amp;rsquo;re currently using (and I am too lazy to specify OS specific menus).&lt;/p&gt;</description>
     </item>
   </channel>
 </rss>
