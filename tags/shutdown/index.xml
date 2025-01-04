@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Shutdown on Darshit Patel&#39;s Blog</title>
+    <link>https://darshit.dev/tags/shutdown/</link>
+    <description>Recent content in Shutdown on Darshit Patel&#39;s Blog</description>
+    <generator>Hugo -- 0.140.1</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 04 Jan 2025 12:14:21 +0530</lastBuildDate>
+    <atom:link href="https://darshit.dev/tags/shutdown/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mastering ExecutorService Shutdown: Tracking ThreadPool Termination</title>
+      <link>https://darshit.dev/posts/tracking-threadpool-termination/</link>
+      <pubDate>Sat, 04 Jan 2025 12:14:21 +0530</pubDate>
+      <guid>https://darshit.dev/posts/tracking-threadpool-termination/</guid>
+      <description>How do you know if all the tasks in ExecutorService have completed?</description>
+    </item>
+  </channel>
+</rss>

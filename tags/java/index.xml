@@ -6,8 +6,15 @@
     <description>Recent content in Java on Darshit Patel&#39;s Blog</description>
     <generator>Hugo -- 0.140.1</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 21 Sep 2024 16:10:34 +0530</lastBuildDate>
+    <lastBuildDate>Sat, 04 Jan 2025 12:14:21 +0530</lastBuildDate>
     <atom:link href="https://darshit.dev/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Mastering ExecutorService Shutdown: Tracking ThreadPool Termination</title>
+      <link>https://darshit.dev/posts/tracking-threadpool-termination/</link>
+      <pubDate>Sat, 04 Jan 2025 12:14:21 +0530</pubDate>
+      <guid>https://darshit.dev/posts/tracking-threadpool-termination/</guid>
+      <description>How do you know if all the tasks in ExecutorService have completed?</description>
+    </item>
     <item>
       <title>SSH Tunnelling with Java</title>
       <link>https://darshit.dev/posts/java-ssh-tunnel/</link>
