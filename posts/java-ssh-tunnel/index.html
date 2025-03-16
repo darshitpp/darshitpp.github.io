@@ -10,7 +10,7 @@
 <meta name="description" content="What to do when you have no local access to a remote resource">
 <meta name="author" content="">
 <link rel="canonical" href="https://darshit.dev/posts/java-ssh-tunnel/">
-<link crossorigin="anonymous" href="https://darshit.dev/assets/css/stylesheet.fc220c15db4aef0318bbf30adc45d33d4d7c88deff3238b23eb255afdc472ca6.css" integrity="sha256-/CIMFdtK7wMYu/MK3EXTPU18iN7/MjiyPrJVr9xHLKY=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="https://darshit.dev/assets/css/stylesheet.f49d66caae9ea0fd43f21f29e71a8d3e284517ed770f2aa86fa012953ad3c9ef.css" integrity="sha256-9J1myq6eoP1D8h8p5xqNPihFF&#43;13Dyqob6ASlTrTye8=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://darshit.dev/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://darshit.dev/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://darshit.dev/favicon-32x32.png">
@@ -55,13 +55,22 @@
         }
 
     </style>
-</noscript><meta property="og:title" content="SSH Tunnelling with Java">
-<meta property="og:description" content="What to do when you have no local access to a remote resource">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://darshit.dev/posts/java-ssh-tunnel/">
-<meta property="og:image" content="https://darshit.dev/img/java-ssh-tunnel/SSH%20Tunnel.png"><meta property="article:section" content="posts">
-<meta property="article:published_time" content="2024-09-21T16:10:34+05:30">
-<meta property="article:modified_time" content="2024-09-21T16:10:34+05:30">
+</noscript><meta property="og:url" content="https://darshit.dev/posts/java-ssh-tunnel/">
+  <meta property="og:site_name" content="Darshit Patel&#39;s Blog">
+  <meta property="og:title" content="SSH Tunnelling with Java">
+  <meta property="og:description" content="What to do when you have no local access to a remote resource">
+  <meta property="og:locale" content="en">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-09-21T16:10:34+05:30">
+    <meta property="article:modified_time" content="2024-09-21T16:10:34+05:30">
+    <meta property="article:tag" content="Ssh">
+    <meta property="article:tag" content="Java">
+    <meta property="article:tag" content="Access">
+    <meta property="article:tag" content="Remote">
+    <meta property="article:tag" content="Localhost">
+    <meta property="article:tag" content="Jumphost">
+    <meta property="og:image" content="https://darshit.dev/img/java-ssh-tunnel/SSH%20Tunnel.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://darshit.dev/img/java-ssh-tunnel/SSH%20Tunnel.png">
 <meta name="twitter:title" content="SSH Tunnelling with Java">
@@ -136,7 +145,7 @@
         <div class="logo">
             <a href="https://darshit.dev/" accesskey="h" title="Darshit Patel&#39;s Blog (Alt + H)">Darshit Patel&#39;s Blog</a>
             <div class="logo-switches">
-                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round">
@@ -187,7 +196,8 @@
 
 </div>
   </header> 
-<figure class="entry-cover"><img loading="eager" src="https://darshit.dev/img/java-ssh-tunnel/SSH%20Tunnel.png" alt="SSH Tunneling diagram">
+<figure class="entry-cover">
+        <img loading="eager" src="https://darshit.dev/img/java-ssh-tunnel/SSH%20Tunnel.png" alt="SSH Tunneling diagram">
         
 </figure>
   <div class="post-content"><p>You heave a sigh of relief, as the QA has approved a long-awaited feature for deployment on Prod. However, as a part of the process, it is first deployed on the UAT env, where there are test accounts that can be used to certify the feature works outside of the local developer and QA testing systems.</p>
@@ -208,8 +218,7 @@
 <blockquote>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh -L 123:farawayhost:456 remotehost
 </span></span></code></pre></div><p>local: <code>-L Specifies that the given port on the local (client) host is to be forwarded to the given host and port on the remote side.</code>
-<code>ssh -L sourcePort:forwardToHost:onPort connectToHost</code> means: connect with ssh to <code>connectToHost</code>, and forward all connection attempts to the <em><strong>local</strong></em> <code>sourcePort</code> to port <code>onPort</code> on the machine called <code>forwardToHost</code>, which can be reached from the <code>connectToHost</code> machine.</p>
-</blockquote>
+<code>ssh -L sourcePort:forwardToHost:onPort connectToHost</code> means: connect with ssh to <code>connectToHost</code>, and forward all connection attempts to the <em><strong>local</strong></em> <code>sourcePort</code> to port <code>onPort</code> on the machine called <code>forwardToHost</code>, which can be reached from the <code>connectToHost</code> machine.</p></blockquote>
 <h4 id="example">Example<a hidden class="anchor" aria-hidden="true" href="#example">#</a></h4>
 <p>For our use case, our sample command will be:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh -L &lt;Local Port&gt;:&lt;UAT Database IP&gt;:&lt;UAT Database Port&gt; &lt;JumpHost IP&gt;

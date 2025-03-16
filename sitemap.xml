@@ -3,10 +3,31 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://darshit.dev/posts/</loc>
-    <lastmod>2025-01-04T12:14:21+05:30</lastmod>
+    <lastmod>2025-03-16T18:16:20+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/bhagavad/</loc>
+    <lastmod>2025-03-16T18:16:20+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/bibek-debroy/</loc>
+    <lastmod>2025-03-16T18:16:20+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/book/</loc>
+    <lastmod>2025-03-16T18:16:20+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/</loc>
-    <lastmod>2025-01-04T12:14:21+05:30</lastmod>
+    <lastmod>2025-03-16T18:16:20+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/gita/</loc>
+    <lastmod>2025-03-16T18:16:20+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/review/</loc>
+    <lastmod>2025-03-16T18:16:20+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/tags/</loc>
+    <lastmod>2025-03-16T18:16:20+05:30</lastmod>
+  </url><url>
+    <loc>https://darshit.dev/posts/review-the-bhagavad-gita-millennials/</loc>
+    <lastmod>2025-03-16T18:16:20+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/executorservice/</loc>
     <lastmod>2025-01-04T12:14:21+05:30</lastmod>
@@ -20,28 +41,16 @@
     <loc>https://darshit.dev/tags/shutdown/</loc>
     <lastmod>2025-01-04T12:14:21+05:30</lastmod>
   </url><url>
-    <loc>https://darshit.dev/tags/</loc>
-    <lastmod>2025-01-04T12:14:21+05:30</lastmod>
-  </url><url>
     <loc>https://darshit.dev/tags/threadpool/</loc>
     <lastmod>2025-01-04T12:14:21+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/threads/</loc>
     <lastmod>2025-01-04T12:14:21+05:30</lastmod>
   </url><url>
-    <loc>https://darshit.dev/tags/bibek-debroy/</loc>
-    <lastmod>2024-12-25T15:54:43+05:30</lastmod>
-  </url><url>
-    <loc>https://darshit.dev/tags/book/</loc>
-    <lastmod>2024-12-25T15:54:43+05:30</lastmod>
-  </url><url>
     <loc>https://darshit.dev/tags/devi/</loc>
     <lastmod>2024-12-25T15:54:43+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/posts/review-devi-for-millennials/</loc>
-    <lastmod>2024-12-25T15:54:43+05:30</lastmod>
-  </url><url>
-    <loc>https://darshit.dev/tags/review/</loc>
     <lastmod>2024-12-25T15:54:43+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/access/</loc>
@@ -98,10 +107,10 @@
     <loc>https://darshit.dev/tags/product-managers/</loc>
     <lastmod>2021-12-31T19:00:26+05:30</lastmod>
   </url><url>
-    <loc>https://darshit.dev/tags/stupid-patterns/</loc>
+    <loc>https://darshit.dev/posts/stupid-patterns/</loc>
     <lastmod>2021-12-31T19:00:26+05:30</lastmod>
   </url><url>
-    <loc>https://darshit.dev/posts/stupid-patterns/</loc>
+    <loc>https://darshit.dev/tags/stupid-patterns/</loc>
     <lastmod>2021-12-31T19:00:26+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/ui/ux/</loc>
@@ -113,10 +122,10 @@
     <loc>https://darshit.dev/tags/class/</loc>
     <lastmod>2021-07-03T20:12:52+05:30</lastmod>
   </url><url>
-    <loc>https://darshit.dev/tags/dynamic-enums/</loc>
+    <loc>https://darshit.dev/posts/dynamic-enums/</loc>
     <lastmod>2021-07-03T20:12:52+05:30</lastmod>
   </url><url>
-    <loc>https://darshit.dev/posts/dynamic-enums/</loc>
+    <loc>https://darshit.dev/tags/dynamic-enums/</loc>
     <lastmod>2021-07-03T20:12:52+05:30</lastmod>
   </url><url>
     <loc>https://darshit.dev/tags/enums/</loc>
