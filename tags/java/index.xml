@@ -6,8 +6,15 @@
     <description>Recent content in Java on Darshit Patel&#39;s Blog</description>
     <generator>Hugo -- 0.148.2</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 04 Jan 2025 12:14:21 +0530</lastBuildDate>
+    <lastBuildDate>Sun, 24 Aug 2025 17:00:20 +0530</lastBuildDate>
     <atom:link href="https://darshit.dev/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using Java&#39;s serialVersionUID</title>
+      <link>https://darshit.dev/posts/using-java-serialversionuid/</link>
+      <pubDate>Sun, 24 Aug 2025 17:00:20 +0530</pubDate>
+      <guid>https://darshit.dev/posts/using-java-serialversionuid/</guid>
+      <description>Quick rant on interview questions and blogs on it</description>
+    </item>
     <item>
       <title>Mastering ExecutorService Shutdown: Tracking ThreadPool Termination</title>
       <link>https://darshit.dev/posts/tracking-threadpool-termination/</link>
