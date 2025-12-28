@@ -11,7 +11,7 @@
 To give you some context, some time ago, our (my org&rsquo;s) Redis usage was un-tracked &ndash; meaning we didn&rsquo;t know why our Redis memory was being occupied as much as it was. Our 2.5GB of Redis ElastiCache was almost close to being full, and if it somehow reached its limit, our system would start to fail. Though there were fallbacks in place, Redis could turn out to be a bottle-neck.">
 <meta name="author" content="">
 <link rel="canonical" href="https://darshit.dev/posts/reduce-redis-memory-usage/">
-<link crossorigin="anonymous" href="https://darshit.dev/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="https://darshit.dev/assets/css/stylesheet.2211ca3164be7830024f6aad2b3a2e520843a64f8f048445c3401c1249aa051d.css" integrity="sha256-IhHKMWS&#43;eDACT2qtKzouUghDpk&#43;PBIRFw0AcEkmqBR0=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://darshit.dev/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://darshit.dev/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://darshit.dev/favicon-32x32.png">
@@ -486,7 +486,8 @@ Request Body:</p>
 <p>But wait, we can reduce it further. How, you ask. Compression! What if we compress the data and then store it? In our case it would work! This time, <a href="https://google.github.io/snappy/">Snappy</a> to the rescue!</p>
 <p>Your first question after this would be: compression and decompression takes time. Wouldn&rsquo;t it be detrimental on production? Snappy has the answer to this too.</p>
 <blockquote>
-<p>It does not aim for maximum compression, or compatibility with any other compression library; instead, it aims for very high speeds and reasonable compression.</p></blockquote>
+<p>It does not aim for maximum compression, or compatibility with any other compression library; instead, it aims for very high speeds and reasonable compression.</p>
+</blockquote>
 <p>Using Snappy is also as simple as adding the dependency in <code>pom.xml</code>, and a couple of lines of code changes. Just add <code>Snappy.compress</code> while serialization and <code>Snappy.decompress</code> while deserialization.</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span>	<span style="color:#f92672">&lt;dependency&gt;</span>
 </span></span><span style="display:flex;"><span>		<span style="color:#f92672">&lt;groupId&gt;</span>org.xerial.snappy<span style="color:#f92672">&lt;/groupId&gt;</span>

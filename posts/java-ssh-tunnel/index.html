@@ -10,7 +10,7 @@
 <meta name="description" content="What to do when you have no local access to a remote resource">
 <meta name="author" content="">
 <link rel="canonical" href="https://darshit.dev/posts/java-ssh-tunnel/">
-<link crossorigin="anonymous" href="https://darshit.dev/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css" integrity="sha256-j&#43;ECM6cGvIfy4Is8&#43;XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as="style">
+<link crossorigin="anonymous" href="https://darshit.dev/assets/css/stylesheet.2211ca3164be7830024f6aad2b3a2e520843a64f8f048445c3401c1249aa051d.css" integrity="sha256-IhHKMWS&#43;eDACT2qtKzouUghDpk&#43;PBIRFw0AcEkmqBR0=" rel="preload stylesheet" as="style">
 <link rel="icon" href="https://darshit.dev/favicon.ico">
 <link rel="icon" type="image/png" sizes="16x16" href="https://darshit.dev/favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="https://darshit.dev/favicon-32x32.png">
@@ -218,7 +218,8 @@
 <blockquote>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh -L 123:farawayhost:456 remotehost
 </span></span></code></pre></div><p>local: <code>-L Specifies that the given port on the local (client) host is to be forwarded to the given host and port on the remote side.</code>
-<code>ssh -L sourcePort:forwardToHost:onPort connectToHost</code> means: connect with ssh to <code>connectToHost</code>, and forward all connection attempts to the <em><strong>local</strong></em> <code>sourcePort</code> to port <code>onPort</code> on the machine called <code>forwardToHost</code>, which can be reached from the <code>connectToHost</code> machine.</p></blockquote>
+<code>ssh -L sourcePort:forwardToHost:onPort connectToHost</code> means: connect with ssh to <code>connectToHost</code>, and forward all connection attempts to the <em><strong>local</strong></em> <code>sourcePort</code> to port <code>onPort</code> on the machine called <code>forwardToHost</code>, which can be reached from the <code>connectToHost</code> machine.</p>
+</blockquote>
 <h4 id="example">Example<a hidden class="anchor" aria-hidden="true" href="#example">#</a></h4>
 <p>For our use case, our sample command will be:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ssh -L &lt;Local Port&gt;:&lt;UAT Database IP&gt;:&lt;UAT Database Port&gt; &lt;JumpHost IP&gt;
