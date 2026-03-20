@@ -1,0 +1,57 @@
+baseURL: "https://darshit.dev/"
+title: Darshit Patel's Blog
+theme: hugo-PaperMod
+canonifyurls: true
+pygmentsCodeFences: true
+enableEmoji: true
+summaryLength: 30
+pagination:
+  pagerSize: 10
+disqusShortName: darshitpp
+# author:
+#   # name: Darshit Patel
+#   github: darshitpp
+#   linkedin: darshitpp
+#   twitter: darshitpp
+params:
+  author:
+  # name: Darshit Patel
+  github: darshitpp
+  linkedin: darshitpp
+  twitter: darshitpp
+  homeInfoParams:
+    Title: "Hi there \U0001F44B! Welcome to my website!"
+    Content:
+        >
+            I am a Software Engineer, with a special interest in working with Backend Technologies like Java. Here, I document some things that I learn, and find interesting. You can learn more about what I do on the About page!
+  env: production
+  tagline: Some things that I learn and find interesting
+  description: "Darshit Patel's Blog: Some things that I learn and find interesting"
+  ShowReadingTime: true
+  ShowShareButtons: true
+  ShowPostNavLinks: true
+  ShowCodeCopyButtons: true
+  hideSummary: false 
+  defaultTheme: auto
+  disableSpecial1stPost: true
+  comments: true
+  socialIcons:
+    - name: twitter
+      url: "https://twitter.com/darshitpp"
+    - name: github
+      url: "https://github.com/darshitpp"
+    - name: linkedin
+      url: "https://linkedin.com/in/darshitpp"
+  fuseOpts:
+    isCaseSensitive: false
+    shouldSort: true
+    location: 0
+    distance: 1000
+    threshold: 0.4
+    minMatchCharLength: 0
+    keys: ["title", "permalink", "summary", "content"]
+outputs:
+  home:
+    - HTML
+    - RSS
+    - JSON
