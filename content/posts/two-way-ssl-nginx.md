@@ -209,18 +209,7 @@ cat ca.key >> ca.pem
 The `ca.key` would be something like
 
 ```shell
------BEGIN RSA PRIVATE KEY-----
-Proc-Type: 4,ENCRYPTED
-DEK-Info: DES-EDE3-CBC,0E2D38C130456B75
-
-3+0Em2EKRkmCCu79bR7E2uFy/G1huIGEGsItwDf0C70Hf2bmUUDYazK/CPZxZCut
-PDximngoGaLSdLQ2HWGjjCe59pJxxZknxHu9QVy3mIWLixAZWevDUnoK1q+Wqy0M
------END RSA PRIVATE KEY-----
------BEGIN CERTIFICATE-----
-MIIFSzCCAzOgAwIBAgIUeawaQJUIAPKOKhrIJDjMVCYVx4MwDQYJKoZIhvcNAQEL
-BQAwNTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxETAPBgNVBAoM
------END CERTIFICATE-----
-```
+<PASTE_YOUR_CERTIFICATE_HERE>```
 ## Generating Client/User Certificates
 
 At this point, we have three files in the `certs` directory.
