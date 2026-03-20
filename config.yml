@@ -8,17 +8,12 @@ summaryLength: 30
 pagination:
   pagerSize: 10
 disqusShortName: darshitpp
-# author:
-#   # name: Darshit Patel
-#   github: darshitpp
-#   linkedin: darshitpp
-#   twitter: darshitpp
 params:
   author:
-  # name: Darshit Patel
-  github: darshitpp
-  linkedin: darshitpp
-  twitter: darshitpp
+    name: Darshit Patel
+    github: darshitpp
+    linkedin: darshitpp
+    twitter: darshitpp
   homeInfoParams:
     Title: "Hi there \U0001F44B! Welcome to my website!"
     Content:
