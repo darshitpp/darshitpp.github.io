@@ -4,10 +4,52 @@
     <title>Posts on Darshit Patel&#39;s Blog</title>
     <link>https://darshit.dev/posts/</link>
     <description>Recent content in Posts on Darshit Patel&#39;s Blog</description>
-    <generator>Hugo -- 0.134.3</generator>
+    <generator>Hugo -- 0.153.3</generator>
     <language>en</language>
-    <lastBuildDate>Fri, 29 Mar 2024 18:52:27 +0530</lastBuildDate>
+    <lastBuildDate>Sun, 24 Aug 2025 17:00:20 +0530</lastBuildDate>
     <atom:link href="https://darshit.dev/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using Java&#39;s serialVersionUID</title>
+      <link>https://darshit.dev/posts/using-java-serialversionuid/</link>
+      <pubDate>Sun, 24 Aug 2025 17:00:20 +0530</pubDate>
+      <guid>https://darshit.dev/posts/using-java-serialversionuid/</guid>
+      <description>Quick rant on interview questions and blogs on it</description>
+    </item>
+    <item>
+      <title>The White Tiger, by Aravind Adiga - A Review</title>
+      <link>https://darshit.dev/posts/review-the-white-tiger/</link>
+      <pubDate>Tue, 15 Jul 2025 21:00:12 +0530</pubDate>
+      <guid>https://darshit.dev/posts/review-the-white-tiger/</guid>
+      <description>The White Tiger will leave you breathless, revolted, and disgusted. It&amp;#39;ll make you cynical, and a pessimist. It&amp;#39;ll anger you, sadden you, and make you despair.</description>
+    </item>
+    <item>
+      <title>The Bhagavad Gita for Millennials, by Bibek Debroy - A Review</title>
+      <link>https://darshit.dev/posts/review-the-bhagavad-gita-millennials/</link>
+      <pubDate>Sun, 16 Mar 2025 18:16:20 +0530</pubDate>
+      <guid>https://darshit.dev/posts/review-the-bhagavad-gita-millennials/</guid>
+      <description>The book&amp;#39;s easy explaining style, coupled with scientific temper by which the author goes about elaborating without sounding preachy, makes it a must read starter text for anyone who wants to know about The Bhagavad Gita.</description>
+    </item>
+    <item>
+      <title>Mastering ExecutorService Shutdown: Tracking ThreadPool Termination</title>
+      <link>https://darshit.dev/posts/tracking-threadpool-termination/</link>
+      <pubDate>Sat, 04 Jan 2025 12:14:21 +0530</pubDate>
+      <guid>https://darshit.dev/posts/tracking-threadpool-termination/</guid>
+      <description>How do you know if all the tasks in ExecutorService have completed?</description>
+    </item>
+    <item>
+      <title>Devi for Millennials, by Bibek Debroy - A Review</title>
+      <link>https://darshit.dev/posts/review-devi-for-millennials/</link>
+      <pubDate>Wed, 25 Dec 2024 15:54:43 +0530</pubDate>
+      <guid>https://darshit.dev/posts/review-devi-for-millennials/</guid>
+      <description>I went into reading this book with high expectations, and I was...</description>
+    </item>
+    <item>
+      <title>SSH Tunnelling with Java</title>
+      <link>https://darshit.dev/posts/java-ssh-tunnel/</link>
+      <pubDate>Sat, 21 Sep 2024 16:10:34 +0530</pubDate>
+      <guid>https://darshit.dev/posts/java-ssh-tunnel/</guid>
+      <description>What to do when you have no local access to a remote resource</description>
+    </item>
     <item>
       <title>Handling limited sudo access through Ansible</title>
       <link>https://darshit.dev/posts/partial-sudo-ansible/</link>
