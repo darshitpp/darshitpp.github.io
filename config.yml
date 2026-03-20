@@ -9,13 +9,13 @@ pagination:
   pagerSize: 10
 disqusShortName: darshitpp
 
+# Top-level author for RSS template compatibility
+author:
+  name: Darshit Patel
+
 params:
-  # Author configuration
-  author:
-    name: Darshit Patel
-    github: darshitpp
-    linkedin: darshitpp
-    twitter: darshitpp
+  # Author name as string for theme meta display
+  author: "Darshit Patel"
 
   # Disable Google Analytics to avoid missing partial error
   analytics:
