@@ -1,0 +1,41 @@
+# AI Crawler Directives for darshit.dev
+# See: https://llmstxt.org/
+
+# Default: Allow AI crawlers to index posts and about page for citation
+User-agent: *
+Allow: /posts/*
+Allow: /about/
+
+# Discourage crawling of thin content pages
+Disallow: /tags/*
+Disallow: /categories/*
+Disallow: /search/
+
+# Specific AI crawlers - explicitly allowed for citation opportunities
+User-agent: GPTBot
+Allow: /posts/*
+Allow: /about/
+
+User-agent: ChatGPT-User
+Allow: /posts/*
+Allow: /about/
+
+User-agent: PerplexityBot
+Allow: /posts/*
+Allow: /about/
+
+User-agent: ClaudeBot
+Allow: /posts/*
+Allow: /about/
+
+User-agent: Google-Extended
+Allow: /posts/*
+Allow: /about/
+
+# EU Directive 2019/790 content signals (as comments)
+# search: yes
+# ai-input: no
+# ai-train: no
+
+# Site metadata
+Sitemap: https://darshit.dev/sitemap.xml
