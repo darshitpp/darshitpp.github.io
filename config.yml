@@ -25,14 +25,18 @@ params:
   # Home page info
   homeInfoParams:
     Title: "Hi there 👋! Welcome to my website!"
-    Content:
-        >
-            I am a Software Engineer, with a special interest in working with Backend Technologies like Java. Here, I document some things that I learn, and find interesting. You can learn more about what I do on the About page!
+    Content: >
+      I am a Software Engineer, with a special interest in working with Backend Technologies like Java.
+      Here, I document some things that I learn, and find interesting. You can learn more about what I do on the About page!
 
   # Site settings
   env: production
   tagline: Some things that I learn and find interesting
   description: "Darshit Patel's Blog: Some things that I learn and find interesting"
+
+  # Default OpenGraph image (used when posts don't have cover images)
+  images: ["og-image.png"]
+
   ShowReadingTime: true
   ShowShareButtons: true
   ShowPostNavLinks: true
@@ -42,7 +46,7 @@ params:
   disableSpecial1stPost: true
   comments: true
 
-  # Social icons
+  # Social icons - used for sameAs in schema
   socialIcons:
     - name: twitter
       url: "https://twitter.com/darshitpp"
@@ -50,6 +54,19 @@ params:
       url: "https://github.com/darshitpp"
     - name: linkedin
       url: "https://linkedin.com/in/darshitpp"
+
+  # Social for Twitter Cards (nested under params)
+  social:
+    twitter: "darshitpp"
+
+  # Schema.org structured data (nested under params)
+  schema:
+    publisherType: "Person"
+    sameAs:
+      - "https://twitter.com/darshitpp"
+      - "https://github.com/darshitpp"
+      - "https://linkedin.com/in/darshitpp"
+      - "https://dev.to/darshitpp"
 
   # Search settings
   fuseOpts:

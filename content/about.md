@@ -1,5 +1,6 @@
 ---
 title: "About"
+description: "Darshit Patel - Tech Lead at Gupshup, Java/Spring Boot engineer, ACM volunteer. Sharing learnings on backend technologies and distributed systems. 9+ years of experience."
 date: 2021-09-24T11:08:57+05:30
 draft: false
 menu: "main"

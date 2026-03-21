@@ -1,0 +1,10 @@
+{{- /* AI Crawler Meta Tags */}}
+{{- if hugo.IsProduction | or (eq site.Params.env "production") }}
+
+{{- /* Generator meta for debugging */}}
+<meta name="generator" content="Hugo {{ hugo.Version }}" />
+
+{{- /* Author info for E-E-A-T */}}
+<meta name="author" content="{{ site.Params.author }}" />
+
+{{- end }}
