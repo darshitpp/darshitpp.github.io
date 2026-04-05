@@ -3,6 +3,7 @@ title: "SSH Tunnelling with Java"
 date: 2024-09-21T16:10:34+05:30
 draft: false
 tags: [ "ssh", "java", "access", "remote", "localhost", "jumphost"]
+categories: ["Backend"]
 comments: true
 description: "What to do when you have no local access to a remote resource"
 cover:

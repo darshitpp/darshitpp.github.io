@@ -3,6 +3,7 @@ title: "Using Java's serialVersionUID"
 date: 2025-08-24T17:00:20+05:30
 draft: false
 tags: [ "java", "serialization", "serialVersionUID"]
+categories: ["Backend"]
 description: "Quick rant on interview questions and blogs on it"
 comments: true
 ---

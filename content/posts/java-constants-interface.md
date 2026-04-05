@@ -3,7 +3,7 @@ title = "The Java Constants Interface Anti-Pattern"
 date = 2020-11-08T04:29:47+05:30
 description = "Should you use Interfaces for defining constant values?"
 tags = ["java", "best-practices"]
-categories = []
+categories = ["Architecture"]
 draft = false
 +++
 

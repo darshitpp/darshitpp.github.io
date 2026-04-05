@@ -4,6 +4,7 @@ date: 2021-12-31T19:00:26+05:30
 draft: false
 cover:
   image: "https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg"
+categories: ["Architecture"]
 tags: ["stupid patterns", "dark patterns", "cyber-security", "ui/ux", "product managers"]
 comments: true
 description: "Stupid patterns on the web (and how to prevent your bank account from getting hacked)"

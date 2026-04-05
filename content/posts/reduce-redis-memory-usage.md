@@ -1,8 +1,9 @@
 +++
 title = "How to achieve a 50% reduction in Redis memory usage"
 date = 2020-05-10T21:25:01+05:30
+description = "How we reduced Redis memory usage by 50% using MessagePack serialization and Snappy compression in a Spring Boot application with Jackson and Lettuce."
 tags = ["redis", "java"]
-categories = []
+categories = ["Backend"]
 draft = false
 +++
 

@@ -3,6 +3,7 @@ title: "Handling limited sudo access through Ansible"
 date: 2024-03-29T18:52:27+05:30
 draft: false
 tags: [ "devops", "ansible", "sudo", "python", "password", "nopasswd", "root", "sudoers"]
+categories: ["DevOps"]
 comments: true
 description: "Especially useful if you don't have root access or access to the sudoers file"
 ---

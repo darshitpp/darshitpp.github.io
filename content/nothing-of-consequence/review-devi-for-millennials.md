@@ -1,4 +1,5 @@
 ---
+url: "/posts/review-devi-for-millennials/"
 title: "Devi for Millennials, by Bibek Debroy - A Review"
 date: 2024-12-25T15:54:43+05:30
 draft: false

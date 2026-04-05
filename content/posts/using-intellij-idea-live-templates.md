@@ -1,9 +1,10 @@
 +++
 title = "Using IntelliJ IDEA Live Templates"
 date = 2019-09-01T14:02:10+05:30
+description = "Boost your Java development productivity by creating custom Live Templates in IntelliJ IDEA. Learn how to automate repetitive code patterns with just a few keystrokes."
 images = []
 tags = ["java", "intellij", "logger", "productivity"]
-categories = []
+categories = ["Productivity"]
 draft = false
 +++
 

@@ -7,6 +7,8 @@ enableEmoji: true
 summaryLength: 30
 pagination:
   pagerSize: 10
+
+disableKinds: ["taxonomy", "term"]
 disqusShortName: darshitpp
 
 # Top-level author for RSS template compatibility
@@ -16,6 +18,10 @@ author:
 params:
   # Author name as string for theme meta display
   author: "Darshit Patel"
+
+  # Main section for homepage (technical posts, not musings)
+  mainSections:
+    - posts
 
   # Disable Google Analytics to avoid missing partial error
   analytics:
@@ -77,6 +83,13 @@ params:
     threshold: 0.4
     minMatchCharLength: 0
     keys: ["title", "permalink", "summary", "content"]
+
+menu:
+  main:
+    - identifier: nothing-of-consequence
+      name: Nothing of Consequence
+      url: /nothing-of-consequence/
+      weight: 20
 
 outputs:
   home:

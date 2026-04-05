@@ -3,6 +3,7 @@ title: "Mastering ExecutorService Shutdown: Tracking ThreadPool Termination"
 date: 2025-01-04T12:14:21+05:30
 draft: false
 tags: [ "java", "ExecutorService", "threadpool", "threads", "shutdown"]
+categories: ["Backend"]
 comments: true
 description: "How do you know if all the tasks in ExecutorService have completed?"
 ---

@@ -1,4 +1,5 @@
 ---
+url: "/posts/review-the-bhagavad-gita-millennials/"
 title: "The Bhagavad Gita for Millennials, by Bibek Debroy - A Review"
 date: 2025-03-16T18:16:20+05:30
 draft: false

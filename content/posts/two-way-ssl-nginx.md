@@ -1,8 +1,9 @@
 ---
 title: "How To Implement Two Way SSL With Nginx"
 date: 2020-06-13T18:30:13+05:30
+description: "Complete step-by-step guide to implementing two-way SSL (mutual TLS / mTLS) with Nginx. Includes certificate generation, server configuration, and Postman testing."
 tags: ["ssl", "ngnix", "tls"]
-categories: []
+categories: ["DevOps"]
 draft: false
 cover:
     image: "img/two-way-ssl-nginx/nginx-logo.png"

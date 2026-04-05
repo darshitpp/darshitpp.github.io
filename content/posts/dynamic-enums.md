@@ -3,6 +3,7 @@ title: "Dynamic Enums"
 date: 2021-07-03T20:12:52+05:30
 draft: false
 tags: ["enums", "dynamic enums", "java", "class", "type-safe enums", "singleton"]
+categories: ["Architecture"]
 comments: true
 description: "Enable Enums to load data from a Database"
 

@@ -1,4 +1,5 @@
 ---
+url: "/posts/review-the-white-tiger/"
 title: "The White Tiger, by Aravind Adiga - A Review"
 date: 2025-07-15T21:00:12+05:30
 tags: [ "book", "review", "aravind adiga", "the white tiger"]

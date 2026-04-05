@@ -1,8 +1,9 @@
 +++
 title = "How to change Java Version/JAVA_HOME for Ant?"
 date = 2020-06-15T10:40:40+05:30
+description = "Learn how to change the Java version for Ant builds using the ~/.antrc file on Unix systems. Step-by-step guide for switching JAVA_HOME per-project."
 tags = ["java", "linux", "ant"]
-categories = []
+categories = ["DevOps"]
 draft = false
 +++
 
