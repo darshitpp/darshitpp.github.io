@@ -56,7 +56,7 @@ Consider that I visit the Sai Baba temple in Shirdi. Considering that the temple
   
 Another user in a thread asked what about women being denied an entry into the inner sanctum Masjids(not to be confused with Dargahs). My retort to the user was did any women actually want to enter the Masjid? The answer might be no, but I later realised that the question was a valid point. Where is the line drawn between religious freedom and constitutional democratic values?  
   
-What complicates this matter is the concept of *religious denomination*. What a denomination means is a subgroup within the religion. The guys against the petition argued that the Sabarimala devotees form a religious denomination, which was rejected by the court. It doesn't make sense to group everyone is a Hindu, but not from a denomination considering there's nothing such as organized religion of Hinduism itself. Moreover, this judgement by SC is compulsive on the people, and not really generated out of internal dialogues/discussions between the devotees themselves. This is like mandating there can be a female Pope in the c. That would be something I'd agree with but isn't the best approach when considering religion. Mandation of such a decision would lead to outright rejection of it from the people.  
+What complicates this matter is the concept of *religious denomination*. What a denomination means is a subgroup within the religion. The guys against the petition argued that the Sabarimala devotees form a religious denomination, which was rejected by the court. It doesn't make sense to group everyone is a Hindu, but not from a denomination considering there's nothing such as organized religion of Hinduism itself. Moreover, this judgement by SC is compulsive on the people, and not really generated out of internal dialogues/discussions between the devotees themselves. This is like mandating there can be a female Pope in the church. That would be something I'd agree with but isn't the best approach when considering religion. Mandation of such a decision would lead to outright rejection of it from the people.  
   
 A better argument is made in the following podcast by NewsLaundry:  
   
@@ -64,7 +64,11 @@ A better argument is made in the following podcast by NewsLaundry:
   
 Listen after the 35:00 min mark.  
   
-Also listen to the following video, which answers a lot of novice points that a layman like me did not consider.  
+Also listen to the following video, which answers a lot of novice points that a layman like me did not consider. 
+
+{{< youtube W91BB0QtcnQ >}}
+
+
  
 This brings us again to the original decision of the SC. I went through Justice Indu Malhotra's judgement again.  
   
