@@ -1,6 +1,6 @@
 ---
 title: "About"
-description: "Darshit Patel - Tech Lead at Gupshup, Java/Spring Boot engineer, ACM volunteer. Sharing learnings on backend technologies and distributed systems. 9+ years of experience."
+description: "Darshit Patel - Tech Lead at Gupshup, Java/Spring Boot engineer, ACM volunteer. Sharing learnings on backend technologies and distributed systems. 10+ years of experience."
 date: 2021-09-24T11:08:57+05:30
 draft: false
 menu: "main"
@@ -44,17 +44,17 @@ You can find a text based resume below.
 * Guided the team in adopting maintainable coding practices and leveraging new technologies like AI to accelerate development velocity.
 ----
 
-### Software Engineer (Spring Boot), LogiNext Solutions, December 2018 - May 2020, Mumbai
+### Software Engineer (Spring Boot) - LogiNext Solutions, December 2018 - May 2020, Mumbai
 
 * Secured sensitive application secrets like credentials and passwords by utilizing server side encryption with the help of AWS Key Management Service and AWS S3 storage.
 * Reduced costs by implementing a caching mechanism for Google Places and Geocoding API, OneMap, and Open Street Maps calls.
 * Implemented a Redis based debounce to eliminate duplicate transactions in the system.
 * Reduced Redis usage by 50% by optimizing storage strategies.
-* Contribued to migration of the application from Spring Boot v1.5 to v2.1.4
+* Contributed to migration of the application from Spring Boot v1.5 to v2.1.4
 
 ----
 
-### Software Engineer (Spring Boot), KPIT Technologies, July 2016 - November 2018, Mumbai
+### Software Engineer (Spring Boot) - KPIT Technologies, July 2016 - November 2018, Mumbai
 > With CRISIL: Quantix Mutual Funds Screener, and Wealth Tracker 
 
 * Implemented a REST micro-service which enables a user to shortlist Mutual Funds based on a criteria.
@@ -63,7 +63,7 @@ You can find a text based resume below.
 
 ----
 
-### Project Intern, Persistent Systems, June 2015 – May 2016
+### Project Intern, Python - Persistent Systems, June 2015 - May 2016, Pune
 
 * Developed a smart system called Dactylock, to secure information using Biometrics and Secret Sharing Techniques as a part of Final Year Bachelors’ Project.
 
@@ -72,10 +72,11 @@ You can find a text based resume below.
 ## Languages and Technologies
 
 * __Languages:__ Java, Python, Lua, Bash
-* __Frameworks & other tech:__ Spring Boot, Java Servlets, Docker, Kubernetes, Pulum
+* __Frameworks & other tech:__ Spring Boot, Java Servlets, Docker, Kubernetes, Pulumi
 * __Databases/Caching:__ MySQL, MongoDB, Redis
 * __Cloud Platforms:__ AWS, GCP, Oracle Cloud
-* __CI/CD & Tools:__ GitLab, GitHub Actions, IntelliJ IDEA, Cursor, Git, SVN, Ansible
+* __CI/CD & Tools:__ GitLab, GitHub Actions, ArgoCD, IntelliJ IDEA, Git, SVN, Ansible
+* __AI Tools:__ Cursor, Claude, Codex, OpenCode
 
 ----
 
@@ -83,11 +84,11 @@ You can find a text based resume below.
 
 1. [Google Maps Java SDK](https://github.com/googlemaps/google-maps-services-java). Implemented a feature to ensure consistence between the Java and JS SDK. Enabled parsing of API Responses in the Google Maps Java SDK. Technologies: Java
 
-2. [Java URL Shortner](https://github.com/darshitpp/url-shortener). Created a self-hosted production ready URL shortener webapp and [CLI](https://github.com/darshitpp/just-cli). Deployed on Oracle Cloud. Technologies: Spring Boot, Docker, Java, PicoCli, GraalVM, Oracle Cloud
+2. [Java URL Shortener](https://github.com/darshitpp/url-shortener). Created a self-hosted production ready URL shortener webapp and [CLI](https://github.com/darshitpp/just-cli). Deployed on Oracle Cloud. Technologies: Spring Boot, Docker, Java, PicoCli, GraalVM, Oracle Cloud
 
 3. [SDKMAN!](https://github.com/sdkman/sdkman-cli) is a tool for managing parallel versions of multiple SDKs on any Unix based system. Improved error suggestions for the user. Technologies: Java, Cucumber
 
-4. Stock Price Bot. A bot which shows the most recent Equity and Cryptocurrency prices. Technologies: Python
+4. [x-agent](https://github.com/darshitpp/x-agent). Cross-agent task runner. Allows any AI CLI (Codex, Cursor, Claude, Gemini, Junie) to delegate tasks to, or get second opinions from, the others.
 
 ----
 
@@ -110,3 +111,11 @@ You can find a text based resume below.
 8. __NASSCOM India@75 Hackathon Winner__: Developed an Android marketplace for blue-collar jobs in the unorganized sector.
 
 9. Honourable Mention at ACM ICPC Amritapuri Regionals, 2015.
+
+----
+
+## Education
+
+* B.E. Computer Engineering, Pimpri-Chinchwad College of Engineering, Pune, June 2016. Aggregate: 71.1%
+* H.S.C, PACE Jr. Science College, Thane, March 2012. 76.67%
+* S.S.C, N.E.S English Medium School, Bhiwandi, March 2010. 90.55%
