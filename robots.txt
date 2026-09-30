@@ -1,0 +1,33 @@
+# robots.txt for darshit.dev
+# Allow all search engines and AI crawlers for citation opportunities
+
+# Default: allow all
+User-agent: *
+Allow: /
+
+# AI Crawler Permissions
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+# EU Directive 2019/790 content signals (as comments)
+# search: yes
+# ai-input: no
+# ai-train: no
+
+# Sitemap location
+Sitemap: https://darshit.dev/sitemap.xml
