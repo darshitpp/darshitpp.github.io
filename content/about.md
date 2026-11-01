@@ -7,11 +7,11 @@ menu: "main"
 meta: "false"
 ---
 
-I currently work as a Tech Lead with [Gupshup](https://gupshup.io).
+I currently work as a Tech Lead with [Gupshup](https://gupshup.ai).
 
 I am involved in the computing community by volunteering at ACM. I have been an editor with ACM [**XRDS**](https://xrds.acm.org/), and also been member of the ACM [**Future of Computing Academy (FCA)**](https://www.acm.org/fca/). I was also a contributing member to *__ACM Selects__*. ACM Selects are a series of guides to a broad range of topics in computer science. Check out some of the guides I compiled: [Getting Started with Microservices](https://selects.acm.org/selections/getting-started-with-microservices), and [Spotlight on Computing in India](https://selects.acm.org/selections/spotlight-on-computing-in-india).
 
-My professional work and interests include working with Java, Spring Boot and related ecosystems, and learning about designing Scalable Software Architectures and Systems.
+My professional work and interests include working with Java, Spring Boot and related ecosystems, and learning about designing Scalable Software Architectures and Systems. I also work AI-native: I use AI coding agents every day, and I build open-source tools around them, like [x-agent](https://github.com/darshitpp/x-agent) and [java-code-upgrade](https://github.com/darshitpp/java-code-upgrade).
 
 My favourite IDE is IntelliJ IDEA!
 
@@ -25,23 +25,23 @@ You can find a text based resume below.
 
 ### Tech Lead - Gupshup Technology, May 2020 - Present, Fully Remote
 
-> Previously: Senior Software Engineer 2, Senior Software Engineer, Software Engineer
+> Previously: Senior Software Engineer 2 (Jan 2023 - Jul 2024), Senior Software Engineer (Jul 2022 - Feb 2023), Software Engineer (May 2020 - Jul 2022)
 
 
 * **Reduced application shutdown time by 140x** (from 7 minutes to 3 seconds) by optimizing and implementing a safe thread stopping strategy.
-* **Boosted matching times** for high-volume internal services **from minutes to seconds**, significantly improving response times and user experience.
-* Utilized Multi-threading and concurrent techniques to improve performance for message processing and delivery by **50-90%**.
-* **Eliminated deployment of production instances from 100s to 0** by enabling dynamic data updates, significantly enhancing system uptime and release efficiency.
-* Integrated streaming architecture to **improve throughput by 2x** and enable virtually unlimited horizontal scaling for high-volume services.
-* **Introduced Token-based authentication for APIs** and implemented security measures for MongoDB connections to prevent unauthorized access.
-* Implemented a mechanism with Redis Cluster and Lua scripts to enable robust rate limiting on messages sent as per client configuration.
-* Achieved a **10x reduction in deployment time** (from 10 minutes to 1 minute) by eliminating human intervention and automating the entire process, coupled with automated notifications for visibility.
-* Automated setup of new environments, reducing manual effort from **weeks (>400 hours) to hours (<15 hours)**, greatly accelerating development and testing cycles.
+* Eliminated the need to deploy **100s of production instances** by enabling dynamic data updates, significantly enhancing system uptime and release efficiency.
 * **Spearheaded the migration to, and automation of Redis Cluster**, transforming potential hours of manual scale-up/scale-down operations into minutes, enabling critical horizontal scalability for data handling, and achieving **1000s of dollars in cost savings**.
-* Championed code quality and maintainability by actively conducting code reviews for critical features and infrastructure components, and integrating SonarQube into GitLab pipelines.
+* **AI-native engineering:** embed AI agents in daily design, coding, and review work, coach the team to do the same, and built open-source tools for it: [x-agent](https://github.com/darshitpp/x-agent) and [java-code-upgrade](https://github.com/darshitpp/java-code-upgrade).
+* **Boosted matching times** for high-volume internal services **from minutes to seconds**, significantly improving response times and user experience.
+* Integrated streaming architecture to **improve throughput by 2x** and enable virtually unlimited horizontal scaling for high-volume services.
+* Utilized Multi-threading and concurrent techniques to improve performance for message processing and delivery by **50-90%**.
+* Automated setup of new environments, reducing manual effort from **weeks (>400 hours) to hours (<15 hours)**, greatly accelerating development and testing cycles.
+* Achieved a **10x reduction in deployment time** (from 10 minutes to 1 minute) by eliminating human intervention and automating the entire process, coupled with automated notifications for visibility.
+* **Introduced Token-based authentication for APIs** and implemented security measures for MongoDB connections to prevent unauthorized access.
+* Built a Redis Cluster and Lua-based feature that lets clients limit their own outgoing messages as per their configuration.
 * **Mentored 2-3 junior engineers**, providing technical guidance and fostering a culture of engineering excellence and continuous learning.
-* Led and collaborated for design and architecture decisions for the system.
-* Guided the team in adopting maintainable coding practices and leveraging new technologies like AI to accelerate development velocity.
+* Led and collaborated on design and architecture decisions for the system.
+* Championed code quality and maintainability by actively conducting code reviews for critical features and infrastructure components, and integrating SonarQube into GitLab pipelines.
 ----
 
 ### Software Engineer (Spring Boot) - LogiNext Solutions, December 2018 - May 2020, Mumbai
@@ -82,13 +82,17 @@ You can find a text based resume below.
 
 ## Side Projects
 
-1. [Google Maps Java SDK](https://github.com/googlemaps/google-maps-services-java). Implemented a feature to ensure consistence between the Java and JS SDK. Enabled parsing of API Responses in the Google Maps Java SDK. Technologies: Java
+1. [Google Maps Java SDK](https://github.com/googlemaps/google-maps-services-java). Implemented a feature to ensure consistency between the Java and JS SDK. Enabled parsing of API Responses in the Google Maps Java SDK. Technologies: Java.
 
-2. [Java URL Shortener](https://github.com/darshitpp/url-shortener). Created a self-hosted production ready URL shortener webapp and [CLI](https://github.com/darshitpp/just-cli). Deployed on Oracle Cloud. Technologies: Spring Boot, Docker, Java, PicoCli, GraalVM, Oracle Cloud
+2. [Java URL Shortener](https://github.com/darshitpp/url-shortener). Try it out: [https://just.darshit.dev](https://just.darshit.dev). Created a self-hosted, production-ready URL shortener webapp and [CLI](https://github.com/darshitpp/just-cli). Hosted on Oracle Cloud. Technologies: Spring Boot, Docker, Java, PicoCli, GraalVM, Oracle Cloud.
 
-3. [SDKMAN!](https://github.com/sdkman/sdkman-cli) is a tool for managing parallel versions of multiple SDKs on any Unix based system. Improved error suggestions for the user. Technologies: Java, Cucumber
+3. [SDKMAN!](https://github.com/sdkman/sdkman-cli) Tool for managing parallel versions of multiple SDKs on any Unix-based system. Improved error suggestions for the user. Technologies: Java, Cucumber.
 
-4. [x-agent](https://github.com/darshitpp/x-agent). Cross-agent task runner. Allows any AI CLI (Codex, Cursor, Claude, Gemini, Junie) to delegate tasks to, or get second opinions from, the others.
+4. [Daak](https://github.com/darshitpp/daak). End-to-end encrypted, serverless file and text sharing between your own devices over the local network, with no accounts. Published on [F-Droid](https://f-droid.org/en/packages/dev.darshit.daak/) for Android, and available for macOS and iOS. Technologies: Rust, React Native, Noise Protocol, mDNS.
+
+5. [x-agent](https://github.com/darshitpp/x-agent). Cross-agent task runner. Allows any AI CLI (Codex, Cursor, Claude, Gemini, Junie) to delegate tasks to, or get second opinions from, the others.
+
+6. [java-code-upgrade](https://github.com/darshitpp/java-code-upgrade). Agent skill that helps AI coding agents upgrade legacy Java to modern idioms, with before/after examples for 113 patterns across Java 7-25. Built on the pattern database from [java.evolved](https://javaevolved.github.io/).
 
 ----
 
