@@ -9,13 +9,13 @@ meta: "false"
 
 I currently work as a Tech Lead with [Gupshup](https://gupshup.ai).
 
-I am involved in the computing community by volunteering at ACM. I have been an editor with ACM [**XRDS**](https://xrds.acm.org/), and also been member of the ACM [**Future of Computing Academy (FCA)**](https://www.acm.org/fca/). I was also a contributing member to *__ACM Selects__*. ACM Selects are a series of guides to a broad range of topics in computer science. Check out some of the guides I compiled: [Getting Started with Microservices](https://selects.acm.org/selections/getting-started-with-microservices), and [Spotlight on Computing in India](https://selects.acm.org/selections/spotlight-on-computing-in-india).
+I am involved in the computing community by volunteering at ACM. I have been an editor with ACM [**XRDS**](https://xrds.acm.org/), and also been a member of the ACM [**Future of Computing Academy (FCA)**](https://www.acm.org/fca/). I was also a contributing member to *__ACM Selects__*. ACM Selects are a series of guides to a broad range of topics in computer science. Check out some of the guides I compiled: [Getting Started with Microservices](https://selects.acm.org/selections/getting-started-with-microservices), and [Spotlight on Computing in India](https://selects.acm.org/selections/spotlight-on-computing-in-india).
 
 My professional work and interests include working with Java, Spring Boot and related ecosystems, and learning about designing Scalable Software Architectures and Systems. I also work AI-native: I use AI coding agents every day, and I build open-source tools around them, like [x-agent](https://github.com/darshitpp/x-agent) and [java-code-upgrade](https://github.com/darshitpp/java-code-upgrade).
 
 My favourite IDE is IntelliJ IDEA!
 
-You can reach out to me on Twitter [**@darshitpp**](https://twitter.com/darshitpp/) and [**LinkedIn**](https://www.linkedin.com/in/darshitpp/), and you can find my Resume/CV [**here**](https://drive.google.com/file/d/0ByZz7te0reC7YzQwRmRrdUt5anRhOWMzbWhnOGNObWF5VUZj/view).
+You can reach out to me on Twitter [**@darshitpp**](https://twitter.com/darshitpp/) and [**LinkedIn**](https://www.linkedin.com/in/darshitpp/), and you can find my Resume/CV [**here**](https://drive.google.com/file/d/13hU5qipszyeh_topvROlk8Pk78mfyWwK/view?usp=sharing).
 
 You can find a text based resume below.
 
@@ -46,9 +46,9 @@ You can find a text based resume below.
 
 ### Software Engineer (Spring Boot) - LogiNext Solutions, December 2018 - May 2020, Mumbai
 
-* Secured sensitive application secrets like credentials and passwords by utilizing server side encryption with the help of AWS Key Management Service and AWS S3 storage.
-* Reduced costs by implementing a caching mechanism for Google Places and Geocoding API, OneMap, and Open Street Maps calls.
-* Implemented a Redis based debounce to eliminate duplicate transactions in the system.
+* Secured sensitive application secrets like credentials and passwords by utilizing server-side encryption with the help of AWS Key Management Service and AWS S3 storage.
+* Reduced costs by implementing a caching mechanism for Google Places and Geocoding API, OneMap, and OpenStreetMap calls.
+* Implemented a Redis-based debounce to eliminate duplicate transactions in the system.
 * Reduced Redis usage by 50% by optimizing storage strategies.
 * Contributed to migration of the application from Spring Boot v1.5 to v2.1.4
 
@@ -57,15 +57,15 @@ You can find a text based resume below.
 ### Software Engineer (Spring Boot) - KPIT Technologies, July 2016 - November 2018, Mumbai
 > With CRISIL: Quantix Mutual Funds Screener, and Wealth Tracker 
 
-* Implemented a REST micro-service which enables a user to shortlist Mutual Funds based on a criteria.
-* Introduced Annotation based development to the team that reduced development time by 40+ man hours per week.
-* Implemented a system which generates user portfolio reports based on their investments profiles and existing portfolios.
+* Implemented a REST micro-service which enables a user to shortlist Mutual Funds based on a criterion.
+* Introduced Annotation-based development to the team that reduced development time by 40+ man-hours per week.
+* Implemented a system which generates user portfolio reports based on their investment profiles and existing portfolios.
 
 ----
 
 ### Project Intern, Python - Persistent Systems, June 2015 - May 2016, Pune
 
-* Developed a smart system called Dactylock, to secure information using Biometrics and Secret Sharing Techniques as a part of Final Year Bachelors’ Project.
+* Developed a smart system called Dactylock, to secure information using Biometrics and Secret Sharing Techniques as a part of Final Year Bachelor’s Project.
 
 ----
 
